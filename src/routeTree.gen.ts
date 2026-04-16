@@ -9,38 +9,248 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WaitlistRouteImport } from './routes/waitlist'
+import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as ProcessRouteImport } from './routes/process'
+import { Route as ParentsRouteImport } from './routes/parents'
+import { Route as LitterRouteImport } from './routes/litter'
+import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ApplyRouteImport } from './routes/apply'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
+import { Route as ApprovedTokenRouteImport } from './routes/approved/$token'
 
+const WaitlistRoute = WaitlistRouteImport.update({
+  id: '/waitlist',
+  path: '/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThankYouRoute = ThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessRoute = ProcessRouteImport.update({
+  id: '/process',
+  path: '/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentsRoute = ParentsRouteImport.update({
+  id: '/parents',
+  path: '/parents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LitterRoute = LitterRouteImport.update({
+  id: '/litter',
+  path: '/litter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthGuaranteeRoute = HealthGuaranteeRouteImport.update({
+  id: '/health-guarantee',
+  path: '/health-guarantee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
+  id: '/puppies/$slug',
+  path: '/puppies/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovedTokenRoute = ApprovedTokenRouteImport.update({
+  id: '/approved/$token',
+  path: '/approved/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
+  '/faq': typeof FaqRoute
+  '/health-guarantee': typeof HealthGuaranteeRoute
+  '/litter': typeof LitterRoute
+  '/parents': typeof ParentsRoute
+  '/process': typeof ProcessRoute
+  '/thank-you': typeof ThankYouRoute
+  '/waitlist': typeof WaitlistRoute
+  '/approved/$token': typeof ApprovedTokenRoute
+  '/puppies/$slug': typeof PuppiesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
+  '/faq': typeof FaqRoute
+  '/health-guarantee': typeof HealthGuaranteeRoute
+  '/litter': typeof LitterRoute
+  '/parents': typeof ParentsRoute
+  '/process': typeof ProcessRoute
+  '/thank-you': typeof ThankYouRoute
+  '/waitlist': typeof WaitlistRoute
+  '/approved/$token': typeof ApprovedTokenRoute
+  '/puppies/$slug': typeof PuppiesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
+  '/faq': typeof FaqRoute
+  '/health-guarantee': typeof HealthGuaranteeRoute
+  '/litter': typeof LitterRoute
+  '/parents': typeof ParentsRoute
+  '/process': typeof ProcessRoute
+  '/thank-you': typeof ThankYouRoute
+  '/waitlist': typeof WaitlistRoute
+  '/approved/$token': typeof ApprovedTokenRoute
+  '/puppies/$slug': typeof PuppiesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/faq'
+    | '/health-guarantee'
+    | '/litter'
+    | '/parents'
+    | '/process'
+    | '/thank-you'
+    | '/waitlist'
+    | '/approved/$token'
+    | '/puppies/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/faq'
+    | '/health-guarantee'
+    | '/litter'
+    | '/parents'
+    | '/process'
+    | '/thank-you'
+    | '/waitlist'
+    | '/approved/$token'
+    | '/puppies/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/faq'
+    | '/health-guarantee'
+    | '/litter'
+    | '/parents'
+    | '/process'
+    | '/thank-you'
+    | '/waitlist'
+    | '/approved/$token'
+    | '/puppies/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ApplyRoute: typeof ApplyRoute
+  FaqRoute: typeof FaqRoute
+  HealthGuaranteeRoute: typeof HealthGuaranteeRoute
+  LitterRoute: typeof LitterRoute
+  ParentsRoute: typeof ParentsRoute
+  ProcessRoute: typeof ProcessRoute
+  ThankYouRoute: typeof ThankYouRoute
+  WaitlistRoute: typeof WaitlistRoute
+  ApprovedTokenRoute: typeof ApprovedTokenRoute
+  PuppiesSlugRoute: typeof PuppiesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/waitlist': {
+      id: '/waitlist'
+      path: '/waitlist'
+      fullPath: '/waitlist'
+      preLoaderRoute: typeof WaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thank-you': {
+      id: '/thank-you'
+      path: '/thank-you'
+      fullPath: '/thank-you'
+      preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/process': {
+      id: '/process'
+      path: '/process'
+      fullPath: '/process'
+      preLoaderRoute: typeof ProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parents': {
+      id: '/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof ParentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/litter': {
+      id: '/litter'
+      path: '/litter'
+      fullPath: '/litter'
+      preLoaderRoute: typeof LitterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health-guarantee': {
+      id: '/health-guarantee'
+      path: '/health-guarantee'
+      fullPath: '/health-guarantee'
+      preLoaderRoute: typeof HealthGuaranteeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +258,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/puppies/$slug': {
+      id: '/puppies/$slug'
+      path: '/puppies/$slug'
+      fullPath: '/puppies/$slug'
+      preLoaderRoute: typeof PuppiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approved/$token': {
+      id: '/approved/$token'
+      path: '/approved/$token'
+      fullPath: '/approved/$token'
+      preLoaderRoute: typeof ApprovedTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ApplyRoute: ApplyRoute,
+  FaqRoute: FaqRoute,
+  HealthGuaranteeRoute: HealthGuaranteeRoute,
+  LitterRoute: LitterRoute,
+  ParentsRoute: ParentsRoute,
+  ProcessRoute: ProcessRoute,
+  ThankYouRoute: ThankYouRoute,
+  WaitlistRoute: WaitlistRoute,
+  ApprovedTokenRoute: ApprovedTokenRoute,
+  PuppiesSlugRoute: PuppiesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

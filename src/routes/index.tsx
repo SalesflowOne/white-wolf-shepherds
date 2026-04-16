@@ -7,6 +7,7 @@ import GallerySection from "@/components/GallerySection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import MobileStickyBar from "@/components/MobileStickyBar";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-16 md:pb-0">
       <Navbar />
       <HeroSection />
       <AboutSection />
@@ -39,6 +40,7 @@ function Index() {
       <TestimonialsSection />
       <ContactSection />
       <Footer />
+      <MobileStickyBar />
     </div>
   );
 }

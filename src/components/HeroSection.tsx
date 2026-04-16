@@ -1,6 +1,44 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-dogs.jpg";
 
 export default function HeroSection() {
+  const [warm, setWarm] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [availableCount, setAvailableCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Check warm state from localStorage
+    const visited = localStorage.getItem("visited_litter");
+    if (visited === "true") setWarm(true);
+
+    // Fade in after check
+    const timer = setTimeout(() => setMounted(true), 50);
+
+    // Fetch live count
+    async function fetchCount() {
+      const { count } = await supabase
+        .from("puppies")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "available");
+      if (count !== null) setAvailableCount(count);
+    }
+    fetchCount();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel("hero-puppies")
+      .on("postgres_changes", { event: "*", schema: "public", table: "puppies" }, () => {
+        fetchCount();
+      })
+      .subscribe();
+
+    return () => {
+      clearTimeout(timer);
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background image */}
@@ -23,22 +61,58 @@ export default function HeroSection() {
           <span className="text-gradient-ice">Loyalty</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/80">
-          Raising exceptional white shepherds with impeccable health, temperament, and beauty.
-          Welcome to the White Wolf family.
+          Health-tested, family-raised White German Shepherd puppies placed with carefully selected homes.
         </p>
-        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <a
-            href="#puppies"
-            className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
-          >
-            View Available Puppies
-          </a>
-          <a
-            href="#about"
-            className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
-          >
-            Our Story
-          </a>
+
+        {/* Live scarcity counter */}
+        {availableCount !== null && (
+          <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-5 py-2 text-primary-foreground">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+            </span>
+            <span className="text-sm font-medium">
+              {availableCount} of 9 puppies available for reservation
+            </span>
+          </div>
+        )}
+
+        {/* Smart CTAs — fade in to avoid hydration mismatch */}
+        <div
+          className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center transition-opacity duration-300"
+          style={{ opacity: mounted ? 1 : 0 }}
+        >
+          {warm ? (
+            <>
+              <a
+                href="/litter"
+                className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+              >
+                Secure Your Pick &mdash; $500 Reservation Fee
+              </a>
+              <a
+                href="/litter"
+                className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
+              >
+                View Remaining Puppies &rarr;
+              </a>
+            </>
+          ) : (
+            <>
+              <a
+                href="/apply"
+                className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+              >
+                Begin Application
+              </a>
+              <a
+                href="/litter"
+                className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
+              >
+                View Current Litter &rarr;
+              </a>
+            </>
+          )}
         </div>
       </div>
 
