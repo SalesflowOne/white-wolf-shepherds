@@ -19,7 +19,9 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortalIndexRouteImport } from './routes/portal/index'
 import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
+import { Route as PortalDashboardRouteImport } from './routes/portal/dashboard'
 import { Route as ApprovedTokenRouteImport } from './routes/approved/$token'
 
 const WaitlistRoute = WaitlistRouteImport.update({
@@ -72,9 +74,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalIndexRoute = PortalIndexRouteImport.update({
+  id: '/portal/',
+  path: '/portal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
   id: '/puppies/$slug',
   path: '/puppies/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalDashboardRoute = PortalDashboardRouteImport.update({
+  id: '/portal/dashboard',
+  path: '/portal/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApprovedTokenRoute = ApprovedTokenRouteImport.update({
@@ -95,7 +107,9 @@ export interface FileRoutesByFullPath {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/portal/': typeof PortalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,7 +123,9 @@ export interface FileRoutesByTo {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/portal': typeof PortalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,7 +140,9 @@ export interface FileRoutesById {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/portal/': typeof PortalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,7 +158,9 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/portal/dashboard'
     | '/puppies/$slug'
+    | '/portal/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,7 +174,9 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/portal/dashboard'
     | '/puppies/$slug'
+    | '/portal'
   id:
     | '__root__'
     | '/'
@@ -168,7 +190,9 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/portal/dashboard'
     | '/puppies/$slug'
+    | '/portal/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,7 +207,9 @@ export interface RootRouteChildren {
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
+  PortalDashboardRoute: typeof PortalDashboardRoute
   PuppiesSlugRoute: typeof PuppiesSlugRoute
+  PortalIndexRoute: typeof PortalIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,11 +284,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/': {
+      id: '/portal/'
+      path: '/portal'
+      fullPath: '/portal/'
+      preLoaderRoute: typeof PortalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/puppies/$slug': {
       id: '/puppies/$slug'
       path: '/puppies/$slug'
       fullPath: '/puppies/$slug'
       preLoaderRoute: typeof PuppiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/dashboard': {
+      id: '/portal/dashboard'
+      path: '/portal/dashboard'
+      fullPath: '/portal/dashboard'
+      preLoaderRoute: typeof PortalDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/approved/$token': {
@@ -287,7 +327,9 @@ const rootRouteChildren: RootRouteChildren = {
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
+  PortalDashboardRoute: PortalDashboardRoute,
   PuppiesSlugRoute: PuppiesSlugRoute,
+  PortalIndexRoute: PortalIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

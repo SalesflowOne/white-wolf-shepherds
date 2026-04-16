@@ -31,6 +31,12 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
+            to="/portal"
+            className="text-sm font-medium tracking-wide text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+          >
+            Applicant Portal
+          </Link>
+          <Link
             to="/apply"
             className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
           >
@@ -67,6 +73,13 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/portal"
+            onClick={() => setOpen(false)}
+            className="block py-3 text-sm font-medium text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+          >
+            Applicant Portal
+          </Link>
           <Link
             to="/apply"
             onClick={() => setOpen(false)}

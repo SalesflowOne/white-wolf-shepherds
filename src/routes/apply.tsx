@@ -34,6 +34,8 @@ function ApplyPage() {
   // Step 1 fields
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -73,6 +75,9 @@ function ApplyPage() {
     const errors: string[] = [];
     if (!fullName.trim()) errors.push("Full name is required");
     if (!email.trim()) errors.push("Email is required");
+    if (!password) errors.push("Password is required");
+    if (password.length > 0 && password.length < 8) errors.push("Password must be at least 8 characters");
+    if (password !== confirmPassword) errors.push("Passwords do not match");
     if (!phone.trim()) errors.push("Phone is required");
     if (!city.trim()) errors.push("City is required");
     if (!state.trim()) errors.push("State is required");
@@ -112,7 +117,28 @@ function ApplyPage() {
     const ownedBool = hasOwnedLargeDog === "yes";
     const fencedBool = hasFencedYard === "yes";
 
-    // Insert lead
+    // 1. Create Supabase Auth account
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password,
+      options: {
+        data: { full_name: fullName.trim() },
+      },
+    });
+
+    if (authError) {
+      setSubmitting(false);
+      if (authError.message.includes("already registered")) {
+        setStep2Errors(["An account with this email already exists. Please log in at the Applicant Portal instead."]);
+      } else {
+        setStep2Errors([`Account creation failed: ${authError.message}`]);
+      }
+      return;
+    }
+
+    const userId = authData.user?.id ?? null;
+
+    // 2. Insert lead with user_id link
     const { data: lead, error } = await supabase
       .from("leads")
       .insert({
@@ -135,6 +161,7 @@ function ApplyPage() {
         ready_for_deposit: readyBool,
         source,
         stage: waitlist ? "waitlist" : "new_inquiry",
+        user_id: userId,
       })
       .select("id")
       .single();
@@ -238,6 +265,31 @@ function ApplyPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
                     placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Create a Password *</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    placeholder="At least 8 characters"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    This creates your Applicant Portal account to track your application status.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Confirm Password *</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    placeholder="Re-enter your password"
                   />
                 </div>
 

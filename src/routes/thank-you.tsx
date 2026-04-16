@@ -59,6 +59,13 @@ function ThankYouPage() {
           <p className="mx-auto mt-4 max-w-lg text-lg text-muted-foreground">
             We received your application and will review it personally. You'll hear from us within 24–48 hours.
           </p>
+
+          <Link
+            to="/portal"
+            className="mt-6 inline-block rounded-xl border border-border px-6 py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
+          >
+            Check Your Application Status &rarr;
+          </Link>
         </div>
       </div>
 
