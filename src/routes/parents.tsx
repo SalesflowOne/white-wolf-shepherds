@@ -38,7 +38,7 @@ function ParentsPage() {
             {/* Dam */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
               <div className="flex h-64 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-5xl text-muted-foreground/20">Dam</span>
+                <span className="font-display text-5xl text-muted-foreground/20">Mia</span>
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
                 Mia &mdash; Dam
@@ -62,7 +62,7 @@ function ParentsPage() {
             {/* Sire */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
               <div className="flex h-64 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-5xl text-muted-foreground/20">Sire</span>
+                <span className="font-display text-5xl text-muted-foreground/20">Haki</span>
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
                 Haki &mdash; Sire
