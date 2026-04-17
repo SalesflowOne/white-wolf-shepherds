@@ -16,21 +16,9 @@ function ThankYouPage() {
   const { name } = Route.useSearch();
 
   const cards = [
-    {
-      title: "Meet the Parents",
-      desc: "Learn about the health-tested dam and sire behind this litter.",
-      href: "/parents",
-    },
-    {
-      title: "Our Process",
-      desc: "See how we raise our puppies using Puppy Culture and ENS protocol.",
-      href: "/process",
-    },
-    {
-      title: "Health Guarantee",
-      desc: "Every puppy comes with a comprehensive health guarantee.",
-      href: "/health-guarantee",
-    },
+    { title: "Meet the Parents", desc: "Learn about the health-tested dam and sire behind this litter.", href: "/parents" as const },
+    { title: "Our Process", desc: "See how we raise our puppies using Puppy Culture and ENS protocol.", href: "/process" as const },
+    { title: "Health Guarantee", desc: "Every puppy comes with a comprehensive health guarantee.", href: "/health-guarantee" as const },
   ];
 
   return (
@@ -39,7 +27,6 @@ function ThankYouPage() {
 
       <div className="bg-gradient-frost pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="mx-auto max-w-2xl px-6 text-center">
-          {/* Success icon */}
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,15 +44,8 @@ function ThankYouPage() {
             Thank you, {name}!
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-lg text-muted-foreground">
-            We received your application and will review it personally. You'll hear from us within 24–48 hours.
+            We review every application personally and will be in touch within 24–48 hours.
           </p>
-
-          <Link
-            to="/portal"
-            className="mt-6 inline-block rounded-xl border border-border px-6 py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
-          >
-            Check Your Application Status &rarr;
-          </Link>
         </div>
       </div>
 
@@ -93,7 +73,21 @@ function ThankYouPage() {
             ))}
           </div>
 
-          {/* TODO: Add Calendly embed here for optional 10-min intro call */}
+          {/* Portal access */}
+          <div className="mt-14 rounded-2xl border border-border bg-card p-8 text-center shadow-card">
+            <h2 className="font-display text-2xl font-bold text-foreground">
+              Access Your Portal
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
+              Your portal account has been created. Check your application status, message us, and track your puppy — all in one place.
+            </p>
+            <Link
+              to="/portal"
+              className="mt-6 inline-block rounded-xl bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+            >
+              Access My Portal &rarr;
+            </Link>
+          </div>
         </div>
       </div>
 

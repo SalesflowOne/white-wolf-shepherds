@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -45,7 +45,7 @@ function PuppyProfilePage() {
   useEffect(() => {
     async function fetchPuppy() {
       const { data, error } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("*")
         .eq("slug", slug)
         .single();
@@ -60,7 +60,7 @@ function PuppyProfilePage() {
 
       // Fetch available siblings
       const { data: sibs } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("*")
         .eq("status", "available")
         .neq("id", data.id)

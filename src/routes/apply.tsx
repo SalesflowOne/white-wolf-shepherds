@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, T } from "@/integrations/supabase/client";
+import { submitApplication } from "@/server/wws-actions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -13,19 +14,29 @@ type AvailablePuppy = {
 
 export const Route = createFileRoute("/apply")({
   component: ApplyPage,
-  validateSearch: (search: Record<string, unknown>) => ({
-    waitlist: (search.waitlist as string) || undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): {
+    waitlist?: string;
+    ref?: string;
+  } => {
+    const out: { waitlist?: string; ref?: string } = {};
+    if (typeof search.waitlist === "string") out.waitlist = search.waitlist;
+    if (typeof search.ref === "string") out.ref = search.ref;
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Apply — White Wolf Shepherds" },
-      { name: "description", content: "Apply to reserve a White German Shepherd puppy from our Spring 2026 litter." },
+      {
+        name: "description",
+        content:
+          "Apply to reserve a White German Shepherd puppy from our Spring 2026 litter.",
+      },
     ],
   }),
 });
 
 function ApplyPage() {
-  const { waitlist } = Route.useSearch();
+  const { waitlist, ref } = Route.useSearch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -34,19 +45,18 @@ function ApplyPage() {
   // Step 1 fields
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [preferredSex, setPreferredSex] = useState("either");
-  const [timeline, setTimeline] = useState("");
-  const [hasOwnedLargeDog, setHasOwnedLargeDog] = useState<string>("");
-  const [readyForDeposit, setReadyForDeposit] = useState("");
+  const [preferredSex, setPreferredSex] =
+    useState<"male" | "female" | "either">("either");
+  const [timeline, setTimeline] = useState<"" | "ready_now" | "1_3_months" | "future">("");
+  const [hasOwnedLargeDog, setHasOwnedLargeDog] = useState<"" | "yes" | "no">("");
+  const [readyForDeposit, setReadyForDeposit] = useState<"" | "yes" | "no" | "info">("");
 
   // Step 2 fields
   const [householdType, setHouseholdType] = useState("");
-  const [hasFencedYard, setHasFencedYard] = useState("");
+  const [hasFencedYard, setHasFencedYard] = useState<"" | "yes" | "no" | "in_progress">("");
   const [familySize, setFamilySize] = useState<number | "">("");
   const [childrenAges, setChildrenAges] = useState("");
   const [otherPets, setOtherPets] = useState("");
@@ -55,14 +65,19 @@ function ApplyPage() {
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [source, setSource] = useState("");
 
-  // Validation
   const [step1Errors, setStep1Errors] = useState<string[]>([]);
   const [step2Errors, setStep2Errors] = useState<string[]>([]);
 
+  // Referral capture
+  useEffect(() => {
+    if (ref) sessionStorage.setItem("wwreferral", ref);
+  }, [ref]);
+
+  // Load available puppies for Step 2 select
   useEffect(() => {
     async function fetchPuppies() {
       const { data } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("id, name, tier, price")
         .eq("status", "available")
         .order("priority_order", { ascending: true });
@@ -72,32 +87,29 @@ function ApplyPage() {
   }, []);
 
   function validateStep1(): boolean {
-    const errors: string[] = [];
-    if (!fullName.trim()) errors.push("Full name is required");
-    if (!email.trim()) errors.push("Email is required");
-    if (!password) errors.push("Password is required");
-    if (password.length > 0 && password.length < 8) errors.push("Password must be at least 8 characters");
-    if (password !== confirmPassword) errors.push("Passwords do not match");
-    if (!phone.trim()) errors.push("Phone is required");
-    if (!city.trim()) errors.push("City is required");
-    if (!state.trim()) errors.push("State is required");
-    if (!timeline) errors.push("Timeline is required");
-    if (!hasOwnedLargeDog) errors.push("Large dog experience is required");
-    if (!readyForDeposit) errors.push("Reservation readiness is required");
-    setStep1Errors(errors);
-    return errors.length === 0;
+    const errs: string[] = [];
+    if (!fullName.trim()) errs.push("Full name is required");
+    if (!email.trim() || !email.includes("@")) errs.push("A valid email is required");
+    if (!phone.trim()) errs.push("Phone is required");
+    if (!city.trim()) errs.push("City is required");
+    if (!state.trim()) errs.push("State is required");
+    if (!timeline) errs.push("Timeline is required");
+    if (!hasOwnedLargeDog) errs.push("Large dog experience is required");
+    if (!readyForDeposit) errs.push("Reservation readiness is required");
+    setStep1Errors(errs);
+    return errs.length === 0;
   }
 
   function validateStep2(): boolean {
-    const errors: string[] = [];
-    if (!householdType) errors.push("Household type is required");
-    if (!hasFencedYard) errors.push("Fenced yard status is required");
-    if (!familySize || familySize < 1) errors.push("Family size is required");
+    const errs: string[] = [];
+    if (!householdType) errs.push("Household type is required");
+    if (!hasFencedYard) errs.push("Fenced yard status is required");
+    if (!familySize || familySize < 1) errs.push("Family size is required");
     if (!reasonForBreed.trim() || reasonForBreed.trim().length < 50)
-      errors.push("Please share at least 50 characters about why you want this breed");
-    if (!source) errors.push("How you heard about us is required");
-    setStep2Errors(errors);
-    return errors.length === 0;
+      errs.push("Please share at least 50 characters about why you want this breed");
+    if (!source) errs.push("How you heard about us is required");
+    setStep2Errors(errs);
+    return errs.length === 0;
   }
 
   function handleContinue() {
@@ -113,90 +125,47 @@ function ApplyPage() {
 
     setSubmitting(true);
 
-    const readyBool = readyForDeposit === "yes";
-    const ownedBool = hasOwnedLargeDog === "yes";
-    const fencedBool = hasFencedYard === "yes";
+    try {
+      const referralCode = sessionStorage.getItem("wwreferral") ?? null;
 
-    // 1. Create Supabase Auth account
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
-      password,
-      options: {
-        data: { full_name: fullName.trim() },
-      },
-    });
+      const result = await submitApplication({
+        data: {
+          fullName: fullName.trim(),
+          email: email.trim().toLowerCase(),
+          phone: phone.trim(),
+          city: city.trim(),
+          state: state.trim(),
+          preferredSex,
+          timeline: timeline as "ready_now" | "1_3_months" | "future",
+          hasOwnedLargeDog: hasOwnedLargeDog === "yes",
+          readyForDeposit: readyForDeposit as "yes" | "no" | "info",
+          householdType,
+          hasFencedYard: hasFencedYard as "yes" | "no" | "in_progress",
+          familySize: typeof familySize === "number" ? familySize : 1,
+          childrenAges: childrenAges.trim() || null,
+          otherPets: otherPets.trim() || null,
+          preferredPuppyId: preferredPuppyId || null,
+          reasonForBreed: reasonForBreed.trim(),
+          additionalNotes: additionalNotes.trim() || null,
+          source,
+          waitlist: waitlist === "true",
+          referralCode,
+        },
+      });
 
-    if (authError) {
+      sessionStorage.removeItem("wwreferral");
+      navigate({ to: "/thank-you", search: { name: result.firstName } });
+    } catch (err) {
       setSubmitting(false);
-      if (authError.message.includes("already registered")) {
-        setStep2Errors(["An account with this email already exists. Please log in at the Applicant Portal instead."]);
-      } else {
-        setStep2Errors([`Account creation failed: ${authError.message}`]);
-      }
-      return;
+      const msg = err instanceof Error ? err.message : "Submission failed.";
+      setStep2Errors([`There was an error submitting your application: ${msg}`]);
     }
-
-    const userId = authData.user?.id ?? null;
-
-    // 2. Insert lead with user_id link
-    const { data: lead, error } = await supabase
-      .from("leads")
-      .insert({
-        full_name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        city: city.trim(),
-        state: state.trim(),
-        preferred_sex: preferredSex,
-        preferred_puppy_id: preferredPuppyId || null,
-        timeline,
-        has_owned_large_dog: ownedBool,
-        has_fenced_yard: fencedBool,
-        household_type: householdType,
-        family_size: typeof familySize === "number" ? familySize : 1,
-        children_ages: childrenAges.trim() || null,
-        other_pets: otherPets.trim() || null,
-        reason_for_breed: reasonForBreed.trim(),
-        additional_notes: additionalNotes.trim() || null,
-        ready_for_deposit: readyBool,
-        source,
-        stage: waitlist ? "waitlist" : "new_inquiry",
-        user_id: userId,
-      })
-      .select("id")
-      .single();
-
-    if (error || !lead) {
-      setSubmitting(false);
-      alert("There was an error submitting your application. Please try again.");
-      return;
-    }
-
-    // Compute score
-    let score = 0;
-    if (timeline === "ready_now") score += 25;
-    if (readyBool) score += 20;
-    if (ownedBool) score += 15;
-    if (fencedBool) score += 10;
-    if (preferredPuppyId) score += 8;
-    if (reasonForBreed.trim().length > 100) score += 7;
-    if (timeline === "1_3_months") score += 5;
-    if (householdType === "house") score += 5;
-    if (additionalNotes.trim().length > 50) score += 5;
-
-    // Update score
-    await supabase
-      .from("leads")
-      .update({ score, updated_at: new Date().toISOString() })
-      .eq("id", lead.id);
-
-    // Redirect to thank you
-    const firstName = fullName.trim().split(" ")[0];
-    navigate({ to: "/thank-you", search: { name: firstName } });
   }
 
   const tierLabel = (tier: string | null) =>
     tier === "premier" ? "Premier" : tier === "preferred" ? "Preferred" : "Companion";
+
+  const charCount = reasonForBreed.trim().length;
 
   return (
     <div className="min-h-screen">
@@ -215,14 +184,14 @@ function ApplyPage() {
             </p>
           </div>
 
-          {/* Progress bar */}
+          {/* Progress */}
           <div className="mt-10">
             <div className="flex items-center justify-between text-sm font-medium">
               <span className={step >= 1 ? "text-accent" : "text-muted-foreground"}>
-                Step 1: Quick Qualifier
+                Step 1 of 2
               </span>
               <span className={step >= 2 ? "text-accent" : "text-muted-foreground"}>
-                Step 2: Full Screening
+                Step 2 of 2
               </span>
             </div>
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -233,7 +202,10 @@ function ApplyPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-10 rounded-2xl bg-card p-8 shadow-card sm:p-10">
+          <form
+            onSubmit={handleSubmit}
+            className="mt-10 rounded-2xl bg-card p-8 shadow-card sm:p-10"
+          >
             {step === 1 && (
               <div className="space-y-6">
                 {step1Errors.length > 0 && (
@@ -246,140 +218,117 @@ function ApplyPage() {
                   </div>
                 )}
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Full Name *</label>
+                <Field label="Full Name *">
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    className={inputCls}
                     placeholder="John Smith"
                   />
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Email *</label>
+                <Field label="Email *">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    className={inputCls}
                     placeholder="john@example.com"
                   />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Create a Password *</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="At least 8 characters"
-                  />
                   <p className="mt-1 text-xs text-muted-foreground">
-                    This creates your Applicant Portal account to track your application status.
+                    We'll use this to create your portal account and send you a magic link — no password required.
                   </p>
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Confirm Password *</label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="Re-enter your password"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Phone *</label>
+                <Field label="Phone *">
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    className={inputCls}
                     placeholder="(555) 123-4567"
                   />
-                </div>
+                </Field>
 
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-foreground">City *</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="City *">
                     <input
                       type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                      placeholder="Austin"
+                      className={inputCls}
+                      placeholder="Nashville"
                     />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-foreground">State *</label>
+                  </Field>
+                  <Field label="State *">
                     <input
                       type="text"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
-                      className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                      placeholder="TX"
+                      className={inputCls}
+                      placeholder="TN"
                     />
-                  </div>
+                  </Field>
                 </div>
 
-                <RadioGroup
-                  label="Preferred Sex *"
-                  name="preferred_sex"
-                  value={preferredSex}
-                  onChange={setPreferredSex}
-                  options={[
-                    { value: "male", label: "Male" },
-                    { value: "female", label: "Female" },
-                    { value: "either", label: "Either" },
-                  ]}
-                />
+                <Field label="Preferred Sex">
+                  <RadioRow
+                    name="preferredSex"
+                    value={preferredSex}
+                    onChange={(v) => setPreferredSex(v as "male" | "female" | "either")}
+                    options={[
+                      { v: "male", l: "Male" },
+                      { v: "female", l: "Female" },
+                      { v: "either", l: "Either" },
+                    ]}
+                  />
+                </Field>
 
-                <RadioGroup
-                  label="Timeline *"
-                  name="timeline"
-                  value={timeline}
-                  onChange={setTimeline}
-                  options={[
-                    { value: "ready_now", label: "Ready now (0\u201330 days)" },
-                    { value: "1_3_months", label: "1\u20133 months" },
-                    { value: "future", label: "Planning for a future litter" },
-                  ]}
-                />
+                <Field label="Timeline *">
+                  <RadioStack
+                    name="timeline"
+                    value={timeline}
+                    onChange={(v) => setTimeline(v as typeof timeline)}
+                    options={[
+                      { v: "ready_now", l: "Ready now (0–30 days)" },
+                      { v: "1_3_months", l: "1–3 months" },
+                      { v: "future", l: "Future litter" },
+                    ]}
+                  />
+                </Field>
 
-                <RadioGroup
-                  label="Have you owned a large breed dog before? *"
-                  name="has_owned_large_dog"
-                  value={hasOwnedLargeDog}
-                  onChange={setHasOwnedLargeDog}
-                  options={[
-                    { value: "yes", label: "Yes" },
-                    { value: "no", label: "No" },
-                  ]}
-                />
+                <Field label="Have you owned a large breed dog before? *">
+                  <RadioRow
+                    name="hasOwnedLargeDog"
+                    value={hasOwnedLargeDog}
+                    onChange={(v) => setHasOwnedLargeDog(v as "yes" | "no")}
+                    options={[
+                      { v: "yes", l: "Yes" },
+                      { v: "no", l: "No" },
+                    ]}
+                  />
+                </Field>
 
-                <RadioGroup
-                  label="Are you ready to place a $500 Reservation Fee if approved? *"
-                  name="ready_for_deposit"
-                  value={readyForDeposit}
-                  onChange={setReadyForDeposit}
-                  options={[
-                    { value: "yes", label: "Yes, ready to place $500 Reservation Fee if approved" },
-                    { value: "not_yet", label: "Not yet, still learning" },
-                    { value: "need_info", label: "Need more information first" },
-                  ]}
-                />
+                <Field label="Are you ready to place a Reservation Fee if approved? *">
+                  <RadioStack
+                    name="readyForDeposit"
+                    value={readyForDeposit}
+                    onChange={(v) => setReadyForDeposit(v as typeof readyForDeposit)}
+                    options={[
+                      { v: "yes", l: "Yes, ready" },
+                      { v: "no", l: "Not yet" },
+                      { v: "info", l: "Need more information" },
+                    ]}
+                  />
+                </Field>
 
                 <button
                   type="button"
                   onClick={handleContinue}
-                  className="w-full rounded-xl bg-accent py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+                  className="mt-2 w-full rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
                 >
-                  Continue to Step 2 &rarr;
+                  Continue &rarr;
                 </button>
               </div>
             )}
@@ -396,165 +345,143 @@ function ApplyPage() {
                   </div>
                 )}
 
-                <RadioGroup
-                  label="Household Type *"
-                  name="household_type"
-                  value={householdType}
-                  onChange={setHouseholdType}
-                  options={[
-                    { value: "house", label: "House" },
-                    { value: "apartment", label: "Apartment" },
-                    { value: "farm", label: "Farm / Ranch" },
-                    { value: "other", label: "Other" },
-                  ]}
-                />
+                <Field label="Household Type *">
+                  <SelectInput
+                    value={householdType}
+                    onChange={setHouseholdType}
+                    options={[
+                      { v: "", l: "Select..." },
+                      { v: "house", l: "House" },
+                      { v: "apartment", l: "Apartment" },
+                      { v: "farm", l: "Farm" },
+                      { v: "other", l: "Other" },
+                    ]}
+                  />
+                </Field>
 
-                <RadioGroup
-                  label="Do you have a fenced yard? *"
-                  name="has_fenced_yard"
-                  value={hasFencedYard}
-                  onChange={setHasFencedYard}
-                  options={[
-                    { value: "yes", label: "Yes, fully fenced" },
-                    { value: "no", label: "No" },
-                    { value: "in_progress", label: "In progress" },
-                  ]}
-                />
+                <Field label="Do you have a fenced yard? *">
+                  <RadioRow
+                    name="fencedYard"
+                    value={hasFencedYard}
+                    onChange={(v) => setHasFencedYard(v as typeof hasFencedYard)}
+                    options={[
+                      { v: "yes", l: "Yes" },
+                      { v: "no", l: "No" },
+                      { v: "in_progress", l: "In progress" },
+                    ]}
+                  />
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">Family Size *</label>
+                <Field label="Family Size *">
                   <input
                     type="number"
                     min={1}
                     value={familySize}
-                    onChange={(e) => setFamilySize(e.target.value ? parseInt(e.target.value) : "")}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="Number of people in household"
+                    onChange={(e) =>
+                      setFamilySize(e.target.value ? parseInt(e.target.value) : "")
+                    }
+                    className={inputCls}
+                    placeholder="4"
                   />
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    Children Ages <span className="text-muted-foreground">(optional)</span>
-                  </label>
+                <Field label="Children's Ages (if applicable)">
                   <input
                     type="text"
                     value={childrenAges}
                     onChange={(e) => setChildrenAges(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="e.g. 4, 7, 12 — leave blank if none"
+                    className={inputCls}
+                    placeholder="e.g. 6, 10"
                   />
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    Other Pets <span className="text-muted-foreground">(optional)</span>
-                  </label>
+                <Field label="Other Pets">
                   <input
                     type="text"
                     value={otherPets}
                     onChange={(e) => setOtherPets(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="e.g. 1 cat, 1 small dog — leave blank if none"
+                    className={inputCls}
+                    placeholder="e.g. 2 cats, 1 dog"
                   />
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    Preferred Puppy <span className="text-muted-foreground">(optional)</span>
-                  </label>
-                  <select
+                <Field label="Preferred Puppy">
+                  <SelectInput
                     value={preferredPuppyId}
-                    onChange={(e) => setPreferredPuppyId(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                  >
-                    <option value="">No preference / any available</option>
-                    {availablePuppies.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} — {tierLabel(p.tier)} — ${p.price?.toLocaleString()}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    onChange={setPreferredPuppyId}
+                    options={[
+                      { v: "", l: "No preference" },
+                      ...availablePuppies.map((p) => ({
+                        v: p.id,
+                        l: `${p.name} — ${tierLabel(p.tier)} — $${p.price?.toLocaleString()}`,
+                      })),
+                    ]}
+                  />
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    Why a White German Shepherd specifically? *
-                  </label>
+                <Field label="Why a White German Shepherd for your family? *">
                   <textarea
-                    rows={4}
                     value={reasonForBreed}
                     onChange={(e) => setReasonForBreed(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                    placeholder="Tell us about your lifestyle, experience, and what draws you to this breed. The more you share, the better we can match you with the right puppy."
+                    rows={4}
+                    className={inputCls}
+                    placeholder="Tell us about your home, lifestyle, and what you're looking for in a companion."
                   />
                   <p
                     className={`mt-1 text-xs ${
-                      reasonForBreed.trim().length >= 50
-                        ? "text-green-600"
-                        : "text-muted-foreground"
+                      charCount >= 50 ? "text-green-600" : "text-muted-foreground"
                     }`}
                   >
-                    {reasonForBreed.trim().length} / 50 minimum
+                    {charCount} / 50 minimum
                   </p>
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    Anything else you'd like us to know?{" "}
-                    <span className="text-muted-foreground">(optional)</span>
-                  </label>
+                <Field label="Additional Notes">
                   <textarea
-                    rows={3}
                     value={additionalNotes}
                     onChange={(e) => setAdditionalNotes(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    rows={3}
+                    className={inputCls}
+                    placeholder="Anything else we should know?"
                   />
-                </div>
+                </Field>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    How did you hear about us? *
-                  </label>
-                  <select
+                <Field label="How did you hear about us? *">
+                  <SelectInput
                     value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
-                  >
-                    <option value="">Select...</option>
-                    <option value="google">Google Search</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="referral">Referral</option>
-                    <option value="breeder_directory">Breeder Directory</option>
-                    <option value="tiktok">TikTok</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+                    onChange={setSource}
+                    options={[
+                      { v: "", l: "Select..." },
+                      { v: "google", l: "Google" },
+                      { v: "instagram", l: "Instagram" },
+                      { v: "facebook", l: "Facebook" },
+                      { v: "referral", l: "Referral" },
+                      { v: "breeder_directory", l: "Breeder Directory" },
+                      { v: "tiktok", l: "TikTok" },
+                      { v: "other", l: "Other" },
+                    ]}
+                  />
+                </Field>
 
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => {
                       setStep(1);
                       window.scrollTo(0, 0);
                     }}
-                    className="rounded-xl border border-border px-6 py-4 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
+                    className="flex-1 rounded-xl border border-border py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
                   >
                     &larr; Back
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 rounded-xl bg-accent py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex-[2] rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {submitting ? "Submitting..." : "Submit Application"}
                   </button>
                 </div>
-
-                <p className="text-center text-xs text-muted-foreground">
-                  We review every application personally and respond within 24–48 hours.
-                </p>
               </div>
             )}
           </form>
@@ -566,45 +493,104 @@ function ApplyPage() {
   );
 }
 
-/* ── Reusable Radio Group ── */
-function RadioGroup({
-  label,
+/* ── Tiny helper components ── */
+
+const inputCls =
+  "w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20";
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-foreground">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function RadioRow({
   name,
   value,
   onChange,
   options,
 }: {
-  label: string;
   name: string;
   value: string;
   onChange: (v: string) => void;
-  options: { value: string; label: string }[];
+  options: { v: string; l: string }[];
 }) {
   return (
-    <fieldset>
-      <legend className="mb-3 text-sm font-medium text-foreground">{label}</legend>
-      <div className="space-y-2">
-        {options.map((opt) => (
-          <label
-            key={opt.value}
-            className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
-              value === opt.value
-                ? "border-accent bg-accent/5"
-                : "border-input hover:bg-muted/50"
-            }`}
-          >
-            <input
-              type="radio"
-              name={name}
-              value={opt.value}
-              checked={value === opt.value}
-              onChange={() => onChange(opt.value)}
-              className="accent-accent"
-            />
-            <span className="text-sm text-foreground">{opt.label}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => (
+        <label
+          key={o.v}
+          className={`cursor-pointer rounded-lg border px-4 py-2 text-sm transition-colors ${
+            value === o.v
+              ? "border-accent bg-accent/10 text-accent"
+              : "border-border text-foreground hover:bg-muted"
+          }`}
+        >
+          <input
+            type="radio"
+            name={name}
+            value={o.v}
+            checked={value === o.v}
+            onChange={() => onChange(o.v)}
+            className="sr-only"
+          />
+          {o.l}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function RadioStack(props: {
+  name: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { v: string; l: string }[];
+}) {
+  return (
+    <div className="space-y-2">
+      {props.options.map((o) => (
+        <label
+          key={o.v}
+          className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors ${
+            props.value === o.v
+              ? "border-accent bg-accent/10 text-accent"
+              : "border-border text-foreground hover:bg-muted"
+          }`}
+        >
+          <input
+            type="radio"
+            name={props.name}
+            value={o.v}
+            checked={props.value === o.v}
+            onChange={() => props.onChange(o.v)}
+          />
+          <span>{o.l}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function SelectInput({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { v: string; l: string }[];
+}) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
+      {options.map((o) => (
+        <option key={o.v} value={o.v}>
+          {o.l}
+        </option>
+      ))}
+    </select>
   );
 }

@@ -1,0 +1,1216 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/portal/admin")({
+  component: AdminPage,
+  head: () => ({
+    meta: [{ title: "Admin — White Wolf Shepherds" }],
+  }),
+});
+
+type Lead = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  score: number | null;
+  stage: string | null;
+  preferred_puppy_id: string | null;
+  preferred_sex: string | null;
+  timeline: string | null;
+  has_owned_large_dog: boolean | null;
+  has_fenced_yard: boolean | null;
+  household_type: string | null;
+  family_size: number | null;
+  children_ages: string | null;
+  other_pets: string | null;
+  reason_for_breed: string | null;
+  additional_notes: string | null;
+  ready_for_deposit: boolean | null;
+  source: string | null;
+  city: string | null;
+  state: string | null;
+  approval_token: string | null;
+  approval_sent_at: string | null;
+  internal_notes: string | null;
+  referral_code: string | null;
+  referred_by_lead_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+type Puppy = {
+  id: string;
+  name: string;
+  slug: string | null;
+  status: string | null;
+  reserved_by_lead_id: string | null;
+  deposit_paid_at: string | null;
+  priority_order: number | null;
+};
+
+type Reservation = { amount: number | null };
+
+type Message = {
+  id: string;
+  lead_id: string;
+  sender: "breeder" | "owner";
+  body: string;
+  read_at: string | null;
+  created_at: string;
+};
+
+type PortalUpdate = {
+  id: string;
+  title: string | null;
+  body: string | null;
+  image_urls: string[] | null;
+  video_url: string | null;
+  milestone_tag: string | null;
+  visibility: string | null;
+  puppy_id: string | null;
+  published_at: string | null;
+};
+
+type AlumniPost = {
+  id: string;
+  lead_id: string;
+  caption: string | null;
+  image_urls: string[] | null;
+  milestone_tag: string | null;
+  status: string;
+  created_at: string;
+};
+
+type AdminTab =
+  | "overview"
+  | "leads"
+  | "messages"
+  | "updates"
+  | "alumni"
+  | "referrals";
+
+function AdminPage() {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [tab, setTab] = useState<AdminTab>("overview");
+
+  useEffect(() => {
+    async function check() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate({ to: "/portal" });
+        return;
+      }
+      const { data: prof } = await supabase
+        .from(T.profiles)
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+      if (prof?.role !== "admin") {
+        navigate({ to: "/portal/me" });
+        return;
+      }
+      setIsAdmin(true);
+      setChecking(false);
+    }
+    check();
+  }, [navigate]);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  }
+
+  if (checking || !isAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading admin...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <h1 className="font-display text-xl font-bold text-foreground">
+            White Wolf <span className="text-accent">Admin</span>
+          </h1>
+          <nav className="hidden items-center gap-1 md:flex">
+            {(["overview", "leads", "messages", "updates", "alumni", "referrals"] as AdminTab[]).map(
+              (t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors capitalize ${
+                    tab === t
+                      ? "bg-accent/10 text-accent"
+                      : "text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {t}
+                </button>
+              )
+            )}
+          </nav>
+          <button
+            onClick={handleSignOut}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Sign out
+          </button>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        {tab === "overview" && <OverviewTab />}
+        {tab === "leads" && <LeadsTab />}
+        {tab === "messages" && <AdminMessagesTab />}
+        {tab === "updates" && <UpdatesAdminTab />}
+        {tab === "alumni" && <AlumniAdminTab />}
+        {tab === "referrals" && <ReferralsAdminTab />}
+      </main>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Overview
+// ─────────────────────────────────────────────────────────────
+
+function OverviewTab() {
+  const [stats, setStats] = useState({
+    totalLeads: 0,
+    hot: 0,
+    deposits: 0,
+    revenue: 0,
+    available: 0,
+  });
+  const [puppies, setPuppies] = useState<Puppy[]>([]);
+  const [leadNames, setLeadNames] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function load() {
+      const [{ data: leads }, { data: pups }, { data: reservations }] = await Promise.all([
+        supabase.from(T.leads).select("id, full_name, score, stage"),
+        supabase
+          .from(T.puppies)
+          .select("id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order")
+          .order("priority_order"),
+        supabase.from(T.reservations).select("amount"),
+      ]);
+
+      const leadsData = leads ?? [];
+      const puppiesData = (pups ?? []) as Puppy[];
+      const reservationsData = (reservations ?? []) as Reservation[];
+
+      const names: Record<string, string> = {};
+      leadsData.forEach((l) => {
+        if (l.id && l.full_name) names[l.id] = l.full_name;
+      });
+      setLeadNames(names);
+      setPuppies(puppiesData);
+
+      setStats({
+        totalLeads: leadsData.length,
+        hot: leadsData.filter((l) => (l.score ?? 0) >= 70).length,
+        deposits: leadsData.filter((l) => l.stage === "deposit_paid" || l.stage === "reserved")
+          .length,
+        revenue: reservationsData.reduce((sum, r) => sum + (r.amount ?? 0), 0),
+        available: puppiesData.filter((p) => p.status === "available").length,
+      });
+    }
+    load();
+  }, []);
+
+  return (
+    <div className="space-y-10">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+        <StatBox label="Total Leads" value={stats.totalLeads} />
+        <StatBox label="Hot (≥70)" value={stats.hot} accent />
+        <StatBox label="Deposits" value={stats.deposits} />
+        <StatBox label="Revenue" value={`$${stats.revenue.toLocaleString()}`} />
+        <StatBox label="Available" value={`${stats.available} / 9`} />
+      </div>
+
+      <div>
+        <h2 className="font-display text-lg font-bold text-foreground">Puppies</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          {puppies.map((p) => (
+            <div key={p.id} className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-base font-bold text-foreground">{p.name}</h3>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
+                    p.status === "available"
+                      ? "bg-green-100 text-green-700"
+                      : p.status === "pending"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {p.status}
+                </span>
+              </div>
+              {p.reserved_by_lead_id && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Reserved by: {leadNames[p.reserved_by_lead_id] ?? "Unknown"}
+                </p>
+              )}
+              {p.deposit_paid_at && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Paid: {new Date(p.deposit_paid_at).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatBox({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string | number;
+  accent?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-5">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p
+        className={`mt-2 font-display text-2xl font-bold ${
+          accent ? "text-accent" : "text-foreground"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Leads
+// ─────────────────────────────────────────────────────────────
+
+function LeadsTab() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [puppies, setPuppies] = useState<Puppy[]>([]);
+  const [selected, setSelected] = useState<Lead | null>(null);
+  const [approveModal, setApproveModal] = useState<Lead | null>(null);
+
+  const fetchData = useCallback(async () => {
+    const [{ data: leadsData }, { data: puppiesData }] = await Promise.all([
+      supabase.from(T.leads).select("*").order("score", { ascending: false }),
+      supabase
+        .from(T.puppies)
+        .select("id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order"),
+    ]);
+    setLeads((leadsData ?? []) as Lead[]);
+    setPuppies((puppiesData ?? []) as Puppy[]);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  async function updateStage(id: string, stage: string) {
+    const updates: Record<string, unknown> = { stage, updated_at: new Date().toISOString() };
+    if (stage === "approved") updates.approval_sent_at = new Date().toISOString();
+    await supabase.from(T.leads).update(updates).eq("id", id);
+    await fetchData();
+    if (stage === "approved") {
+      const l = leads.find((x) => x.id === id);
+      if (l) setApproveModal(l);
+    }
+  }
+
+  async function saveNotes(id: string, notes: string) {
+    await supabase
+      .from(T.leads)
+      .update({ internal_notes: notes, updated_at: new Date().toISOString() })
+      .eq("id", id);
+  }
+
+  const puppyName = (id: string | null) =>
+    id ? puppies.find((p) => p.id === id)?.name ?? "—" : "—";
+
+  return (
+    <div>
+      <h2 className="font-display text-lg font-bold text-foreground">Leads</h2>
+      <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-border bg-muted/50">
+            <tr>
+              {["Name", "Email", "Score", "Stage", "Puppy", "Applied", "Actions"].map((h) => (
+                <th key={h} className="px-4 py-3 font-semibold text-muted-foreground">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {leads.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                  No leads yet.
+                </td>
+              </tr>
+            ) : (
+              leads.map((l) => (
+                <tr key={l.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                  <td className="px-4 py-3 font-medium">{l.full_name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{l.email}</td>
+                  <td className="px-4 py-3">
+                    <ScorePill score={l.score ?? 0} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <StageBadge stage={l.stage} />
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {puppyName(l.preferred_puppy_id)}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {l.created_at ? new Date(l.created_at).toLocaleDateString() : "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1">
+                      <TinyBtn onClick={() => updateStage(l.id, "qualified")}>Qualify</TinyBtn>
+                      <TinyBtn onClick={() => updateStage(l.id, "approved")}>Approve</TinyBtn>
+                      <TinyBtn onClick={() => updateStage(l.id, "waitlist")}>Waitlist</TinyBtn>
+                      <TinyBtn onClick={() => setSelected(l)}>View</TinyBtn>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {selected && (
+        <LeadSlideOver
+          lead={selected}
+          puppyName={puppyName(selected.preferred_puppy_id)}
+          onClose={() => setSelected(null)}
+          onSaveNotes={saveNotes}
+        />
+      )}
+      {approveModal && <ApproveModal lead={approveModal} onClose={() => setApproveModal(null)} />}
+    </div>
+  );
+}
+
+function ScorePill({ score }: { score: number }) {
+  const color =
+    score >= 70
+      ? "bg-green-100 text-green-700"
+      : score >= 40
+        ? "bg-amber-100 text-amber-700"
+        : "bg-red-100 text-red-700";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${color}`}
+    >
+      {score >= 70 && <span>🔥</span>}
+      {score}
+    </span>
+  );
+}
+
+function StageBadge({ stage }: { stage: string | null }) {
+  const map: Record<string, string> = {
+    new_inquiry: "bg-gray-100 text-gray-700",
+    application_submitted: "bg-blue-100 text-blue-700",
+    qualified: "bg-teal-100 text-teal-700",
+    approved: "bg-purple-100 text-purple-700",
+    deposit_paid: "bg-green-100 text-green-700",
+    reserved: "bg-green-200 text-green-800",
+    waitlist: "bg-orange-100 text-orange-700",
+    completed: "bg-slate-100 text-slate-700",
+  };
+  const s = stage ?? "new_inquiry";
+  return (
+    <span
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
+        map[s] ?? map.new_inquiry
+      }`}
+    >
+      {s.replace(/_/g, " ")}
+    </span>
+  );
+}
+
+function TinyBtn({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-md px-2 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent/10"
+    >
+      {children}
+    </button>
+  );
+}
+
+function LeadSlideOver({
+  lead,
+  puppyName,
+  onClose,
+  onSaveNotes,
+}: {
+  lead: Lead;
+  puppyName: string;
+  onClose: () => void;
+  onSaveNotes: (id: string, n: string) => void;
+}) {
+  const [notes, setNotes] = useState(lead.internal_notes ?? "");
+
+  const fields: { label: string; value: string | null | undefined }[] = [
+    { label: "Name", value: lead.full_name },
+    { label: "Email", value: lead.email },
+    { label: "Phone", value: lead.phone },
+    { label: "City", value: lead.city },
+    { label: "State", value: lead.state },
+    { label: "Preferred Puppy", value: puppyName },
+    { label: "Timeline", value: lead.timeline?.replace(/_/g, " ") },
+    { label: "Owned large dog", value: lead.has_owned_large_dog ? "Yes" : "No" },
+    { label: "Fenced yard", value: lead.has_fenced_yard ? "Yes" : "No" },
+    { label: "Household", value: lead.household_type },
+    { label: "Family size", value: lead.family_size?.toString() },
+    { label: "Children ages", value: lead.children_ages },
+    { label: "Other pets", value: lead.other_pets },
+    { label: "Ready for reservation", value: lead.ready_for_deposit ? "Yes" : "No" },
+    { label: "Source", value: lead.source },
+    { label: "Referral code", value: lead.referral_code },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative w-full max-w-lg overflow-y-auto bg-card shadow-wolf">
+        <div className="sticky top-0 flex items-center justify-between border-b border-border bg-card px-6 py-4">
+          <h2 className="font-display text-lg font-bold text-foreground">{lead.full_name}</h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            ✕
+          </button>
+        </div>
+        <div className="space-y-4 p-6">
+          {fields.map((f) => (
+            <div key={f.label}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {f.label}
+              </p>
+              <p className="mt-1 text-sm text-foreground">{f.value || "—"}</p>
+            </div>
+          ))}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Why this breed?
+            </p>
+            <p className="mt-1 text-sm text-foreground">{lead.reason_for_breed || "—"}</p>
+          </div>
+          {lead.additional_notes && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Applicant notes
+              </p>
+              <p className="mt-1 text-sm text-foreground">{lead.additional_notes}</p>
+            </div>
+          )}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Internal notes
+            </p>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              onBlur={() => onSaveNotes(lead.id, notes)}
+              rows={4}
+              className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+              placeholder="Private notes..."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApproveModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const url =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/approved/${lead.approval_token}`
+      : "";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative w-full max-w-md rounded-2xl bg-card p-8 shadow-wolf">
+        <h2 className="font-display text-lg font-bold text-foreground">Approval Link Ready</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Send this link to <strong>{lead.full_name}</strong>. It expires in 48 hours.
+        </p>
+        <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-muted/50 p-3">
+          <input
+            readOnly
+            value={url}
+            className="flex-1 bg-transparent text-xs text-foreground outline-none"
+          />
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(url);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="rounded-md bg-accent px-3 py-1.5 text-xs font-bold text-accent-foreground"
+          >
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+        <button
+          onClick={onClose}
+          className="mt-6 w-full rounded-xl border border-border py-3 text-sm font-bold uppercase tracking-wider"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Admin Messages
+// ─────────────────────────────────────────────────────────────
+
+function AdminMessagesTab() {
+  const [threads, setThreads] = useState<
+    { lead: { id: string; full_name: string | null; email: string | null }; unread: number; last: string }[]
+  >([]);
+  const [selectedLead, setSelectedLead] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [reply, setReply] = useState("");
+
+  const loadThreads = useCallback(async () => {
+    const { data: msgs } = await supabase
+      .from(T.messages)
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!msgs) return;
+    const perLead = new Map<
+      string,
+      { unread: number; last: string }
+    >();
+    for (const m of msgs as Message[]) {
+      const cur = perLead.get(m.lead_id) ?? { unread: 0, last: m.created_at };
+      if (m.sender === "owner" && !m.read_at) cur.unread++;
+      if (Date.parse(m.created_at) > Date.parse(cur.last)) cur.last = m.created_at;
+      perLead.set(m.lead_id, cur);
+    }
+    const leadIds = Array.from(perLead.keys());
+    const { data: leadRows } =
+      leadIds.length > 0
+        ? await supabase.from(T.leads).select("id, full_name, email").in("id", leadIds)
+        : { data: [] };
+    const list = (leadRows ?? []).map((l) => ({
+      lead: l,
+      unread: perLead.get(l.id)?.unread ?? 0,
+      last: perLead.get(l.id)?.last ?? "",
+    }));
+    list.sort((a, b) => Date.parse(b.last) - Date.parse(a.last));
+    setThreads(list);
+  }, []);
+
+  const loadMessages = useCallback(async (leadId: string) => {
+    const { data } = await supabase
+      .from(T.messages)
+      .select("*")
+      .eq("lead_id", leadId)
+      .order("created_at", { ascending: true });
+    if (data) {
+      setMessages(data as Message[]);
+      const unread = (data as Message[]).filter((m) => m.sender === "owner" && !m.read_at);
+      if (unread.length > 0) {
+        await supabase
+          .from(T.messages)
+          .update({ read_at: new Date().toISOString() })
+          .in(
+            "id",
+            unread.map((m) => m.id)
+          );
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    loadThreads();
+  }, [loadThreads]);
+
+  useEffect(() => {
+    if (selectedLead) loadMessages(selectedLead);
+  }, [selectedLead, loadMessages]);
+
+  async function handleReply(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reply.trim() || !selectedLead) return;
+    await supabase
+      .from(T.messages)
+      .insert({ lead_id: selectedLead, sender: "breeder", body: reply.trim() });
+    setReply("");
+    loadMessages(selectedLead);
+    loadThreads();
+  }
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="rounded-2xl bg-card shadow-card">
+        <h2 className="border-b border-border p-4 font-display text-lg font-bold">Threads</h2>
+        <ul>
+          {threads.length === 0 && (
+            <li className="p-6 text-center text-sm text-muted-foreground">No messages yet.</li>
+          )}
+          {threads.map((t) => (
+            <li key={t.lead.id}>
+              <button
+                onClick={() => setSelectedLead(t.lead.id)}
+                className={`block w-full border-b border-border px-4 py-3 text-left transition-colors hover:bg-muted ${
+                  selectedLead === t.lead.id ? "bg-accent/5" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-foreground">{t.lead.full_name}</span>
+                  {t.unread > 0 && (
+                    <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground">
+                      {t.unread}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">{t.lead.email}</p>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="lg:col-span-2">
+        <div className="flex h-[70vh] flex-col rounded-2xl bg-card shadow-card">
+          <div className="border-b border-border p-4">
+            <h2 className="font-display text-lg font-bold">
+              {selectedLead ? "Conversation" : "Pick a thread"}
+            </h2>
+          </div>
+          <div className="flex-1 space-y-3 overflow-y-auto p-4">
+            {messages.map((m) => {
+              const mine = m.sender === "breeder";
+              return (
+                <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
+                      mine ? "bg-accent text-accent-foreground" : "bg-muted text-foreground"
+                    }`}
+                  >
+                    <p>{m.body}</p>
+                    <p
+                      className={`mt-1 text-xs ${
+                        mine ? "text-accent-foreground/70" : "text-muted-foreground"
+                      }`}
+                    >
+                      {new Date(m.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {selectedLead && (
+            <form onSubmit={handleReply} className="flex gap-2 border-t border-border p-4">
+              <textarea
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                rows={2}
+                placeholder="Type a reply..."
+                className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+              />
+              <button
+                type="submit"
+                className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground"
+              >
+                Send
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Portal Updates Admin
+// ─────────────────────────────────────────────────────────────
+
+function UpdatesAdminTab() {
+  const [updates, setUpdates] = useState<PortalUpdate[]>([]);
+  const [puppies, setPuppies] = useState<{ id: string; name: string }[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [milestoneTag, setMilestoneTag] = useState("");
+  const [visibility, setVisibility] = useState<"all_reserved" | "specific_puppy" | "alumni_only">(
+    "all_reserved"
+  );
+  const [puppyId, setPuppyId] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const load = useCallback(async () => {
+    const [{ data: u }, { data: p }] = await Promise.all([
+      supabase.from(T.portalUpdates).select("*").order("published_at", { ascending: false }),
+      supabase.from(T.puppies).select("id, name").order("priority_order"),
+    ]);
+    if (u) setUpdates(u as PortalUpdate[]);
+    if (p) setPuppies(p);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function handlePublish(e: React.FormEvent) {
+    e.preventDefault();
+    setPublishing(true);
+
+    const urls: string[] = [];
+    const files = fileRef.current?.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < Math.min(files.length, 4); i++) {
+        const f = files[i];
+        const key = `updates/${Date.now()}_${i}_${f.name}`;
+        const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(key, f);
+        if (!error) {
+          const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key);
+          if (data?.publicUrl) urls.push(data.publicUrl);
+        }
+      }
+    }
+
+    await supabase.from(T.portalUpdates).insert({
+      title: title || null,
+      body: body || null,
+      image_urls: urls.length > 0 ? urls : null,
+      video_url: videoUrl || null,
+      milestone_tag: milestoneTag || null,
+      visibility,
+      puppy_id: visibility === "specific_puppy" ? puppyId || null : null,
+    });
+
+    setTitle("");
+    setBody("");
+    setVideoUrl("");
+    setMilestoneTag("");
+    setVisibility("all_reserved");
+    setPuppyId("");
+    if (fileRef.current) fileRef.current.value = "";
+    setPublishing(false);
+    setShowModal(false);
+    load();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this update?")) return;
+    await supabase.from(T.portalUpdates).delete().eq("id", id);
+    load();
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-lg font-bold text-foreground">Portal Updates</h2>
+        <button
+          onClick={() => setShowModal(true)}
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground"
+        >
+          + New Update
+        </button>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-border bg-muted/50">
+            <tr>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">Title</th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">Visibility</th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">Date</th>
+              <th className="px-4 py-3 font-semibold text-muted-foreground">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {updates.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                  No updates yet.
+                </td>
+              </tr>
+            ) : (
+              updates.map((u) => (
+                <tr key={u.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3 font-medium">{u.title || "(no title)"}</td>
+                  <td className="px-4 py-3 text-muted-foreground capitalize">
+                    {u.visibility?.replace(/_/g, " ")}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {u.published_at ? new Date(u.published_at).toLocaleDateString() : "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <TinyBtn onClick={() => handleDelete(u.id)}>Delete</TinyBtn>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setShowModal(false)} />
+          <form
+            onSubmit={handlePublish}
+            className="relative w-full max-w-lg rounded-2xl bg-card p-8 shadow-wolf"
+          >
+            <h2 className="font-display text-xl font-bold text-foreground">New Update</h2>
+            <div className="mt-4 space-y-3">
+              <LabeledInput label="Title" value={title} onChange={setTitle} />
+              <LabeledTextarea label="Body" value={body} onChange={setBody} rows={4} />
+              <div>
+                <label className="mb-1 block text-sm font-medium">Images (up to 4)</label>
+                <input ref={fileRef} type="file" multiple accept="image/*" />
+              </div>
+              <LabeledInput label="Video URL" value={videoUrl} onChange={setVideoUrl} />
+              <LabeledInput label="Milestone Tag" value={milestoneTag} onChange={setMilestoneTag} />
+              <div>
+                <label className="mb-1 block text-sm font-medium">Visibility</label>
+                <select
+                  value={visibility}
+                  onChange={(e) => setVisibility(e.target.value as typeof visibility)}
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="all_reserved">All reserved owners</option>
+                  <option value="specific_puppy">Specific puppy</option>
+                  <option value="alumni_only">Alumni only</option>
+                </select>
+              </div>
+              {visibility === "specific_puppy" && (
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Puppy</label>
+                  <select
+                    value={puppyId}
+                    onChange={(e) => setPuppyId(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">Select...</option>
+                    {puppies.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="flex-1 rounded-lg border border-border px-4 py-2 text-sm font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={publishing}
+                className="flex-1 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground disabled:opacity-50"
+              >
+                {publishing ? "Publishing..." : "Publish"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Alumni moderation
+// ─────────────────────────────────────────────────────────────
+
+function AlumniAdminTab() {
+  const [sub, setSub] = useState<"pending" | "profiles">("pending");
+  const [pending, setPending] = useState<AlumniPost[]>([]);
+  const [profiles, setProfiles] = useState<
+    { id: string; call_name: string; puppy_id: string | null; lead_id: string; profile_photo_url: string | null }[]
+  >([]);
+
+  const load = useCallback(async () => {
+    const [{ data: p }, { data: dogs }] = await Promise.all([
+      supabase
+        .from(T.alumniPosts)
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from(T.dogProfiles)
+        .select("id, call_name, puppy_id, lead_id, profile_photo_url")
+        .order("created_at", { ascending: false }),
+    ]);
+    if (p) setPending(p as AlumniPost[]);
+    if (dogs) setProfiles(dogs);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function approve(id: string) {
+    await supabase
+      .from(T.alumniPosts)
+      .update({ status: "approved", approved_at: new Date().toISOString() })
+      .eq("id", id);
+    load();
+  }
+
+  async function reject(id: string) {
+    await supabase.from(T.alumniPosts).update({ status: "rejected" }).eq("id", id);
+    load();
+  }
+
+  return (
+    <div className="space-y-6">
+      <h2 className="font-display text-lg font-bold text-foreground">Alumni</h2>
+      <div className="flex gap-2">
+        <button
+          onClick={() => setSub("pending")}
+          className={`rounded-lg px-3 py-2 text-sm ${
+            sub === "pending" ? "bg-accent text-accent-foreground" : "border border-border"
+          }`}
+        >
+          Pending posts ({pending.length})
+        </button>
+        <button
+          onClick={() => setSub("profiles")}
+          className={`rounded-lg px-3 py-2 text-sm ${
+            sub === "profiles" ? "bg-accent text-accent-foreground" : "border border-border"
+          }`}
+        >
+          Dog profiles ({profiles.length})
+        </button>
+      </div>
+
+      {sub === "pending" && (
+        <div className="space-y-4">
+          {pending.length === 0 ? (
+            <p className="text-muted-foreground">Nothing awaiting review.</p>
+          ) : (
+            pending.map((p) => (
+              <div key={p.id} className="rounded-2xl bg-card p-6 shadow-card">
+                <p className="text-xs text-muted-foreground">
+                  {new Date(p.created_at).toLocaleString()} · {p.milestone_tag}
+                </p>
+                <p className="mt-2 text-foreground">{p.caption}</p>
+                {p.image_urls && p.image_urls.length > 0 && (
+                  <div className="mt-3 grid grid-cols-4 gap-2">
+                    {p.image_urls.map((u, i) => (
+                      <img key={i} src={u} alt="" className="h-24 w-full rounded-lg object-cover" />
+                    ))}
+                  </div>
+                )}
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => approve(p.id)}
+                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => reject(p.id)}
+                    className="rounded-lg border border-border px-4 py-2 text-sm"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {sub === "profiles" && (
+        <div className="overflow-x-auto rounded-xl border border-border bg-card">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border bg-muted/50">
+              <tr>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Call Name</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Lead</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Photo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profiles.map((p) => (
+                <tr key={p.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3">{p.call_name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{p.lead_id}</td>
+                  <td className="px-4 py-3">
+                    {p.profile_photo_url ? (
+                      <img
+                        src={p.profile_photo_url}
+                        alt=""
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Referrals admin
+// ─────────────────────────────────────────────────────────────
+
+function ReferralsAdminTab() {
+  const [rows, setRows] = useState<
+    { lead: Lead; referred: number; converted: number }[]
+  >([]);
+
+  useEffect(() => {
+    async function load() {
+      const { data: leads } = await supabase.from(T.leads).select("*");
+      if (!leads) return;
+      const typed = leads as Lead[];
+      const byId = new Map<string, Lead>(typed.map((l) => [l.id, l]));
+
+      const counts = new Map<string, { referred: number; converted: number }>();
+      for (const l of typed) {
+        if (l.referred_by_lead_id) {
+          const cur = counts.get(l.referred_by_lead_id) ?? { referred: 0, converted: 0 };
+          cur.referred++;
+          if (l.stage === "deposit_paid" || l.stage === "reserved") cur.converted++;
+          counts.set(l.referred_by_lead_id, cur);
+        }
+      }
+      const result: { lead: Lead; referred: number; converted: number }[] = [];
+      typed.forEach((l) => {
+        const c = counts.get(l.id);
+        if (c) result.push({ lead: l, ...c });
+      });
+      void byId;
+      result.sort((a, b) => b.converted - a.converted);
+      setRows(result);
+    }
+    load();
+  }, []);
+
+  return (
+    <div>
+      <h2 className="font-display text-lg font-bold text-foreground">Referrals</h2>
+      <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-border bg-muted/50">
+            <tr>
+              {["Name", "Referral code", "Referred", "Converted"].map((h) => (
+                <th key={h} className="px-4 py-3 font-semibold text-muted-foreground">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                  No referrals yet.
+                </td>
+              </tr>
+            ) : (
+              rows.map((r) => (
+                <tr
+                  key={r.lead.id}
+                  className={`border-b border-border last:border-0 ${
+                    r.converted > 0 ? "bg-green-50" : ""
+                  }`}
+                >
+                  <td className="px-4 py-3 font-medium">{r.lead.full_name}</td>
+                  <td className="px-4 py-3 font-mono text-xs">{r.lead.referral_code}</td>
+                  <td className="px-4 py-3">{r.referred}</td>
+                  <td className="px-4 py-3 font-bold">{r.converted}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// Shared tiny inputs
+function LabeledInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-foreground">{label}</label>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+      />
+    </div>
+  );
+}
+
+function LabeledTextarea({
+  label,
+  value,
+  onChange,
+  rows = 3,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  rows?: number;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-foreground">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={rows}
+        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20"
+      />
+    </div>
+  );
+}

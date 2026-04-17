@@ -1,10 +1,4 @@
--- Add user_id column to link Supabase Auth users to their lead record
-alter table leads add column if not exists user_id uuid unique references auth.users(id);
-
--- Allow authenticated users to read their own lead
-create policy "Authenticated users can read own lead" on leads
-  for select using (auth.uid() = user_id);
-
--- Allow authenticated users to update their own lead (for internal notes etc)
-create policy "Authenticated users can update own lead" on leads
-  for update using (auth.uid() = user_id);
+-- SUPERSEDED — see 20260417100000_wws_schema_complete.sql
+-- The unified `wws_profiles` table now links auth.users to wws_leads.
+-- This migration is intentionally a no-op.
+select 1;

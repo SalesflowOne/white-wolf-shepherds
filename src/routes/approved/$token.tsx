@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from "@tanstack/react-router";
+import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -44,7 +45,7 @@ function ApprovedPage() {
   useEffect(() => {
     async function fetchLead() {
       const { data, error } = await supabase
-        .from("leads")
+        .from(T.leads)
         .select("id, full_name, email, approval_sent_at, created_at, preferred_puppy_id")
         .eq("approval_token", token)
         .single();
@@ -60,7 +61,7 @@ function ApprovedPage() {
       // Fetch preferred puppy name if set
       if (data.preferred_puppy_id) {
         const { data: puppyData } = await supabase
-          .from("puppies")
+          .from(T.puppies)
           .select("name, tier, priority_order")
           .eq("id", data.preferred_puppy_id)
           .single();
@@ -252,6 +253,19 @@ function ApprovedPage() {
                 Complete Your Reservation &mdash; Pay $500
               </a>
             )}
+          </div>
+
+          {/* Portal access */}
+          <div className="mt-12 rounded-2xl border border-border bg-card p-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Access your portal any time at <span className="font-semibold text-foreground">[site]/portal</span> using the email you applied with.
+            </p>
+            <Link
+              to="/portal"
+              className="mt-4 inline-block rounded-xl border border-border px-6 py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
+            >
+              Go to My Portal &rarr;
+            </Link>
           </div>
 
           {/* What happens next */}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, T } from "@/integrations/supabase/client";
 
 export default function MobileStickyBar() {
   const [count, setCount] = useState<number | null>(null);
@@ -8,7 +8,7 @@ export default function MobileStickyBar() {
   useEffect(() => {
     async function fetchCount() {
       const { count: c } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("*", { count: "exact", head: true })
         .eq("status", "available");
       if (c !== null) setCount(c);
@@ -17,7 +17,7 @@ export default function MobileStickyBar() {
 
     const channel = supabase
       .channel("mobile-bar-puppies")
-      .on("postgres_changes", { event: "*", schema: "public", table: "puppies" }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: T.puppies }, () => {
         fetchCount();
       })
       .subscribe();
@@ -29,9 +29,10 @@ export default function MobileStickyBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between bg-primary px-4 py-3 shadow-wolf md:hidden">
-      <span className="text-sm font-medium text-primary-foreground/80">
-        {count} puppies available
-      </span>
+      <Link to="/portal" className="text-sm font-medium text-primary-foreground/80">
+        My Portal
+      </Link>
+      <span className="text-xs text-primary-foreground/60">{count} / 9 left</span>
       <Link
         to="/apply"
         className="rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
