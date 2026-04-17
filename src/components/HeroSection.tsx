@@ -54,14 +54,14 @@ export default function HeroSection() {
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-ice">
-          Welcome to the White Wolf Bloodline
+          Premium White German Shepherd Bloodlines
         </p>
         <h1 className="font-display text-5xl font-bold leading-tight tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl">
-          A Rare Line of Noble{" "}
-          <span className="text-gradient-ice">White German Shepherds</span>
+          Welcome to the{" "}
+          <span className="text-gradient-ice">White Wolf Bloodline</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/80">
-          Raised for Family and Legacy.
+          Health-tested, family-raised White German Shepherd puppies for select homes.
         </p>
 
         {/* Live scarcity counter */}
