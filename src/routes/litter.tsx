@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -47,7 +47,7 @@ function LitterPage() {
 
     async function fetchPuppies() {
       const { data, error } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("*")
         .order("priority_order", { ascending: true });
 
@@ -65,7 +65,7 @@ function LitterPage() {
       .channel("puppies-realtime")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "puppies" },
+        { event: "*", schema: "public", table: T.puppies },
         () => {
           // Re-fetch on any change
           fetchPuppies();

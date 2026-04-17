@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, T } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-dogs.jpg";
 
 export default function HeroSection() {
@@ -18,7 +18,7 @@ export default function HeroSection() {
     // Fetch live count
     async function fetchCount() {
       const { count } = await supabase
-        .from("puppies")
+        .from(T.puppies)
         .select("*", { count: "exact", head: true })
         .eq("status", "available");
       if (count !== null) setAvailableCount(count);
@@ -28,7 +28,7 @@ export default function HeroSection() {
     // Realtime subscription
     const channel = supabase
       .channel("hero-puppies")
-      .on("postgres_changes", { event: "*", schema: "public", table: "puppies" }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: T.puppies }, () => {
         fetchCount();
       })
       .subscribe();

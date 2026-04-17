@@ -5,11 +5,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const links = [
-    { label: "Current Litter", href: "/litter" },
-    { label: "Meet the Parents", href: "/parents" },
-    { label: "Our Process", href: "/process" },
-    { label: "Health Guarantee", href: "/health-guarantee" },
-    { label: "FAQ", href: "/faq" },
+    { label: "Current Litter", href: "/litter" as const },
+    { label: "Parents", href: "/parents" as const },
+    { label: "Process", href: "/process" as const },
+    { label: "Health & Guarantee", href: "/health-guarantee" as const },
+    { label: "FAQ", href: "/faq" as const },
   ];
 
   return (
@@ -34,7 +34,7 @@ export default function Navbar() {
             to="/portal"
             className="text-sm font-medium tracking-wide text-primary-foreground/70 transition-colors hover:text-primary-foreground"
           >
-            Applicant Portal
+            My Portal
           </Link>
           <Link
             to="/apply"
@@ -78,7 +78,7 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
             className="block py-3 text-sm font-medium text-primary-foreground/70 transition-colors hover:text-primary-foreground"
           >
-            Applicant Portal
+            My Portal
           </Link>
           <Link
             to="/apply"
