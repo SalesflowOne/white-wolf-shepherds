@@ -29,14 +29,16 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "While Wold Shepherds" },
+      { name: "description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "While Wold Shepherds" },
+      { property: "og:description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "While Wold Shepherds" },
+      { name: "twitter:description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
     ],
     links: [
       {
