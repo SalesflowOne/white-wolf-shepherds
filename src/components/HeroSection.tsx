@@ -69,8 +69,8 @@ export default function HeroSection() {
         {availableCount !== null && (
           <div className="mt-8 inline-flex items-center gap-2.5 rounded-full border border-primary-foreground/15 bg-primary-foreground/[0.06] px-4 py-1.5 backdrop-blur-sm">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ice opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ice" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
             </span>
             <span className="text-xs font-medium tracking-wide text-primary-foreground/85">
               Current litter: {availableCount} puppies available
