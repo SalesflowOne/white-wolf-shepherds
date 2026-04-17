@@ -82,37 +82,18 @@ export default function HeroSection() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center transition-opacity duration-300"
           style={{ opacity: mounted ? 1 : 0 }}
         >
-          {warm ? (
-            <>
-              <a
-                href="/litter"
-                className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
-              >
-                Secure Your Pick &mdash; $500 Reservation Fee
-              </a>
-              <a
-                href="/litter"
-                className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
-              >
-                View Remaining Puppies &rarr;
-              </a>
-            </>
-          ) : (
-            <>
-              <a
-                href="/apply"
-                className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
-              >
-                Begin Application
-              </a>
-              <a
-                href="/litter"
-                className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
-              >
-                View Current Litter &rarr;
-              </a>
-            </>
-          )}
+          <a
+            href="/apply"
+            className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+          >
+            Begin Application
+          </a>
+          <a
+            href="/litter"
+            className="rounded-xl border border-primary-foreground/30 px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary-foreground/10"
+          >
+            View Current Litter &rarr;
+          </a>
         </div>
       </div>
 
