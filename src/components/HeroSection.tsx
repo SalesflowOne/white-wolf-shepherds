@@ -57,7 +57,8 @@ export default function HeroSection() {
           Rare White German Shepherd Puppies
         </p>
         <h1 className="font-display text-5xl font-semibold leading-[1.05] tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl">
-          Welcome to the{" "}
+          Welcome to the Noble
+          <br />
           <span className="text-gradient-ice font-bold">White Wolf</span>{" "}
           Bloodline
         </h1>
