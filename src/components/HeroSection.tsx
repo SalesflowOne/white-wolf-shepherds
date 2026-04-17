@@ -54,7 +54,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
         <p className="mb-6 text-[11px] font-medium uppercase tracking-[0.4em] text-ice/80">
-          Health-Tested White German Shepherd Bloodlines
+          Rare White German Shepherd Puppies
         </p>
         <h1 className="font-display text-5xl font-semibold leading-[1.05] tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl">
           Welcome to the{" "}
