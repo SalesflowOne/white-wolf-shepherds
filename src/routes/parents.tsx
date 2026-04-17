@@ -37,8 +37,15 @@ function ParentsPage() {
           <div className="grid gap-12 md:grid-cols-2">
             {/* Dam */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
-              <div className="flex h-64 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-5xl text-muted-foreground/20">Mia</span>
+              <div className="overflow-hidden rounded-xl bg-muted">
+                <img
+                  src="/parents/mia.jpg"
+                  alt="Mia, our white German Shepherd dam"
+                  width={1024}
+                  height={1024}
+                  loading="lazy"
+                  className="h-64 w-full object-cover"
+                />
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
                 Mia &mdash; Dam
@@ -61,8 +68,15 @@ function ParentsPage() {
 
             {/* Sire */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
-              <div className="flex h-64 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-5xl text-muted-foreground/20">Haki</span>
+              <div className="overflow-hidden rounded-xl bg-muted">
+                <img
+                  src="/parents/haki.jpg"
+                  alt="Haki, our white German Shepherd sire"
+                  width={1024}
+                  height={1024}
+                  loading="lazy"
+                  className="h-64 w-full object-cover"
+                />
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
                 Haki &mdash; Sire
