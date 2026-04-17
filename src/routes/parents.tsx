@@ -41,7 +41,7 @@ function ParentsPage() {
                 <span className="font-display text-5xl text-muted-foreground/20">Dam</span>
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
-                Dam &mdash; Name TBD
+                Mia &mdash; Dam
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
@@ -65,7 +65,7 @@ function ParentsPage() {
                 <span className="font-display text-5xl text-muted-foreground/20">Sire</span>
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
-                Sire &mdash; Name TBD
+                Haki &mdash; Sire
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
