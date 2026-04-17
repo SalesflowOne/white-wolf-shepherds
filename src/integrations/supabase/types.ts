@@ -3974,6 +3974,45 @@ export type Database = {
           },
         ]
       }
+      puppy_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          phone: string | null
+          preferred_sex: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          message?: string | null
+          phone?: string | null
+          preferred_sex?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          phone?: string | null
+          preferred_sex?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       question_audit_log: {
         Row: {
           audit_type: string
