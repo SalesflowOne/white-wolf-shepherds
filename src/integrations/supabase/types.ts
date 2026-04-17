@@ -5918,6 +5918,539 @@ export type Database = {
           },
         ]
       }
+      wws_alumni_posts: {
+        Row: {
+          approved_at: string | null
+          caption: string | null
+          created_at: string | null
+          id: string
+          image_urls: string[] | null
+          lead_id: string
+          milestone_tag: string | null
+          puppy_id: string | null
+          status: string | null
+          video_url: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_urls?: string[] | null
+          lead_id: string
+          milestone_tag?: string | null
+          puppy_id?: string | null
+          status?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_urls?: string[] | null
+          lead_id?: string
+          milestone_tag?: string | null
+          puppy_id?: string | null
+          status?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_alumni_posts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wws_alumni_posts_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "wws_puppies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_dog_profiles: {
+        Row: {
+          bio: string | null
+          call_name: string
+          color_description: string | null
+          created_at: string | null
+          dob: string | null
+          gallery_urls: string[] | null
+          health_notes: string | null
+          id: string
+          lead_id: string
+          profile_photo_url: string | null
+          puppy_id: string | null
+          sex: string | null
+          titles_earned: string[] | null
+          updated_at: string | null
+          weight_lbs: number | null
+        }
+        Insert: {
+          bio?: string | null
+          call_name: string
+          color_description?: string | null
+          created_at?: string | null
+          dob?: string | null
+          gallery_urls?: string[] | null
+          health_notes?: string | null
+          id?: string
+          lead_id: string
+          profile_photo_url?: string | null
+          puppy_id?: string | null
+          sex?: string | null
+          titles_earned?: string[] | null
+          updated_at?: string | null
+          weight_lbs?: number | null
+        }
+        Update: {
+          bio?: string | null
+          call_name?: string
+          color_description?: string | null
+          created_at?: string | null
+          dob?: string | null
+          gallery_urls?: string[] | null
+          health_notes?: string | null
+          id?: string
+          lead_id?: string
+          profile_photo_url?: string | null
+          puppy_id?: string | null
+          sex?: string | null
+          titles_earned?: string[] | null
+          updated_at?: string | null
+          weight_lbs?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_dog_profiles_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wws_dog_profiles_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "wws_puppies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_leads: {
+        Row: {
+          additional_notes: string | null
+          approval_sent_at: string | null
+          approval_token: string | null
+          children_ages: string | null
+          city: string | null
+          created_at: string | null
+          deposit_link_sent_at: string | null
+          email: string | null
+          family_size: number | null
+          full_name: string | null
+          has_fenced_yard: boolean | null
+          has_owned_large_dog: boolean | null
+          household_type: string | null
+          id: string
+          internal_notes: string | null
+          other_pets: string | null
+          phone: string | null
+          pickup_date: string | null
+          portal_last_seen_at: string | null
+          preferred_puppy_id: string | null
+          preferred_sex: string | null
+          ready_for_deposit: boolean | null
+          reason_for_breed: string | null
+          referral_code: string | null
+          referred_by_lead_id: string | null
+          score: number | null
+          signature_agreed_at: string | null
+          source: string | null
+          stage: string | null
+          state: string | null
+          timeline: string | null
+          updated_at: string | null
+          utm_campaign: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          approval_sent_at?: string | null
+          approval_token?: string | null
+          children_ages?: string | null
+          city?: string | null
+          created_at?: string | null
+          deposit_link_sent_at?: string | null
+          email?: string | null
+          family_size?: number | null
+          full_name?: string | null
+          has_fenced_yard?: boolean | null
+          has_owned_large_dog?: boolean | null
+          household_type?: string | null
+          id?: string
+          internal_notes?: string | null
+          other_pets?: string | null
+          phone?: string | null
+          pickup_date?: string | null
+          portal_last_seen_at?: string | null
+          preferred_puppy_id?: string | null
+          preferred_sex?: string | null
+          ready_for_deposit?: boolean | null
+          reason_for_breed?: string | null
+          referral_code?: string | null
+          referred_by_lead_id?: string | null
+          score?: number | null
+          signature_agreed_at?: string | null
+          source?: string | null
+          stage?: string | null
+          state?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+          utm_campaign?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          approval_sent_at?: string | null
+          approval_token?: string | null
+          children_ages?: string | null
+          city?: string | null
+          created_at?: string | null
+          deposit_link_sent_at?: string | null
+          email?: string | null
+          family_size?: number | null
+          full_name?: string | null
+          has_fenced_yard?: boolean | null
+          has_owned_large_dog?: boolean | null
+          household_type?: string | null
+          id?: string
+          internal_notes?: string | null
+          other_pets?: string | null
+          phone?: string | null
+          pickup_date?: string | null
+          portal_last_seen_at?: string | null
+          preferred_puppy_id?: string | null
+          preferred_sex?: string | null
+          ready_for_deposit?: boolean | null
+          reason_for_breed?: string | null
+          referral_code?: string | null
+          referred_by_lead_id?: string | null
+          score?: number | null
+          signature_agreed_at?: string | null
+          source?: string | null
+          stage?: string | null
+          state?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+          utm_campaign?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_leads_preferred_puppy_id_fkey"
+            columns: ["preferred_puppy_id"]
+            isOneToOne: false
+            referencedRelation: "wws_puppies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wws_leads_referred_by_lead_id_fkey"
+            columns: ["referred_by_lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_messages: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          lead_id: string
+          read_at: string | null
+          sender: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          lead_id: string
+          read_at?: string | null
+          sender: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          lead_id?: string
+          read_at?: string | null
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_messages_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_portal_updates: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          id: string
+          image_urls: string[] | null
+          milestone_tag: string | null
+          published_at: string | null
+          puppy_id: string | null
+          title: string | null
+          video_url: string | null
+          visibility: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          id?: string
+          image_urls?: string[] | null
+          milestone_tag?: string | null
+          published_at?: string | null
+          puppy_id?: string | null
+          title?: string | null
+          video_url?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          id?: string
+          image_urls?: string[] | null
+          milestone_tag?: string | null
+          published_at?: string | null
+          puppy_id?: string | null
+          title?: string | null
+          video_url?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_portal_updates_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "wws_puppies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          lead_id: string | null
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          lead_id?: string | null
+          role?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lead_id?: string | null
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_profiles_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_puppies: {
+        Row: {
+          collar_color: string | null
+          created_at: string | null
+          deposit_paid_at: string | null
+          dob: string | null
+          gallery_urls: string[] | null
+          id: string
+          ideal_home: string | null
+          image_url: string | null
+          name: string
+          personality_bio: string | null
+          price: number | null
+          priority_order: number | null
+          ready_date: string | null
+          reserved_by_lead_id: string | null
+          sex: string | null
+          slug: string
+          status: string | null
+          stripe_payment_link: string | null
+          temperament_tags: string[] | null
+          tier: string | null
+          video_url: string | null
+        }
+        Insert: {
+          collar_color?: string | null
+          created_at?: string | null
+          deposit_paid_at?: string | null
+          dob?: string | null
+          gallery_urls?: string[] | null
+          id?: string
+          ideal_home?: string | null
+          image_url?: string | null
+          name: string
+          personality_bio?: string | null
+          price?: number | null
+          priority_order?: number | null
+          ready_date?: string | null
+          reserved_by_lead_id?: string | null
+          sex?: string | null
+          slug: string
+          status?: string | null
+          stripe_payment_link?: string | null
+          temperament_tags?: string[] | null
+          tier?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          collar_color?: string | null
+          created_at?: string | null
+          deposit_paid_at?: string | null
+          dob?: string | null
+          gallery_urls?: string[] | null
+          id?: string
+          ideal_home?: string | null
+          image_url?: string | null
+          name?: string
+          personality_bio?: string | null
+          price?: number | null
+          priority_order?: number | null
+          ready_date?: string | null
+          reserved_by_lead_id?: string | null
+          sex?: string | null
+          slug?: string
+          status?: string | null
+          stripe_payment_link?: string | null
+          temperament_tags?: string[] | null
+          tier?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_puppies_reserved_by_lead_id_fkey"
+            columns: ["reserved_by_lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_reservations: {
+        Row: {
+          amount: number | null
+          contract_sent_at: string | null
+          created_at: string | null
+          final_payment_due_at: string | null
+          final_payment_paid_at: string | null
+          id: string
+          lead_id: string | null
+          pick_order: number | null
+          pickup_date: string | null
+          puppy_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tier: string | null
+        }
+        Insert: {
+          amount?: number | null
+          contract_sent_at?: string | null
+          created_at?: string | null
+          final_payment_due_at?: string | null
+          final_payment_paid_at?: string | null
+          id?: string
+          lead_id?: string | null
+          pick_order?: number | null
+          pickup_date?: string | null
+          puppy_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tier?: string | null
+        }
+        Update: {
+          amount?: number | null
+          contract_sent_at?: string | null
+          created_at?: string | null
+          final_payment_due_at?: string | null
+          final_payment_paid_at?: string | null
+          id?: string
+          lead_id?: string | null
+          pick_order?: number | null
+          pickup_date?: string | null
+          puppy_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tier?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wws_reservations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "wws_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wws_reservations_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "wws_puppies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wws_resources: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          section: string
+          sort_order: number | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          section: string
+          sort_order?: number | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          section?: string
+          sort_order?: number | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -5982,6 +6515,7 @@ export type Database = {
       }
       invoke_reconcile_schedules: { Args: never; Returns: undefined }
       is_org_member: { Args: { org_id: string }; Returns: boolean }
+      wws_is_admin: { Args: { uid: string }; Returns: boolean }
     }
     Enums: {
       app_role:
