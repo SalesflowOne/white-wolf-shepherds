@@ -6016,6 +6016,65 @@ export type Database = {
           },
         ]
       }
+      sync_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          event_type: string
+          id: string
+          integration_id: string | null
+          last_error: string | null
+          payload: Json
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          event_type: string
+          id?: string
+          integration_id?: string | null
+          last_error?: string | null
+          payload?: Json
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          event_type?: string
+          id?: string
+          integration_id?: string | null
+          last_error?: string | null
+          payload?: Json
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_outbox_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_integrity_logs: {
         Row: {
           affected_entity: string
@@ -6913,6 +6972,17 @@ export type Database = {
       }
       day_name_to_dow: { Args: { day_name: string }; Returns: number }
       dow_int_to_text: { Args: { dow: number }; Returns: string }
+      enqueue_sync_event: {
+        Args: {
+          p_entity_id: string
+          p_entity_type: string
+          p_event_type: string
+          p_organization_id: string
+          p_payload: Json
+          p_user_id: string
+        }
+        Returns: number
+      }
       ensure_program_space: {
         Args: { p_program_id: string; p_user_id: string }
         Returns: undefined
