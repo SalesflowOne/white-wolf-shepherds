@@ -133,6 +133,14 @@ function AdminPage() {
   }
 
   const tabs: AdminTab[] = ["overview", "leads", "messages", "updates", "alumni", "referrals"];
+  const tabLabels: Record<AdminTab, string> = {
+    overview: "Overview",
+    leads: "Leads",
+    messages: "Messages",
+    updates: "Updates",
+    alumni: "Pack Family",
+    referrals: "Referrals",
+  };
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -148,13 +156,13 @@ function AdminPage() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium capitalize transition-colors ${
+              className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
                 tab === t
                   ? "bg-accent/10 text-accent"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t}
+              {tabLabels[t]}
             </button>
           ))}
         </nav>
@@ -187,13 +195,13 @@ function AdminPage() {
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                   tab === t
                     ? "bg-accent/10 text-accent"
                     : "text-muted-foreground hover:bg-muted"
                 }`}
               >
-                {t}
+                {tabLabels[t]}
               </button>
             ))}
           </nav>
@@ -940,7 +948,7 @@ function UpdatesAdminTab() {
                 >
                   <option value="all_reserved">All reserved owners</option>
                   <option value="specific_puppy">Specific puppy</option>
-                  <option value="alumni_only">Alumni only</option>
+                  <option value="alumni_only">Pack Family only</option>
                 </select>
               </div>
               {visibility === "specific_puppy" && (
@@ -1030,7 +1038,7 @@ function AlumniAdminTab() {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-display text-lg font-bold text-foreground">Alumni</h2>
+      <h2 className="font-display text-lg font-bold text-foreground">Pack Family</h2>
       <div className="flex gap-2">
         <button
           onClick={() => setSub("pending")}
