@@ -3554,7 +3554,7 @@ export type Database = {
           amount: number
           created_at: string
           id: string
-          order_id: string
+          order_id: string | null
           provider: string
           provider_transaction_id: string | null
           raw_response_json: Json | null
@@ -3564,7 +3564,7 @@ export type Database = {
           amount?: number
           created_at?: string
           id?: string
-          order_id: string
+          order_id?: string | null
           provider?: string
           provider_transaction_id?: string | null
           raw_response_json?: Json | null
@@ -3574,7 +3574,7 @@ export type Database = {
           amount?: number
           created_at?: string
           id?: string
-          order_id?: string
+          order_id?: string | null
           provider?: string
           provider_transaction_id?: string | null
           raw_response_json?: Json | null
@@ -6986,6 +6986,10 @@ export type Database = {
       ensure_program_space: {
         Args: { p_program_id: string; p_user_id: string }
         Returns: undefined
+      }
+      find_duplicate_payment: {
+        Args: { p_amount: number; p_email: string; p_paid_at: string }
+        Returns: string
       }
       generate_cohort_sessions: {
         Args: { p_cohort_id: string; p_force?: boolean }
