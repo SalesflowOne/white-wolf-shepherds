@@ -330,7 +330,7 @@ function tabsForRole(role: Role): { key: TabKey; label: string }[] {
       { key: "messages", label: "Messages" },
       { key: "documents", label: "Documents" },
       { key: "updates", label: "Updates" },
-      { key: "pack", label: "The Pack" },
+      { key: "pack", label: "Pack Family" },
       { key: "resources", label: "Resources" },
       { key: "referrals", label: "Referrals" },
       { key: "payments", label: "Payments" },
