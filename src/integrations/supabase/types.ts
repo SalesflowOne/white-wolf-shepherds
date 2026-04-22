@@ -724,6 +724,41 @@ export type Database = {
           },
         ]
       }
+      calendar_holidays: {
+        Row: {
+          calendar_id: string
+          created_at: string
+          date: string
+          id: string
+          name: string
+          recurring: boolean
+        }
+        Insert: {
+          calendar_id: string
+          created_at?: string
+          date: string
+          id?: string
+          name: string
+          recurring?: boolean
+        }
+        Update: {
+          calendar_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          name?: string
+          recurring?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_holidays_calendar_id_fkey"
+            columns: ["calendar_id"]
+            isOneToOne: false
+            referencedRelation: "holiday_calendars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_integrations: {
         Row: {
           active: boolean
@@ -981,6 +1016,7 @@ export type Database = {
       class_sessions: {
         Row: {
           classroom: string | null
+          cohort_id: string | null
           created_at: string
           end_time: string
           id: string
@@ -990,12 +1026,12 @@ export type Database = {
           schedule_version: number | null
           session_date: string
           session_type: string
-          start_date_id: string | null
           start_time: string
           zoom_link: string | null
         }
         Insert: {
           classroom?: string | null
+          cohort_id?: string | null
           created_at?: string
           end_time: string
           id?: string
@@ -1005,12 +1041,12 @@ export type Database = {
           schedule_version?: number | null
           session_date: string
           session_type?: string
-          start_date_id?: string | null
           start_time: string
           zoom_link?: string | null
         }
         Update: {
           classroom?: string | null
+          cohort_id?: string | null
           created_at?: string
           end_time?: string
           id?: string
@@ -1020,23 +1056,22 @@ export type Database = {
           schedule_version?: number | null
           session_date?: string
           session_type?: string
-          start_date_id?: string | null
           start_time?: string
           zoom_link?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "class_sessions_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "class_sessions_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "class_sessions_start_date_id_fkey"
-            columns: ["start_date_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
             referencedColumns: ["id"]
           },
         ]
@@ -1064,6 +1099,58 @@ export type Database = {
           taxpro_id?: string | null
         }
         Relationships: []
+      }
+      cohort_instructor_assignments: {
+        Row: {
+          created_at: string
+          effective_end_date: string | null
+          effective_start_date: string
+          generated_cohort_id: string
+          id: string
+          instructor_id: string
+          organization_id: string
+        }
+        Insert: {
+          created_at?: string
+          effective_end_date?: string | null
+          effective_start_date: string
+          generated_cohort_id: string
+          id?: string
+          instructor_id: string
+          organization_id: string
+        }
+        Update: {
+          created_at?: string
+          effective_end_date?: string | null
+          effective_start_date?: string
+          generated_cohort_id?: string
+          id?: string
+          instructor_id?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohort_instructor_assignments_generated_cohort_id_fkey"
+            columns: ["generated_cohort_id"]
+            isOneToOne: false
+            referencedRelation: "generated_cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cohort_instructor_assignments_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cohort_instructor_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cohort_instructors: {
         Row: {
@@ -1195,9 +1282,11 @@ export type Database = {
       cohorts: {
         Row: {
           created_at: string
+          created_via: string | null
           curriculum_hours_snapshot: number
           end_date: string | null
           enrolled_count: number
+          event_time: string | null
           generated: boolean
           generator_version: number
           ghl_event_id: string | null
@@ -1206,7 +1295,8 @@ export type Database = {
           max_seats: number
           organization_id: string | null
           program_id: string
-          schedule_template_id: string
+          schedule_template_id: string | null
+          schedule_version: number
           start_date: string
           status: string
           template_snapshot: Json
@@ -1215,9 +1305,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_via?: string | null
           curriculum_hours_snapshot: number
           end_date?: string | null
           enrolled_count?: number
+          event_time?: string | null
           generated?: boolean
           generator_version?: number
           ghl_event_id?: string | null
@@ -1226,7 +1318,8 @@ export type Database = {
           max_seats?: number
           organization_id?: string | null
           program_id: string
-          schedule_template_id: string
+          schedule_template_id?: string | null
+          schedule_version?: number
           start_date: string
           status?: string
           template_snapshot?: Json
@@ -1235,9 +1328,11 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_via?: string | null
           curriculum_hours_snapshot?: number
           end_date?: string | null
           enrolled_count?: number
+          event_time?: string | null
           generated?: boolean
           generator_version?: number
           ghl_event_id?: string | null
@@ -1246,7 +1341,8 @@ export type Database = {
           max_seats?: number
           organization_id?: string | null
           program_id?: string
-          schedule_template_id?: string
+          schedule_template_id?: string | null
+          schedule_version?: number
           start_date?: string
           status?: string
           template_snapshot?: Json
@@ -1426,13 +1522,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "conversations_cohort_id_fkey"
-            columns: ["cohort_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "conversations_program_id_fkey"
             columns: ["program_id"]
@@ -1888,7 +1977,6 @@ export type Database = {
           reservation_expires_at: string | null
           reservation_extended: boolean | null
           reserved_at: string | null
-          start_date_id: string | null
           status: string
           subscription_expires_at: string | null
           subscription_started_at: string | null
@@ -1917,7 +2005,6 @@ export type Database = {
           reservation_expires_at?: string | null
           reservation_extended?: boolean | null
           reserved_at?: string | null
-          start_date_id?: string | null
           status?: string
           subscription_expires_at?: string | null
           subscription_started_at?: string | null
@@ -1946,7 +2033,6 @@ export type Database = {
           reservation_expires_at?: string | null
           reservation_extended?: boolean | null
           reserved_at?: string | null
-          start_date_id?: string | null
           status?: string
           subscription_expires_at?: string | null
           subscription_started_at?: string | null
@@ -1976,13 +2062,6 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "enrollments_start_date_id_fkey"
-            columns: ["start_date_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
             referencedColumns: ["id"]
           },
           {
@@ -2231,6 +2310,147 @@ export type Database = {
           },
         ]
       }
+      generated_cohorts: {
+        Row: {
+          committed_cohort_id: string | null
+          created_at: string
+          end_date: string
+          generation_run_id: string | null
+          id: string
+          organization_id: string
+          pattern_id: string
+          program_id: string
+          rotation_index: number
+          scheduled_hours: number
+          start_date: string
+          status: string
+          time_block_end: string
+          time_block_start: string
+          updated_at: string
+        }
+        Insert: {
+          committed_cohort_id?: string | null
+          created_at?: string
+          end_date: string
+          generation_run_id?: string | null
+          id?: string
+          organization_id: string
+          pattern_id: string
+          program_id: string
+          rotation_index?: number
+          scheduled_hours: number
+          start_date: string
+          status?: string
+          time_block_end: string
+          time_block_start: string
+          updated_at?: string
+        }
+        Update: {
+          committed_cohort_id?: string | null
+          created_at?: string
+          end_date?: string
+          generation_run_id?: string | null
+          id?: string
+          organization_id?: string
+          pattern_id?: string
+          program_id?: string
+          rotation_index?: number
+          scheduled_hours?: number
+          start_date?: string
+          status?: string
+          time_block_end?: string
+          time_block_start?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_cohorts_committed_cohort_id_fkey"
+            columns: ["committed_cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_cohorts_generation_run_id_fkey"
+            columns: ["generation_run_id"]
+            isOneToOne: false
+            referencedRelation: "generation_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_cohorts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_cohorts_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_cohorts_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generation_runs: {
+        Row: {
+          cohorts_generated: number
+          horizon_date: string
+          id: string
+          input_hash: string
+          organization_id: string
+          output_hash: string
+          pattern_id: string | null
+          ran_at: string
+          triggered_by: string
+        }
+        Insert: {
+          cohorts_generated?: number
+          horizon_date: string
+          id?: string
+          input_hash: string
+          organization_id: string
+          output_hash: string
+          pattern_id?: string | null
+          ran_at?: string
+          triggered_by?: string
+        }
+        Update: {
+          cohorts_generated?: number
+          horizon_date?: string
+          id?: string
+          input_hash?: string
+          organization_id?: string
+          output_hash?: string
+          pattern_id?: string | null
+          ran_at?: string
+          triggered_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_generation_runs_pattern"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generation_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ghl_calendar_mappings: {
         Row: {
           active: boolean
@@ -2325,6 +2545,41 @@ export type Database = {
           },
         ]
       }
+      holiday_calendars: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "holiday_calendars_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       holidays: {
         Row: {
           created_at: string
@@ -2362,27 +2617,34 @@ export type Database = {
       }
       instructor_assignments: {
         Row: {
+          cohort_id: string | null
           created_at: string
           id: string
           program_id: string
-          start_date_id: string | null
           user_id: string
         }
         Insert: {
+          cohort_id?: string | null
           created_at?: string
           id?: string
           program_id: string
-          start_date_id?: string | null
           user_id: string
         }
         Update: {
+          cohort_id?: string | null
           created_at?: string
           id?: string
           program_id?: string
-          start_date_id?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "instructor_assignments_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "instructor_assignments_program_id_fkey"
             columns: ["program_id"]
@@ -2390,11 +2652,121 @@ export type Database = {
             referencedRelation: "programs"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      integration_credentials: {
+        Row: {
+          api_key_secret_id: string | null
+          integration_id: string
+          oauth_access_token_secret_id: string | null
+          oauth_expires_at: string | null
+          oauth_refresh_token_secret_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          api_key_secret_id?: string | null
+          integration_id: string
+          oauth_access_token_secret_id?: string | null
+          oauth_expires_at?: string | null
+          oauth_refresh_token_secret_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          api_key_secret_id?: string | null
+          integration_id?: string
+          oauth_access_token_secret_id?: string | null
+          oauth_expires_at?: string | null
+          oauth_refresh_token_secret_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "instructor_assignments_start_date_id_fkey"
-            columns: ["start_date_id"]
+            foreignKeyName: "integration_credentials_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: true
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_field_mappings: {
+        Row: {
+          created_at: string
+          external_field_id: string
+          external_field_name: string | null
+          field_kind: string
+          ghi_field: string
+          integration_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_field_id: string
+          external_field_name?: string | null
+          field_kind?: string
+          ghi_field: string
+          integration_id: string
+        }
+        Update: {
+          created_at?: string
+          external_field_id?: string
+          external_field_name?: string | null
+          field_kind?: string
+          ghi_field?: string
+          integration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_field_mappings_integration_id_fkey"
+            columns: ["integration_id"]
             isOneToOne: false
-            referencedRelation: "program_start_dates"
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrations: {
+        Row: {
+          base_url: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          inbound_webhook_secret: string
+          location_id: string | null
+          name: string | null
+          organization_id: string | null
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          base_url?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          inbound_webhook_secret: string
+          location_id?: string | null
+          name?: string | null
+          organization_id?: string | null
+          provider: string
+          updated_at?: string
+        }
+        Update: {
+          base_url?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          inbound_webhook_secret?: string
+          location_id?: string | null
+          name?: string | null
+          organization_id?: string | null
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integrations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -2959,6 +3331,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          cohort_id: string | null
           created_at: string
           deposit_paid: number
           id: string
@@ -2969,13 +3342,13 @@ export type Database = {
           reservation_expires_at: string | null
           reserved_at: string | null
           salesflow_synced: boolean
-          start_date_id: string | null
           start_date_pending: boolean
           total_amount: number
           updated_at: string
           variant_id: string | null
         }
         Insert: {
+          cohort_id?: string | null
           created_at?: string
           deposit_paid?: number
           id?: string
@@ -2986,13 +3359,13 @@ export type Database = {
           reservation_expires_at?: string | null
           reserved_at?: string | null
           salesflow_synced?: boolean
-          start_date_id?: string | null
           start_date_pending?: boolean
           total_amount?: number
           updated_at?: string
           variant_id?: string | null
         }
         Update: {
+          cohort_id?: string | null
           created_at?: string
           deposit_paid?: number
           id?: string
@@ -3003,7 +3376,6 @@ export type Database = {
           reservation_expires_at?: string | null
           reserved_at?: string | null
           salesflow_synced?: boolean
-          start_date_id?: string | null
           start_date_pending?: boolean
           total_amount?: number
           updated_at?: string
@@ -3011,17 +3383,17 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "orders_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_start_date_id_fkey"
-            columns: ["start_date_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
             referencedColumns: ["id"]
           },
           {
@@ -3087,6 +3459,7 @@ export type Database = {
           status: string
           subscription_tier: string
           support_email: string | null
+          timezone: string
           updated_at: string
         }
         Insert: {
@@ -3104,6 +3477,7 @@ export type Database = {
           status?: string
           subscription_tier?: string
           support_email?: string | null
+          timezone?: string
           updated_at?: string
         }
         Update: {
@@ -3121,6 +3495,7 @@ export type Database = {
           status?: string
           subscription_tier?: string
           support_email?: string | null
+          timezone?: string
           updated_at?: string
         }
         Relationships: [
@@ -3385,6 +3760,7 @@ export type Database = {
           email: string | null
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
+          external_contact_ids: Json
           first_name: string | null
           handle: string | null
           id: string
@@ -3418,6 +3794,7 @@ export type Database = {
           email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          external_contact_ids?: Json
           first_name?: string | null
           handle?: string | null
           id?: string
@@ -3451,6 +3828,7 @@ export type Database = {
           email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          external_contact_ids?: Json
           first_name?: string | null
           handle?: string | null
           id?: string
@@ -3728,63 +4106,6 @@ export type Database = {
             foreignKeyName: "program_scheduling_rules_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: true
-            referencedRelation: "programs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      program_start_dates: {
-        Row: {
-          active: boolean
-          cohort_id: string | null
-          created_at: string
-          event_time: string | null
-          id: string
-          program_id: string
-          schedule_label: string
-          schedule_locked: boolean | null
-          schedule_version: number | null
-          seats_available: number
-          start_date: string
-        }
-        Insert: {
-          active?: boolean
-          cohort_id?: string | null
-          created_at?: string
-          event_time?: string | null
-          id?: string
-          program_id: string
-          schedule_label?: string
-          schedule_locked?: boolean | null
-          schedule_version?: number | null
-          seats_available?: number
-          start_date: string
-        }
-        Update: {
-          active?: boolean
-          cohort_id?: string | null
-          created_at?: string
-          event_time?: string | null
-          id?: string
-          program_id?: string
-          schedule_label?: string
-          schedule_locked?: boolean | null
-          schedule_version?: number | null
-          seats_available?: number
-          start_date?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "program_start_dates_cohort_id_fkey"
-            columns: ["cohort_id"]
-            isOneToOne: false
-            referencedRelation: "cohorts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "program_start_dates_program_id_fkey"
-            columns: ["program_id"]
-            isOneToOne: false
             referencedRelation: "programs"
             referencedColumns: ["id"]
           },
@@ -4959,6 +5280,57 @@ export type Database = {
         }
         Relationships: []
       }
+      salesflow_inbound_logs: {
+        Row: {
+          action: string
+          cohort_id: string | null
+          created_at: string
+          error: string | null
+          id: string
+          payload: Json | null
+          program_id: string | null
+          success: boolean
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          cohort_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          program_id?: string | null
+          success?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          cohort_id?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          program_id?: string | null
+          success?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesflow_inbound_logs_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesflow_inbound_logs_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       schedule_exceptions: {
         Row: {
           cancelled: boolean
@@ -4996,6 +5368,84 @@ export type Database = {
             columns: ["schedule_template_id"]
             isOneToOne: false
             referencedRelation: "schedule_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedule_patterns: {
+        Row: {
+          active: boolean
+          anchor_start_date: string
+          created_at: string
+          day_pattern: string[]
+          gap_behavior: string
+          holiday_calendar_id: string | null
+          horizon_months: number
+          hours_per_day: number
+          id: string
+          max_seats: number
+          name: string
+          organization_id: string
+          programs: Json
+          rotation_type: string
+          sync_to_salesflow: boolean
+          time_block_end: string
+          time_block_start: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          anchor_start_date: string
+          created_at?: string
+          day_pattern?: string[]
+          gap_behavior?: string
+          holiday_calendar_id?: string | null
+          horizon_months?: number
+          hours_per_day?: number
+          id?: string
+          max_seats?: number
+          name: string
+          organization_id: string
+          programs?: Json
+          rotation_type?: string
+          sync_to_salesflow?: boolean
+          time_block_end: string
+          time_block_start: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          anchor_start_date?: string
+          created_at?: string
+          day_pattern?: string[]
+          gap_behavior?: string
+          holiday_calendar_id?: string | null
+          horizon_months?: number
+          hours_per_day?: number
+          id?: string
+          max_seats?: number
+          name?: string
+          organization_id?: string
+          programs?: Json
+          rotation_type?: string
+          sync_to_salesflow?: boolean
+          time_block_end?: string
+          time_block_start?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_patterns_holiday_calendar_id_fkey"
+            columns: ["holiday_calendar_id"]
+            isOneToOne: false
+            referencedRelation: "holiday_calendars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedule_patterns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -5374,6 +5824,7 @@ export type Database = {
       }
       student_practice_passes: {
         Row: {
+          cohort_id: string | null
           created_at: string
           enrollment_id: string
           id: string
@@ -5381,12 +5832,12 @@ export type Database = {
           pass_number: number
           reschedule_count: number
           scheduled_date: string | null
-          scheduled_start_date_id: string | null
           status: string
           updated_at: string
           used_at: string | null
         }
         Insert: {
+          cohort_id?: string | null
           created_at?: string
           enrollment_id: string
           id?: string
@@ -5394,12 +5845,12 @@ export type Database = {
           pass_number: number
           reschedule_count?: number
           scheduled_date?: string | null
-          scheduled_start_date_id?: string | null
           status?: string
           updated_at?: string
           used_at?: string | null
         }
         Update: {
+          cohort_id?: string | null
           created_at?: string
           enrollment_id?: string
           id?: string
@@ -5407,24 +5858,23 @@ export type Database = {
           pass_number?: number
           reschedule_count?: number
           scheduled_date?: string | null
-          scheduled_start_date_id?: string | null
           status?: string
           updated_at?: string
           used_at?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "student_practice_passes_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "student_practice_passes_enrollment_id_fkey"
             columns: ["enrollment_id"]
             isOneToOne: false
             referencedRelation: "enrollments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_practice_passes_scheduled_start_date_id_fkey"
-            columns: ["scheduled_start_date_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
             referencedColumns: ["id"]
           },
         ]
@@ -5714,13 +6164,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "timeline_posts_cohort_id_fkey"
-            columns: ["cohort_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "timeline_posts_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
@@ -5853,6 +6296,7 @@ export type Database = {
       }
       waitlist: {
         Row: {
+          cohort_id: string | null
           created_at: string
           email: string
           first_name: string | null
@@ -5863,10 +6307,10 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           program_id: string
-          start_date_id: string
           user_id: string | null
         }
         Insert: {
+          cohort_id?: string | null
           created_at?: string
           email: string
           first_name?: string | null
@@ -5877,10 +6321,10 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           program_id: string
-          start_date_id: string
           user_id?: string | null
         }
         Update: {
+          cohort_id?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
@@ -5891,10 +6335,16 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           program_id?: string
-          start_date_id?: string
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "waitlist_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "waitlist_organization_id_fkey"
             columns: ["organization_id"]
@@ -5907,13 +6357,6 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "waitlist_start_date_id_fkey"
-            columns: ["start_date_id"]
-            isOneToOne: false
-            referencedRelation: "program_start_dates"
             referencedColumns: ["id"]
           },
         ]
@@ -6474,10 +6917,6 @@ export type Database = {
         Args: { p_program_id: string; p_user_id: string }
         Returns: undefined
       }
-      generate_class_schedule: {
-        Args: { p_start_date_id: string }
-        Returns: undefined
-      }
       generate_cohort_sessions: {
         Args: { p_cohort_id: string; p_force?: boolean }
         Returns: undefined
@@ -6513,7 +6952,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      integration_disconnect: {
+        Args: { p_integration_id: string }
+        Returns: undefined
+      }
+      integration_get_api_key: {
+        Args: { p_integration_id: string }
+        Returns: string
+      }
+      integration_set_api_key: {
+        Args: { p_api_key: string; p_integration_id: string }
+        Returns: undefined
+      }
       invoke_reconcile_schedules: { Args: never; Returns: undefined }
+      is_admin: { Args: never; Returns: boolean }
       is_org_member: { Args: { org_id: string }; Returns: boolean }
       wws_is_admin: { Args: { uid: string }; Returns: boolean }
     }
