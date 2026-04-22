@@ -132,47 +132,82 @@ function AdminPage() {
     );
   }
 
+  const tabs: AdminTab[] = ["overview", "leads", "messages", "updates", "alumni", "referrals"];
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <h1 className="font-display text-xl font-bold text-foreground">
+    <div className="flex min-h-screen w-full bg-background">
+      {/* Sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
+        <div className="border-b border-border px-6 py-5">
+          <h1 className="font-display text-lg font-bold text-foreground">
             White Wolf <span className="text-accent">Admin</span>
           </h1>
-          <nav className="hidden items-center gap-1 md:flex">
-            {(["overview", "leads", "messages", "updates", "alumni", "referrals"] as AdminTab[]).map(
-              (t) => (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors capitalize ${
-                    tab === t
-                      ? "bg-accent/10 text-accent"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {t}
-                </button>
-              )
-            )}
-          </nav>
+        </div>
+        <nav className="flex-1 space-y-1 px-3 py-4">
+          {tabs.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium capitalize transition-colors ${
+                tab === t
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </nav>
+        <div className="border-t border-border px-3 py-4">
           <button
             onClick={handleSignOut}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="w-full rounded-lg px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             Sign out
           </button>
         </div>
-      </header>
+      </aside>
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        {tab === "overview" && <OverviewTab />}
-        {tab === "leads" && <LeadsTab />}
-        {tab === "messages" && <AdminMessagesTab />}
-        {tab === "updates" && <UpdatesAdminTab />}
-        {tab === "alumni" && <AlumniAdminTab />}
-        {tab === "referrals" && <ReferralsAdminTab />}
-      </main>
+      {/* Mobile top bar */}
+      <div className="flex flex-1 flex-col">
+        <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md md:hidden">
+          <div className="flex items-center justify-between px-4 py-3">
+            <h1 className="font-display text-base font-bold text-foreground">
+              White Wolf <span className="text-accent">Admin</span>
+            </h1>
+            <button
+              onClick={handleSignOut}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Sign out
+            </button>
+          </div>
+          <nav className="flex gap-1 overflow-x-auto px-3 pb-2">
+            {tabs.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+                  tab === t
+                    ? "bg-accent/10 text-accent"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </nav>
+        </header>
+
+        <main className="flex-1 px-6 py-8">
+          {tab === "overview" && <OverviewTab />}
+          {tab === "leads" && <LeadsTab />}
+          {tab === "messages" && <AdminMessagesTab />}
+          {tab === "updates" && <UpdatesAdminTab />}
+          {tab === "alumni" && <AlumniAdminTab />}
+          {tab === "referrals" && <ReferralsAdminTab />}
+        </main>
+      </div>
     </div>
   );
 }
