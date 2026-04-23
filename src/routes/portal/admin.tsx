@@ -228,6 +228,7 @@ function AdminPage() {
         <main className="flex-1 px-6 py-8">
           {tab === "overview" && <OverviewTab />}
           {tab === "leads" && <LeadsTab />}
+          {tab === "litters" && <LittersAdminTab />}
           {tab === "messages" && <AdminMessagesTab />}
           {tab === "updates" && <UpdatesAdminTab />}
           {tab === "alumni" && <AlumniAdminTab />}
