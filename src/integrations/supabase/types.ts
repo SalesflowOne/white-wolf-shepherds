@@ -2131,6 +2131,73 @@ export type Database = {
           },
         ]
       }
+      flow_signatures: {
+        Row: {
+          acknowledgments: Json
+          agreement_template_id: string | null
+          created_at: string
+          flow_id: string | null
+          id: string
+          ip_address: string | null
+          signature_text: string
+          signed_at: string
+          step_id: string | null
+          template_version: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          acknowledgments?: Json
+          agreement_template_id?: string | null
+          created_at?: string
+          flow_id?: string | null
+          id?: string
+          ip_address?: string | null
+          signature_text: string
+          signed_at?: string
+          step_id?: string | null
+          template_version?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          acknowledgments?: Json
+          agreement_template_id?: string | null
+          created_at?: string
+          flow_id?: string | null
+          id?: string
+          ip_address?: string | null
+          signature_text?: string
+          signed_at?: string
+          step_id?: string | null
+          template_version?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flow_signatures_agreement_template_id_fkey"
+            columns: ["agreement_template_id"]
+            isOneToOne: false
+            referencedRelation: "agreement_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flow_signatures_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "flows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flow_signatures_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "flow_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flow_step_options: {
         Row: {
           created_at: string
