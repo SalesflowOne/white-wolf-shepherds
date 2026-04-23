@@ -27,6 +27,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 // with other apps sharing this Supabase project.
 export const T = {
   puppies: 'wws_puppies',
+  litters: 'wws_litters',
   leads: 'wws_leads',
   reservations: 'wws_reservations',
   profiles: 'wws_profiles',
