@@ -1372,3 +1372,397 @@ function LabeledTextarea({
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────
+// Litters
+// ─────────────────────────────────────────────────────────────
+
+const LITTER_STATUSES = ["upcoming", "available", "reserved", "past"] as const;
+
+function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function LittersAdminTab() {
+  const [litters, setLitters] = useState<Litter[]>([]);
+  const [puppies, setPuppies] = useState<Puppy[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Litter | null>(null);
+  const [showNew, setShowNew] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    const [{ data: lits }, { data: pups }] = await Promise.all([
+      supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
+      supabase
+        .from(T.puppies)
+        .select("id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id")
+        .order("priority_order"),
+    ]);
+    setLitters((lits ?? []) as Litter[]);
+    setPuppies((pups ?? []) as Puppy[]);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  async function handleDelete(litter: Litter) {
+    if (!confirm(`Delete litter "${litter.name}"? Puppies will become unassigned.`)) return;
+    const { error } = await supabase.from(T.litters).delete().eq("id", litter.id);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    fetchData();
+  }
+
+  async function assignPuppy(puppyId: string, litterId: string | null) {
+    const { error } = await supabase
+      .from(T.puppies)
+      .update({ litter_id: litterId })
+      .eq("id", puppyId);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    fetchData();
+  }
+
+  if (loading) {
+    return <div className="text-sm text-muted-foreground">Loading litters…</div>;
+  }
+
+  const orphans = puppies.filter((p) => !p.litter_id);
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-lg font-bold text-foreground">Litters</h2>
+          <p className="text-sm text-muted-foreground">
+            Group puppies under their litter. Each litter shows on the public site.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowNew(true)}
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-accent-foreground transition-all hover:brightness-110"
+        >
+          + New Litter
+        </button>
+      </div>
+
+      {litters.length === 0 && (
+        <p className="text-sm text-muted-foreground">No litters yet. Create your first one.</p>
+      )}
+
+      <div className="space-y-4">
+        {litters.map((lit) => {
+          const litPups = puppies.filter((p) => p.litter_id === lit.id);
+          return (
+            <div key={lit.id} className="rounded-2xl border border-border bg-card p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-display text-lg font-bold text-foreground">{lit.name}</h3>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold capitalize text-muted-foreground">
+                      {lit.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {[
+                      lit.dam_name && lit.sire_name
+                        ? `${lit.dam_name} × ${lit.sire_name}`
+                        : null,
+                      lit.born_date ? `Born ${new Date(lit.born_date).toLocaleDateString()}` : null,
+                      lit.ready_date
+                        ? `Ready ${new Date(lit.ready_date).toLocaleDateString()}`
+                        : null,
+                      `${litPups.length}${lit.expected_count ? ` of ${lit.expected_count}` : ""} puppies`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditing(lit)}
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(lit)}
+                    className="rounded-lg border border-destructive/30 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Puppies in this litter
+                </p>
+                {litPups.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">None assigned yet.</p>
+                ) : (
+                  <ul className="space-y-1">
+                    {litPups.map((p) => (
+                      <li
+                        key={p.id}
+                        className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                      >
+                        <span className="font-medium text-foreground">{p.name}</span>
+                        <button
+                          onClick={() => assignPuppy(p.id, null)}
+                          className="text-xs text-muted-foreground hover:text-destructive"
+                        >
+                          Unassign
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {orphans.length > 0 && (
+        <div className="rounded-2xl border border-dashed border-border bg-card/40 p-5">
+          <h3 className="font-display text-base font-bold text-foreground">Unassigned puppies</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Assign each puppy to a litter.</p>
+          <ul className="mt-4 space-y-2">
+            {orphans.map((p) => (
+              <li
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              >
+                <span className="font-medium text-foreground">{p.name}</span>
+                <select
+                  onChange={(e) => assignPuppy(p.id, e.target.value || null)}
+                  defaultValue=""
+                  className="rounded-md border border-input bg-background px-2 py-1 text-xs"
+                >
+                  <option value="">Assign to litter…</option>
+                  {litters.map((l) => (
+                    <option key={l.id} value={l.id}>
+                      {l.name}
+                    </option>
+                  ))}
+                </select>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(showNew || editing) && (
+        <LitterFormModal
+          litter={editing}
+          existingSlugs={litters.map((l) => l.slug)}
+          onClose={() => {
+            setShowNew(false);
+            setEditing(null);
+          }}
+          onSaved={() => {
+            setShowNew(false);
+            setEditing(null);
+            fetchData();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function LitterFormModal({
+  litter,
+  existingSlugs,
+  onClose,
+  onSaved,
+}: {
+  litter: Litter | null;
+  existingSlugs: string[];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const isEdit = !!litter;
+  const [name, setName] = useState(litter?.name ?? "");
+  const [slug, setSlug] = useState(litter?.slug ?? "");
+  const [damName, setDamName] = useState(litter?.dam_name ?? "");
+  const [sireName, setSireName] = useState(litter?.sire_name ?? "");
+  const [bornDate, setBornDate] = useState(litter?.born_date ?? "");
+  const [readyDate, setReadyDate] = useState(litter?.ready_date ?? "");
+  const [expectedCount, setExpectedCount] = useState<string>(
+    litter?.expected_count?.toString() ?? ""
+  );
+  const [status, setStatus] = useState(litter?.status ?? "upcoming");
+  const [description, setDescription] = useState(litter?.description ?? "");
+  const [coverImageUrl, setCoverImageUrl] = useState(litter?.cover_image_url ?? "");
+  const [priorityOrder, setPriorityOrder] = useState<string>(
+    litter?.priority_order?.toString() ?? "0"
+  );
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit && name) setSlug(slugify(name));
+  }, [name, isEdit]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !slug.trim()) {
+      alert("Name and slug are required.");
+      return;
+    }
+    if (!isEdit && existingSlugs.includes(slug.trim())) {
+      alert("A litter with this slug already exists. Choose a different name.");
+      return;
+    }
+    setSaving(true);
+    const payload = {
+      name: name.trim(),
+      slug: slug.trim(),
+      dam_name: damName.trim() || null,
+      sire_name: sireName.trim() || null,
+      born_date: bornDate || null,
+      ready_date: readyDate || null,
+      expected_count: expectedCount ? Number(expectedCount) : null,
+      status,
+      description: description.trim() || null,
+      cover_image_url: coverImageUrl.trim() || null,
+      priority_order: Number(priorityOrder) || 0,
+    };
+    const { error } = isEdit
+      ? await supabase.from(T.litters).update(payload).eq("id", litter!.id)
+      : await supabase.from(T.litters).insert(payload);
+    setSaving(false);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    onSaved();
+  }
+
+  const inputCls =
+    "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20";
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-card p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="font-display text-xl font-bold text-foreground">
+          {isEdit ? "Edit Litter" : "New Litter"}
+        </h3>
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+          <Field label="Name *">
+            <input
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Spring 2026"
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Slug *">
+            <input
+              required
+              value={slug}
+              onChange={(e) => setSlug(slugify(e.target.value))}
+              placeholder="spring-2026"
+              className={inputCls}
+            />
+          </Field>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Dam (mother)">
+              <input value={damName} onChange={(e) => setDamName(e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Sire (father)">
+              <input value={sireName} onChange={(e) => setSireName(e.target.value)} className={inputCls} />
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Born date">
+              <input type="date" value={bornDate} onChange={(e) => setBornDate(e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Ready date">
+              <input type="date" value={readyDate} onChange={(e) => setReadyDate(e.target.value)} className={inputCls} />
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Field label="Expected count">
+              <input
+                type="number"
+                min="0"
+                value={expectedCount}
+                onChange={(e) => setExpectedCount(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Status">
+              <select value={status} onChange={(e) => setStatus(e.target.value)} className={inputCls}>
+                {LITTER_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Sort order">
+              <input
+                type="number"
+                value={priorityOrder}
+                onChange={(e) => setPriorityOrder(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
+          </div>
+          <Field label="Cover image URL">
+            <input
+              value={coverImageUrl}
+              onChange={(e) => setCoverImageUrl(e.target.value)}
+              placeholder="https://…"
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Description">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className={inputCls}
+            />
+          </Field>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-accent-foreground transition-all hover:brightness-110 disabled:opacity-60"
+            >
+              {saving ? "Saving…" : isEdit ? "Save changes" : "Create litter"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
