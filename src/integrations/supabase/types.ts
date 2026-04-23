@@ -2657,6 +2657,7 @@ export type Database = {
       integration_credentials: {
         Row: {
           api_key_secret_id: string | null
+          api_token_secret_id: string | null
           integration_id: string
           oauth_access_token_secret_id: string | null
           oauth_expires_at: string | null
@@ -2665,6 +2666,7 @@ export type Database = {
         }
         Insert: {
           api_key_secret_id?: string | null
+          api_token_secret_id?: string | null
           integration_id: string
           oauth_access_token_secret_id?: string | null
           oauth_expires_at?: string | null
@@ -2673,6 +2675,7 @@ export type Database = {
         }
         Update: {
           api_key_secret_id?: string | null
+          api_token_secret_id?: string | null
           integration_id?: string
           oauth_access_token_secret_id?: string | null
           oauth_expires_at?: string | null
@@ -6666,6 +6669,57 @@ export type Database = {
           },
         ]
       }
+      wws_litters: {
+        Row: {
+          born_date: string | null
+          cover_image_url: string | null
+          created_at: string
+          dam_name: string | null
+          description: string | null
+          expected_count: number | null
+          id: string
+          name: string
+          priority_order: number
+          ready_date: string | null
+          sire_name: string | null
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          born_date?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          dam_name?: string | null
+          description?: string | null
+          expected_count?: number | null
+          id?: string
+          name: string
+          priority_order?: number
+          ready_date?: string | null
+          sire_name?: string | null
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          born_date?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          dam_name?: string | null
+          description?: string | null
+          expected_count?: number | null
+          id?: string
+          name?: string
+          priority_order?: number
+          ready_date?: string | null
+          sire_name?: string | null
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wws_messages: {
         Row: {
           body: string
@@ -6790,6 +6844,7 @@ export type Database = {
           id: string
           ideal_home: string | null
           image_url: string | null
+          litter_id: string | null
           name: string
           personality_bio: string | null
           price: number | null
@@ -6813,6 +6868,7 @@ export type Database = {
           id?: string
           ideal_home?: string | null
           image_url?: string | null
+          litter_id?: string | null
           name: string
           personality_bio?: string | null
           price?: number | null
@@ -6836,6 +6892,7 @@ export type Database = {
           id?: string
           ideal_home?: string | null
           image_url?: string | null
+          litter_id?: string | null
           name?: string
           personality_bio?: string | null
           price?: number | null
@@ -6851,6 +6908,13 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "wws_puppies_litter_id_fkey"
+            columns: ["litter_id"]
+            isOneToOne: false
+            referencedRelation: "wws_litters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "wws_puppies_reserved_by_lead_id_fkey"
             columns: ["reserved_by_lead_id"]
@@ -7034,8 +7098,16 @@ export type Database = {
         Args: { p_integration_id: string }
         Returns: string
       }
+      integration_get_api_token: {
+        Args: { p_integration_id: string }
+        Returns: string
+      }
       integration_set_api_key: {
         Args: { p_api_key: string; p_integration_id: string }
+        Returns: undefined
+      }
+      integration_set_api_token: {
+        Args: { p_integration_id: string; p_token: string }
         Returns: undefined
       }
       invoke_reconcile_schedules: { Args: never; Returns: undefined }
