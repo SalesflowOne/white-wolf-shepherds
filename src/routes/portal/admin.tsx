@@ -102,10 +102,11 @@ type AlumniPost = {
 type AdminTab =
   | "overview"
   | "leads"
+  | "dogs"
   | "litters"
+  | "alumni"
   | "messages"
   | "updates"
-  | "alumni"
   | "referrals";
 
 function AdminPage() {
@@ -149,14 +150,15 @@ function AdminPage() {
     );
   }
 
-  const tabs: AdminTab[] = ["overview", "leads", "litters", "messages", "updates", "alumni", "referrals"];
+  const tabs: AdminTab[] = ["overview", "leads", "dogs", "litters", "alumni", "messages", "updates", "referrals"];
   const tabLabels: Record<AdminTab, string> = {
     overview: "Overview",
     leads: "Leads",
+    dogs: "Dogs",
     litters: "Litters",
+    alumni: "Pack Family",
     messages: "Messages",
     updates: "Updates",
-    alumni: "Pack Family",
     referrals: "Referrals",
   };
 
@@ -228,10 +230,11 @@ function AdminPage() {
         <main className="flex-1 px-6 py-8">
           {tab === "overview" && <OverviewTab />}
           {tab === "leads" && <LeadsTab />}
+          {tab === "dogs" && <DogsAdminTab />}
           {tab === "litters" && <LittersAdminTab />}
+          {tab === "alumni" && <AlumniAdminTab />}
           {tab === "messages" && <AdminMessagesTab />}
           {tab === "updates" && <UpdatesAdminTab />}
-          {tab === "alumni" && <AlumniAdminTab />}
           {tab === "referrals" && <ReferralsAdminTab />}
         </main>
       </div>
