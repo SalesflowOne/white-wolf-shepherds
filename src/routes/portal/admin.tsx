@@ -252,18 +252,23 @@ function OverviewTab() {
     available: 0,
   });
   const [puppies, setPuppies] = useState<Puppy[]>([]);
+  const [litters, setLitters] = useState<Litter[]>([]);
   const [leadNames, setLeadNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function load() {
-      const [{ data: leads }, { data: pups }, { data: reservations }] = await Promise.all([
-        supabase.from(T.leads).select("id, full_name, score, stage"),
-        supabase
-          .from(T.puppies)
-          .select("id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order")
-          .order("priority_order"),
-        supabase.from(T.reservations).select("amount"),
-      ]);
+      const [{ data: leads }, { data: pups }, { data: reservations }, { data: lits }] =
+        await Promise.all([
+          supabase.from(T.leads).select("id, full_name, score, stage"),
+          supabase
+            .from(T.puppies)
+            .select(
+              "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id"
+            )
+            .order("priority_order"),
+          supabase.from(T.reservations).select("amount"),
+          supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
+        ]);
 
       const leadsData = leads ?? [];
       const puppiesData = (pups ?? []) as Puppy[];
@@ -275,6 +280,7 @@ function OverviewTab() {
       });
       setLeadNames(names);
       setPuppies(puppiesData);
+      setLitters((lits ?? []) as Litter[]);
 
       setStats({
         totalLeads: leadsData.length,
@@ -288,6 +294,13 @@ function OverviewTab() {
     load();
   }, []);
 
+  // Group puppies by litter
+  const grouped = litters.map((lit) => ({
+    litter: lit,
+    puppies: puppies.filter((p) => p.litter_id === lit.id),
+  }));
+  const orphans = puppies.filter((p) => !p.litter_id);
+
   return (
     <div className="space-y-10">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
@@ -298,39 +311,122 @@ function OverviewTab() {
         <StatBox label="Available" value={`${stats.available} / 9`} />
       </div>
 
-      <div>
-        <h2 className="font-display text-lg font-bold text-foreground">Puppies</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          {puppies.map((p) => (
-            <div key={p.id} className="rounded-xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-bold text-foreground">{p.name}</h3>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                    p.status === "available"
-                      ? "bg-green-100 text-green-700"
-                      : p.status === "pending"
-                        ? "bg-amber-100 text-amber-700"
-                        : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {p.status}
-                </span>
-              </div>
-              {p.reserved_by_lead_id && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Reserved by: {leadNames[p.reserved_by_lead_id] ?? "Unknown"}
-                </p>
-              )}
-              {p.deposit_paid_at && (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Paid: {new Date(p.deposit_paid_at).toLocaleDateString()}
-                </p>
-              )}
+      <div className="space-y-8">
+        <h2 className="font-display text-lg font-bold text-foreground">Puppies by Litter</h2>
+
+        {grouped.length === 0 && orphans.length === 0 && (
+          <p className="text-sm text-muted-foreground">No puppies yet.</p>
+        )}
+
+        {grouped.map(({ litter, puppies: pups }) => (
+          <LitterGroup
+            key={litter.id}
+            litter={litter}
+            puppies={pups}
+            leadNames={leadNames}
+          />
+        ))}
+
+        {orphans.length > 0 && (
+          <div>
+            <div className="mb-3 flex items-baseline justify-between">
+              <h3 className="font-display text-base font-bold text-foreground">
+                Unassigned puppies
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Assign these to a litter from the Litters tab
+              </p>
             </div>
-          ))}
-        </div>
+            <PuppyGrid puppies={orphans} leadNames={leadNames} />
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function LitterGroup({
+  litter,
+  puppies,
+  leadNames,
+}: {
+  litter: Litter;
+  puppies: Puppy[];
+  leadNames: Record<string, string>;
+}) {
+  const available = puppies.filter((p) => p.status === "available").length;
+  const total = puppies.length || litter.expected_count || 0;
+  return (
+    <div className="rounded-2xl border border-border bg-card/40 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <h3 className="font-display text-lg font-bold text-foreground">{litter.name}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {[
+              litter.dam_name && litter.sire_name
+                ? `${litter.dam_name} × ${litter.sire_name}`
+                : null,
+              litter.born_date ? `Born ${new Date(litter.born_date).toLocaleDateString()}` : null,
+              litter.ready_date
+                ? `Ready ${new Date(litter.ready_date).toLocaleDateString()}`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" · ") || "No details set"}
+          </p>
+        </div>
+        <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+          {available} of {total} available
+        </span>
+      </div>
+      {puppies.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">No puppies assigned yet.</p>
+      ) : (
+        <div className="mt-4">
+          <PuppyGrid puppies={puppies} leadNames={leadNames} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PuppyGrid({
+  puppies,
+  leadNames,
+}: {
+  puppies: Puppy[];
+  leadNames: Record<string, string>;
+}) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-3">
+      {puppies.map((p) => (
+        <div key={p.id} className="rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-display text-base font-bold text-foreground">{p.name}</h4>
+            <span
+              className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
+                p.status === "available"
+                  ? "bg-green-100 text-green-700"
+                  : p.status === "pending"
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {p.status}
+            </span>
+          </div>
+          {p.reserved_by_lead_id && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Reserved by: {leadNames[p.reserved_by_lead_id] ?? "Unknown"}
+            </p>
+          )}
+          {p.deposit_paid_at && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Paid: {new Date(p.deposit_paid_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
