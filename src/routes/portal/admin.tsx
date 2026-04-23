@@ -1390,6 +1390,209 @@ function slugify(s: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+// ─────────────────────────────────────────────────────────────
+// Dogs (master Dog Manager — every dog the kennel tracks)
+// ─────────────────────────────────────────────────────────────
+
+type DogRow = Puppy & {
+  sex: string | null;
+  dob: string | null;
+  image_url: string | null;
+};
+
+function DogsAdminTab() {
+  const [dogs, setDogs] = useState<DogRow[]>([]);
+  const [litters, setLitters] = useState<Litter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "litter" | "pack" | "unassigned">("all");
+  const [search, setSearch] = useState("");
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    const [{ data: pups }, { data: lits }] = await Promise.all([
+      supabase
+        .from(T.puppies)
+        .select(
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url"
+        )
+        .order("name"),
+      supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
+    ]);
+    setDogs((pups ?? []) as DogRow[]);
+    setLitters((lits ?? []) as Litter[]);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  async function updateDog(id: string, patch: Partial<DogRow>) {
+    const { error } = await supabase.from(T.puppies).update(patch).eq("id", id);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    fetchData();
+  }
+
+  async function handleDelete(dog: DogRow) {
+    if (!confirm(`Delete "${dog.name}"? This cannot be undone.`)) return;
+    const { error } = await supabase.from(T.puppies).delete().eq("id", dog.id);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    fetchData();
+  }
+
+  if (loading) return <div className="text-sm text-muted-foreground">Loading dogs…</div>;
+
+  const litterMap: Record<string, Litter> = Object.fromEntries(litters.map((l) => [l.id, l]));
+  const q = search.trim().toLowerCase();
+
+  const filtered = dogs.filter((d) => {
+    if (q && !d.name.toLowerCase().includes(q)) return false;
+    if (filter === "litter") return !!d.litter_id;
+    if (filter === "pack") return d.status === "placed" || d.status === "alumni";
+    if (filter === "unassigned") return !d.litter_id && d.status !== "placed" && d.status !== "alumni";
+    return true;
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-lg font-bold text-foreground">Dogs</h2>
+          <p className="text-sm text-muted-foreground">
+            Every dog in the program. Assign to a litter, mark as placed (Pack Family), or keep unassigned.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="text"
+          placeholder="Search by name…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-xs rounded-lg border border-input bg-background px-3 py-2 text-sm"
+        />
+        <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
+          {(["all", "litter", "pack", "unassigned"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
+                filter === f
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {f === "pack" ? "Pack Family" : f}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-muted-foreground">{filtered.length} of {dogs.length}</span>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No dogs match.</p>
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3 text-left">Name</th>
+                <th className="px-4 py-3 text-left">Sex</th>
+                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Litter</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((d) => {
+                const lit = d.litter_id ? litterMap[d.litter_id] : null;
+                return (
+                  <tr key={d.id} className="border-t border-border">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {d.image_url ? (
+                          <img
+                            src={d.image_url}
+                            alt={d.name}
+                            className="h-9 w-9 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-9 w-9 rounded-full bg-muted" />
+                        )}
+                        <div>
+                          <p className="font-medium text-foreground">{d.name}</p>
+                          {d.dob && (
+                            <p className="text-xs text-muted-foreground">
+                              Born {new Date(d.dob).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 capitalize text-muted-foreground">
+                      {d.sex ?? "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <select
+                        value={d.status ?? ""}
+                        onChange={(e) => updateDog(d.id, { status: e.target.value })}
+                        className="rounded-md border border-input bg-background px-2 py-1 text-xs"
+                      >
+                        <option value="available">available</option>
+                        <option value="pending">pending</option>
+                        <option value="reserved">reserved</option>
+                        <option value="placed">placed</option>
+                        <option value="alumni">alumni</option>
+                        <option value="hold">hold</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <select
+                        value={d.litter_id ?? ""}
+                        onChange={(e) =>
+                          updateDog(d.id, { litter_id: e.target.value || null })
+                        }
+                        className="rounded-md border border-input bg-background px-2 py-1 text-xs"
+                      >
+                        <option value="">— None —</option>
+                        {litters.map((l) => (
+                          <option key={l.id} value={l.id}>
+                            {l.name}
+                          </option>
+                        ))}
+                      </select>
+                      {lit && (
+                        <p className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {lit.status}
+                        </p>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => handleDelete(d)}
+                        className="rounded-md border border-destructive/30 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LittersAdminTab() {
   const [litters, setLitters] = useState<Litter[]>([]);
   const [puppies, setPuppies] = useState<Puppy[]>([]);
