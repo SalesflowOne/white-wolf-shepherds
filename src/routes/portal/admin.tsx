@@ -48,6 +48,22 @@ type Puppy = {
   reserved_by_lead_id: string | null;
   deposit_paid_at: string | null;
   priority_order: number | null;
+  litter_id: string | null;
+};
+
+type Litter = {
+  id: string;
+  name: string;
+  slug: string;
+  dam_name: string | null;
+  sire_name: string | null;
+  born_date: string | null;
+  ready_date: string | null;
+  expected_count: number | null;
+  status: string;
+  description: string | null;
+  cover_image_url: string | null;
+  priority_order: number;
 };
 
 type Reservation = { amount: number | null };
@@ -86,6 +102,7 @@ type AlumniPost = {
 type AdminTab =
   | "overview"
   | "leads"
+  | "litters"
   | "messages"
   | "updates"
   | "alumni"
