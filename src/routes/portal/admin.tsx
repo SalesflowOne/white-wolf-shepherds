@@ -1398,7 +1398,15 @@ type DogRow = Puppy & {
   sex: string | null;
   dob: string | null;
   image_url: string | null;
+  tier: string | null;
+  price: number | null;
+  collar_color: string | null;
+  personality_bio: string | null;
+  ideal_home: string | null;
+  stripe_payment_link: string | null;
 };
+
+const DOG_STATUSES = ["available", "pending", "reserved", "placed", "alumni", "hold"] as const;
 
 function DogsAdminTab() {
   const [dogs, setDogs] = useState<DogRow[]>([]);
@@ -1406,6 +1414,8 @@ function DogsAdminTab() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "litter" | "pack" | "unassigned">("all");
   const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState<DogRow | null>(null);
+  const [showNew, setShowNew] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -1413,7 +1423,7 @@ function DogsAdminTab() {
       supabase
         .from(T.puppies)
         .select(
-          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url"
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link"
         )
         .order("name"),
       supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
@@ -1468,6 +1478,12 @@ function DogsAdminTab() {
             Every dog in the program. Assign to a litter, mark as placed (Pack Family), or keep unassigned.
           </p>
         </div>
+        <button
+          onClick={() => setShowNew(true)}
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-accent-foreground transition-all hover:brightness-110"
+        >
+          + New Dog
+        </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -1575,12 +1591,20 @@ function DogsAdminTab() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => handleDelete(d)}
-                        className="rounded-md border border-destructive/30 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setEditing(d)}
+                          className="rounded-md border border-border px-2 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(d)}
+                          className="rounded-md border border-destructive/30 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -1589,6 +1613,244 @@ function DogsAdminTab() {
           </table>
         </div>
       )}
+
+      {(showNew || editing) && (
+        <DogFormModal
+          dog={editing}
+          litters={litters}
+          existingSlugs={dogs.map((d) => d.slug ?? "").filter(Boolean)}
+          onClose={() => {
+            setShowNew(false);
+            setEditing(null);
+          }}
+          onSaved={() => {
+            setShowNew(false);
+            setEditing(null);
+            fetchData();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function DogFormModal({
+  dog,
+  litters,
+  existingSlugs,
+  onClose,
+  onSaved,
+}: {
+  dog: DogRow | null;
+  litters: Litter[];
+  existingSlugs: string[];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const isEdit = !!dog;
+  const [name, setName] = useState(dog?.name ?? "");
+  const [slug, setSlug] = useState(dog?.slug ?? "");
+  const [sex, setSex] = useState(dog?.sex ?? "");
+  const [dob, setDob] = useState(dog?.dob ?? "");
+  const [status, setStatus] = useState(dog?.status ?? "available");
+  const [tier, setTier] = useState(dog?.tier ?? "");
+  const [priceStr, setPriceStr] = useState(dog?.price != null ? String(dog.price) : "");
+  const [collarColor, setCollarColor] = useState(dog?.collar_color ?? "");
+  const [imageUrl, setImageUrl] = useState(dog?.image_url ?? "");
+  const [bio, setBio] = useState(dog?.personality_bio ?? "");
+  const [idealHome, setIdealHome] = useState(dog?.ideal_home ?? "");
+  const [stripeLink, setStripeLink] = useState(dog?.stripe_payment_link ?? "");
+  const [litterId, setLitterId] = useState<string>(dog?.litter_id ?? "");
+  const [priorityStr, setPriorityStr] = useState(
+    dog?.priority_order != null ? String(dog.priority_order) : "0"
+  );
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  async function handleImageUpload(file: File) {
+    setUploading(true);
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const key = `dogs/${slugify(name || "dog")}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(key, file);
+    if (error) {
+      alert(`Upload error: ${error.message}`);
+      setUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key);
+    setImageUrl(data.publicUrl);
+    setUploading(false);
+  }
+
+  async function handleSave() {
+    if (!name.trim()) {
+      alert("Name is required");
+      return;
+    }
+    let finalSlug = slug.trim() || slugify(name);
+    if (
+      !isEdit &&
+      existingSlugs.includes(finalSlug)
+    ) {
+      finalSlug = `${finalSlug}-${Date.now().toString(36).slice(-4)}`;
+    }
+    const priceNum = priceStr.trim() ? Number(priceStr) : null;
+    if (priceStr.trim() && Number.isNaN(priceNum)) {
+      alert("Price must be a number");
+      return;
+    }
+    const priorityNum = Number(priorityStr) || 0;
+
+    const payload = {
+      name: name.trim(),
+      slug: finalSlug,
+      sex: sex || null,
+      dob: dob || null,
+      status: status || "available",
+      tier: tier || null,
+      price: priceNum,
+      collar_color: collarColor.trim() || null,
+      image_url: imageUrl.trim() || null,
+      personality_bio: bio.trim() || null,
+      ideal_home: idealHome.trim() || null,
+      stripe_payment_link: stripeLink.trim() || null,
+      litter_id: litterId || null,
+      priority_order: priorityNum,
+    };
+
+    setSaving(true);
+    const { error } = isEdit
+      ? await supabase.from(T.puppies).update(payload).eq("id", dog!.id)
+      : await supabase.from(T.puppies).insert(payload);
+    setSaving(false);
+    if (error) {
+      alert(`Save error: ${error.message}`);
+      return;
+    }
+    onSaved();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-background p-6 shadow-2xl">
+        <div className="mb-5 flex items-center justify-between">
+          <h3 className="font-display text-xl font-bold text-foreground">
+            {isEdit ? `Edit ${dog!.name}` : "New Dog"}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <LabeledInput label="Name *" value={name} onChange={setName} />
+          <LabeledInput
+            label="Slug (URL)"
+            value={slug}
+            onChange={setSlug}
+          />
+          <Field label="Sex">
+            <select
+              value={sex}
+              onChange={(e) => setSex(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">—</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </Field>
+          <Field label="Date of Birth">
+            <input
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            />
+          </Field>
+          <Field label="Status">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            >
+              {DOG_STATUSES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Litter">
+            <select
+              value={litterId}
+              onChange={(e) => setLitterId(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">— None —</option>
+              {litters.map((l) => (
+                <option key={l.id} value={l.id}>{l.name}</option>
+              ))}
+            </select>
+          </Field>
+          <LabeledInput label="Tier" value={tier} onChange={setTier} />
+          <LabeledInput label="Price (USD)" value={priceStr} onChange={setPriceStr} />
+          <LabeledInput label="Collar color" value={collarColor} onChange={setCollarColor} />
+          <LabeledInput label="Priority order" value={priorityStr} onChange={setPriorityStr} />
+          <div className="sm:col-span-2">
+            <LabeledInput label="Stripe payment link" value={stripeLink} onChange={setStripeLink} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-foreground">Profile image</label>
+            <div className="flex items-center gap-3">
+              {imageUrl ? (
+                <img src={imageUrl} alt="" className="h-16 w-16 rounded-lg object-cover" />
+              ) : (
+                <div className="h-16 w-16 rounded-lg bg-muted" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleImageUpload(f);
+                }}
+                className="text-xs"
+              />
+              {uploading && <span className="text-xs text-muted-foreground">Uploading…</span>}
+            </div>
+            <input
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="or paste image URL"
+              className="mt-2 w-full rounded-lg border border-input bg-background px-3 py-2 text-xs"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <LabeledTextarea label="Personality bio" value={bio} onChange={setBio} rows={3} />
+          </div>
+          <div className="sm:col-span-2">
+            <LabeledTextarea label="Ideal home" value={idealHome} onChange={setIdealHome} rows={2} />
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving || uploading}
+            className="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-accent-foreground transition-all hover:brightness-110 disabled:opacity-50"
+          >
+            {saving ? "Saving…" : isEdit ? "Save changes" : "Create dog"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
