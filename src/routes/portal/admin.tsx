@@ -149,10 +149,11 @@ function AdminPage() {
     );
   }
 
-  const tabs: AdminTab[] = ["overview", "leads", "messages", "updates", "alumni", "referrals"];
+  const tabs: AdminTab[] = ["overview", "leads", "litters", "messages", "updates", "alumni", "referrals"];
   const tabLabels: Record<AdminTab, string> = {
     overview: "Overview",
     leads: "Leads",
+    litters: "Litters",
     messages: "Messages",
     updates: "Updates",
     alumni: "Pack Family",
