@@ -38,7 +38,7 @@ export const Route = createFileRoute("/apply")({
 });
 
 function ApplyPage() {
-  const { waitlist, ref } = Route.useSearch();
+  const { waitlist, ref, parent } = Route.useSearch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
