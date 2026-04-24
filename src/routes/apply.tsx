@@ -17,10 +17,12 @@ export const Route = createFileRoute("/apply")({
   validateSearch: (search: Record<string, unknown>): {
     waitlist?: string;
     ref?: string;
+    parent?: string;
   } => {
-    const out: { waitlist?: string; ref?: string } = {};
+    const out: { waitlist?: string; ref?: string; parent?: string } = {};
     if (typeof search.waitlist === "string") out.waitlist = search.waitlist;
     if (typeof search.ref === "string") out.ref = search.ref;
+    if (typeof search.parent === "string") out.parent = search.parent;
     return out;
   },
   head: () => ({
@@ -36,7 +38,7 @@ export const Route = createFileRoute("/apply")({
 });
 
 function ApplyPage() {
-  const { waitlist, ref } = Route.useSearch();
+  const { waitlist, ref, parent } = Route.useSearch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -62,7 +64,9 @@ function ApplyPage() {
   const [otherPets, setOtherPets] = useState("");
   const [preferredPuppyId, setPreferredPuppyId] = useState("");
   const [reasonForBreed, setReasonForBreed] = useState("");
-  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState(
+    parent ? `Inquiry about parent dog: ${parent}` : "",
+  );
   const [source, setSource] = useState("");
 
   const [step1Errors, setStep1Errors] = useState<string[]>([]);
