@@ -6,7 +6,7 @@ export default function Navbar() {
 
   const links = [
     { label: "Current Litter", href: "/litter" as const },
-    { label: "Parents", href: "/parents" as const },
+    { label: "Pack Family", href: "/pack-family" as const },
     { label: "Process", href: "/process" as const },
     { label: "Health & Guarantee", href: "/health-guarantee" as const },
     { label: "FAQ", href: "/faq" as const },
