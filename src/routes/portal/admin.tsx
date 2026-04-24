@@ -1577,7 +1577,10 @@ function DogsAdminTab() {
                           <div className="h-9 w-9 rounded-full bg-muted" />
                         )}
                         <div>
-                          <p className="font-medium text-foreground">{d.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-foreground">{d.name}</p>
+                            <AgeTag dob={d.dob} />
+                          </div>
                           {d.dob && (
                             <p className="text-xs text-muted-foreground">
                               Born {new Date(d.dob).toLocaleDateString()}
