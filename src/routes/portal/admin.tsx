@@ -1507,6 +1507,7 @@ function DogsAdminTab() {
     if (q && !d.name.toLowerCase().includes(q)) return false;
     if (filter === "litter") return !!d.litter_id;
     if (filter === "pack") return d.status === "placed" || d.status === "alumni";
+    if (filter === "parents") return d.status === "parent";
     if (filter === "unassigned") return !d.litter_id && d.status !== "placed" && d.status !== "alumni";
     return true;
   });
