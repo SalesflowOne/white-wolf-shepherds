@@ -1454,7 +1454,7 @@ function DogsAdminTab() {
   const [dogs, setDogs] = useState<DogRow[]>([]);
   const [litters, setLitters] = useState<Litter[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "litter" | "pack" | "unassigned">("all");
+  const [filter, setFilter] = useState<"all" | "litter" | "pack" | "parents" | "unassigned">("all");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<DogRow | null>(null);
   const [showNew, setShowNew] = useState(false);
