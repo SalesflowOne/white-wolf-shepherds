@@ -1406,7 +1406,7 @@ type DogRow = Puppy & {
   stripe_payment_link: string | null;
 };
 
-const DOG_STATUSES = ["available", "pending", "reserved", "placed", "alumni", "hold"] as const;
+const DOG_STATUSES = ["available", "pending", "reserved", "sold", "placed", "alumni", "parent", "retired"] as const;
 
 // Age category: an "Adult" is 1 year (365 days) or older. Puppies < 1 year.
 // Returns null when DOB is unknown so we can render an "Unknown age" tag.
@@ -1608,13 +1608,11 @@ function DogsAdminTab() {
                         onChange={(e) => updateDog(d.id, { status: e.target.value })}
                         className="rounded-md border border-input bg-background px-2 py-1 text-xs"
                       >
-                        <option value="available">available</option>
-                        <option value="pending">pending</option>
-                        <option value="reserved">reserved</option>
-                        <option value="placed">placed</option>
-                        <option value="alumni">alumni</option>
-                        <option value="hold">hold</option>
-                        <option value="parent">parent</option>
+                        {DOG_STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
                       </select>
                     </td>
                     <td className="px-4 py-3">
