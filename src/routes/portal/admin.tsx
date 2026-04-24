@@ -1613,6 +1613,7 @@ function DogsAdminTab() {
                         <option value="placed">placed</option>
                         <option value="alumni">alumni</option>
                         <option value="hold">hold</option>
+                        <option value="parent">parent</option>
                       </select>
                     </td>
                     <td className="px-4 py-3">
