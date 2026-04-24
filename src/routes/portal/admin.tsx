@@ -1419,6 +1419,14 @@ function getAgeCategory(dob: string | null): "puppy" | "adult" | null {
   return ageMs >= oneYearMs ? "adult" : "puppy";
 }
 
+function ParentTag() {
+  return (
+    <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
+      Parent
+    </span>
+  );
+}
+
 function AgeTag({ dob }: { dob: string | null }) {
   const cat = getAgeCategory(dob);
   if (cat === "adult") {
@@ -1580,6 +1588,7 @@ function DogsAdminTab() {
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-foreground">{d.name}</p>
                             <AgeTag dob={d.dob} />
+                            {d.status === "parent" && <ParentTag />}
                           </div>
                           {d.dob && (
                             <p className="text-xs text-muted-foreground">
@@ -1604,6 +1613,7 @@ function DogsAdminTab() {
                         <option value="placed">placed</option>
                         <option value="alumni">alumni</option>
                         <option value="hold">hold</option>
+                        <option value="parent">parent</option>
                       </select>
                     </td>
                     <td className="px-4 py-3">
