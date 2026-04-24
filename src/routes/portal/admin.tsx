@@ -1588,6 +1588,7 @@ function DogsAdminTab() {
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-foreground">{d.name}</p>
                             <AgeTag dob={d.dob} />
+                            {d.status === "parent" && <ParentTag />}
                           </div>
                           {d.dob && (
                             <p className="text-xs text-muted-foreground">
