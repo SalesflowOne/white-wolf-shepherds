@@ -13,6 +13,7 @@ import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as ProcessRouteImport } from './routes/process'
 import { Route as ParentsRouteImport } from './routes/parents'
+import { Route as PackFamilyRouteImport } from './routes/pack-family'
 import { Route as LitterRouteImport } from './routes/litter'
 import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -44,6 +45,11 @@ const ProcessRoute = ProcessRouteImport.update({
 const ParentsRoute = ParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PackFamilyRoute = PackFamilyRouteImport.update({
+  id: '/pack-family',
+  path: '/pack-family',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LitterRoute = LitterRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
+  '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/thank-you': typeof ThankYouRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
+  '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/thank-you': typeof ThankYouRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
+  '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/thank-you': typeof ThankYouRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/health-guarantee'
     | '/litter'
+    | '/pack-family'
     | '/parents'
     | '/process'
     | '/thank-you'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/health-guarantee'
     | '/litter'
+    | '/pack-family'
     | '/parents'
     | '/process'
     | '/thank-you'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/health-guarantee'
     | '/litter'
+    | '/pack-family'
     | '/parents'
     | '/process'
     | '/thank-you'
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   HealthGuaranteeRoute: typeof HealthGuaranteeRoute
   LitterRoute: typeof LitterRoute
+  PackFamilyRoute: typeof PackFamilyRoute
   ParentsRoute: typeof ParentsRoute
   ProcessRoute: typeof ProcessRoute
   ThankYouRoute: typeof ThankYouRoute
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/parents'
       fullPath: '/parents'
       preLoaderRoute: typeof ParentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pack-family': {
+      id: '/pack-family'
+      path: '/pack-family'
+      fullPath: '/pack-family'
+      preLoaderRoute: typeof PackFamilyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/litter': {
@@ -362,6 +382,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   HealthGuaranteeRoute: HealthGuaranteeRoute,
   LitterRoute: LitterRoute,
+  PackFamilyRoute: PackFamilyRoute,
   ParentsRoute: ParentsRoute,
   ProcessRoute: ProcessRoute,
   ThankYouRoute: ThankYouRoute,
