@@ -1408,6 +1408,40 @@ type DogRow = Puppy & {
 
 const DOG_STATUSES = ["available", "pending", "reserved", "placed", "alumni", "hold"] as const;
 
+// Age category: an "Adult" is 1 year (365 days) or older. Puppies < 1 year.
+// Returns null when DOB is unknown so we can render an "Unknown age" tag.
+function getAgeCategory(dob: string | null): "puppy" | "adult" | null {
+  if (!dob) return null;
+  const birth = new Date(dob);
+  if (Number.isNaN(birth.getTime())) return null;
+  const ageMs = Date.now() - birth.getTime();
+  const oneYearMs = 365.25 * 24 * 60 * 60 * 1000;
+  return ageMs >= oneYearMs ? "adult" : "puppy";
+}
+
+function AgeTag({ dob }: { dob: string | null }) {
+  const cat = getAgeCategory(dob);
+  if (cat === "adult") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
+        Adult
+      </span>
+    );
+  }
+  if (cat === "puppy") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+        Puppy
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+      Age unknown
+    </span>
+  );
+}
+
 function DogsAdminTab() {
   const [dogs, setDogs] = useState<DogRow[]>([]);
   const [litters, setLitters] = useState<Litter[]>([]);
