@@ -3198,6 +3198,66 @@ export type Database = {
           },
         ]
       }
+      lead_assignments: {
+        Row: {
+          assignee_user_id: string | null
+          created_at: string
+          first_contacted_at: string | null
+          id: string
+          notes: string | null
+          organization_id: string | null
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_user_id?: string | null
+          created_at?: string
+          first_contacted_at?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string | null
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_user_id?: string | null
+          created_at?: string
+          first_contacted_at?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string | null
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lead_center_saved_views: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           alt_emails: string[]

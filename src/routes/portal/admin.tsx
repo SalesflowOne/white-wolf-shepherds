@@ -1419,6 +1419,14 @@ function getAgeCategory(dob: string | null): "puppy" | "adult" | null {
   return ageMs >= oneYearMs ? "adult" : "puppy";
 }
 
+function ParentTag() {
+  return (
+    <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
+      Parent
+    </span>
+  );
+}
+
 function AgeTag({ dob }: { dob: string | null }) {
   const cat = getAgeCategory(dob);
   if (cat === "adult") {
