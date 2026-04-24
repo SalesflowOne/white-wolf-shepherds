@@ -1454,7 +1454,7 @@ function DogsAdminTab() {
   const [dogs, setDogs] = useState<DogRow[]>([]);
   const [litters, setLitters] = useState<Litter[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "litter" | "pack" | "unassigned">("all");
+  const [filter, setFilter] = useState<"all" | "litter" | "pack" | "parents" | "unassigned">("all");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<DogRow | null>(null);
   const [showNew, setShowNew] = useState(false);
@@ -1507,6 +1507,7 @@ function DogsAdminTab() {
     if (q && !d.name.toLowerCase().includes(q)) return false;
     if (filter === "litter") return !!d.litter_id;
     if (filter === "pack") return d.status === "placed" || d.status === "alumni";
+    if (filter === "parents") return d.status === "parent";
     if (filter === "unassigned") return !d.litter_id && d.status !== "placed" && d.status !== "alumni";
     return true;
   });
@@ -1537,7 +1538,7 @@ function DogsAdminTab() {
           className="w-full max-w-xs rounded-lg border border-input bg-background px-3 py-2 text-sm"
         />
         <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
-          {(["all", "litter", "pack", "unassigned"] as const).map((f) => (
+          {(["all", "litter", "pack", "parents", "unassigned"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -1547,7 +1548,7 @@ function DogsAdminTab() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "pack" ? "Pack Family" : f}
+              {f === "pack" ? "Pack Family" : f === "parents" ? "Parents only" : f}
             </button>
           ))}
         </div>
