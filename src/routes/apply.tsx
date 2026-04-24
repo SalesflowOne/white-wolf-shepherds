@@ -17,10 +17,12 @@ export const Route = createFileRoute("/apply")({
   validateSearch: (search: Record<string, unknown>): {
     waitlist?: string;
     ref?: string;
+    parent?: string;
   } => {
-    const out: { waitlist?: string; ref?: string } = {};
+    const out: { waitlist?: string; ref?: string; parent?: string } = {};
     if (typeof search.waitlist === "string") out.waitlist = search.waitlist;
     if (typeof search.ref === "string") out.ref = search.ref;
+    if (typeof search.parent === "string") out.parent = search.parent;
     return out;
   },
   head: () => ({
