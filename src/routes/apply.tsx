@@ -64,7 +64,9 @@ function ApplyPage() {
   const [otherPets, setOtherPets] = useState("");
   const [preferredPuppyId, setPreferredPuppyId] = useState("");
   const [reasonForBreed, setReasonForBreed] = useState("");
-  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState(
+    parent ? `Inquiry about parent dog: ${parent}` : "",
+  );
   const [source, setSource] = useState("");
 
   const [step1Errors, setStep1Errors] = useState<string[]>([]);
