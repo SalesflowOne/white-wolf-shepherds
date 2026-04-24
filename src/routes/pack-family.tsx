@@ -138,6 +138,16 @@ function PackFamilyPage() {
                       {p.ideal_home}
                     </p>
                   )}
+
+                  <div className="mt-6">
+                    <Link
+                      to="/apply"
+                      search={{ parent: p.name }}
+                      className="inline-block rounded-xl bg-accent px-6 py-3 text-xs font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+                    >
+                      Inquire about {p.name}
+                    </Link>
+                  </div>
                 </article>
               ))}
             </div>
