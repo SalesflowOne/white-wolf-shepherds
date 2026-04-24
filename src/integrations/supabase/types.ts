@@ -25,6 +25,7 @@ export type Database = {
           last_name: string | null
           last_step: number
           last_step_label: string
+          order_id: string | null
           payment_option: string | null
           phone: string | null
           program_code: string
@@ -50,6 +51,7 @@ export type Database = {
           last_name?: string | null
           last_step?: number
           last_step_label?: string
+          order_id?: string | null
           payment_option?: string | null
           phone?: string | null
           program_code: string
@@ -75,6 +77,7 @@ export type Database = {
           last_name?: string | null
           last_step?: number
           last_step_label?: string
+          order_id?: string | null
           payment_option?: string | null
           phone?: string | null
           program_code?: string
@@ -91,6 +94,13 @@ export type Database = {
           zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "abandoned_funnels_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "abandoned_funnels_program_id_fkey"
             columns: ["program_id"]
@@ -673,6 +683,170 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "blog_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bundle_components: {
+        Row: {
+          access_type: Database["public"]["Enums"]["bundle_access_type"]
+          auto_enroll: boolean
+          bundle_id: string
+          component_program_id: string
+          created_at: string
+          duration_months: number | null
+          id: string
+          price_override: number | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          access_type?: Database["public"]["Enums"]["bundle_access_type"]
+          auto_enroll?: boolean
+          bundle_id: string
+          component_program_id: string
+          created_at?: string
+          duration_months?: number | null
+          id?: string
+          price_override?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          access_type?: Database["public"]["Enums"]["bundle_access_type"]
+          auto_enroll?: boolean
+          bundle_id?: string
+          component_program_id?: string
+          created_at?: string
+          duration_months?: number | null
+          id?: string
+          price_override?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_components_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "bundles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundle_components_component_program_id_fkey"
+            columns: ["component_program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bundles: {
+        Row: {
+          active: boolean
+          consecutive_cohorts: boolean | null
+          created_at: string
+          default_installment_amount: number
+          deposit_amount: number
+          description: string | null
+          duration_label: string | null
+          excluded_features: Json | null
+          features: Json | null
+          id: string
+          interest_fee: number
+          legacy_variant_id: string | null
+          max_payments: number
+          name: string
+          organization_id: string | null
+          popular: boolean | null
+          practice_pass_count: number | null
+          practice_reserve_count: number | null
+          practice_weeks: number
+          price: number
+          sort_order: number
+          source_program_id: string
+          source_variant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          consecutive_cohorts?: boolean | null
+          created_at?: string
+          default_installment_amount?: number
+          deposit_amount?: number
+          description?: string | null
+          duration_label?: string | null
+          excluded_features?: Json | null
+          features?: Json | null
+          id?: string
+          interest_fee?: number
+          legacy_variant_id?: string | null
+          max_payments?: number
+          name: string
+          organization_id?: string | null
+          popular?: boolean | null
+          practice_pass_count?: number | null
+          practice_reserve_count?: number | null
+          practice_weeks?: number
+          price?: number
+          sort_order?: number
+          source_program_id: string
+          source_variant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          consecutive_cohorts?: boolean | null
+          created_at?: string
+          default_installment_amount?: number
+          deposit_amount?: number
+          description?: string | null
+          duration_label?: string | null
+          excluded_features?: Json | null
+          features?: Json | null
+          id?: string
+          interest_fee?: number
+          legacy_variant_id?: string | null
+          max_payments?: number
+          name?: string
+          organization_id?: string | null
+          popular?: boolean | null
+          practice_pass_count?: number | null
+          practice_reserve_count?: number | null
+          practice_weeks?: number
+          price?: number
+          sort_order?: number
+          source_program_id?: string
+          source_variant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundles_legacy_variant_id_fkey"
+            columns: ["legacy_variant_id"]
+            isOneToOne: false
+            referencedRelation: "program_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundles_source_program_id_fkey"
+            columns: ["source_program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundles_source_variant_id_fkey"
+            columns: ["source_variant_id"]
+            isOneToOne: false
+            referencedRelation: "program_variants"
             referencedColumns: ["id"]
           },
         ]
@@ -1961,14 +2135,17 @@ export type Database = {
         Row: {
           actual_end_date: string | null
           amount_paid: number
+          bundle_id: string | null
           certificate_url: string | null
           certification_status: string
           cohort_id: string | null
           created_at: string
+          discount_amount: number
           enrollment_date: string
           expected_end_date: string | null
           id: string
           instructor_name: string | null
+          list_price: number
           notes: string | null
           organization_id: string | null
           payment_status: string
@@ -1981,6 +2158,10 @@ export type Database = {
           subscription_expires_at: string | null
           subscription_started_at: string | null
           subscription_type: string | null
+          suspended: boolean
+          suspended_at: string | null
+          suspended_by: string | null
+          suspended_reason: string | null
           total_tuition: number
           updated_at: string
           user_id: string
@@ -1989,14 +2170,17 @@ export type Database = {
         Insert: {
           actual_end_date?: string | null
           amount_paid?: number
+          bundle_id?: string | null
           certificate_url?: string | null
           certification_status?: string
           cohort_id?: string | null
           created_at?: string
+          discount_amount?: number
           enrollment_date?: string
           expected_end_date?: string | null
           id?: string
           instructor_name?: string | null
+          list_price?: number
           notes?: string | null
           organization_id?: string | null
           payment_status?: string
@@ -2009,6 +2193,10 @@ export type Database = {
           subscription_expires_at?: string | null
           subscription_started_at?: string | null
           subscription_type?: string | null
+          suspended?: boolean
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           total_tuition?: number
           updated_at?: string
           user_id: string
@@ -2017,14 +2205,17 @@ export type Database = {
         Update: {
           actual_end_date?: string | null
           amount_paid?: number
+          bundle_id?: string | null
           certificate_url?: string | null
           certification_status?: string
           cohort_id?: string | null
           created_at?: string
+          discount_amount?: number
           enrollment_date?: string
           expected_end_date?: string | null
           id?: string
           instructor_name?: string | null
+          list_price?: number
           notes?: string | null
           organization_id?: string | null
           payment_status?: string
@@ -2037,12 +2228,23 @@ export type Database = {
           subscription_expires_at?: string | null
           subscription_started_at?: string | null
           subscription_type?: string | null
+          suspended?: boolean
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           total_tuition?: number
           updated_at?: string
           user_id?: string
           variant_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "enrollments_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "bundles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "enrollments_cohort_id_fkey"
             columns: ["cohort_id"]
@@ -2998,6 +3200,8 @@ export type Database = {
       }
       leads: {
         Row: {
+          alt_emails: string[]
+          alt_phones: string[]
           created_at: string
           email: string
           id: string
@@ -3006,6 +3210,8 @@ export type Database = {
           program: string
         }
         Insert: {
+          alt_emails?: string[]
+          alt_phones?: string[]
           created_at?: string
           email: string
           id?: string
@@ -3014,6 +3220,8 @@ export type Database = {
           program: string
         }
         Update: {
+          alt_emails?: string[]
+          alt_phones?: string[]
           created_at?: string
           email?: string
           id?: string
@@ -3401,10 +3609,14 @@ export type Database = {
       }
       orders: {
         Row: {
+          auto_charge_enabled: boolean
+          bundle_id: string | null
           cohort_id: string | null
           created_at: string
           deposit_paid: number
+          discount_amount: number
           id: string
+          list_price: number
           order_status: string
           payment_option: string
           payment_status: string
@@ -3412,16 +3624,23 @@ export type Database = {
           reservation_expires_at: string | null
           reserved_at: string | null
           salesflow_synced: boolean
+          square_card_id: string | null
+          square_customer_id: string | null
           start_date_pending: boolean
           total_amount: number
           updated_at: string
+          user_id: string | null
           variant_id: string | null
         }
         Insert: {
+          auto_charge_enabled?: boolean
+          bundle_id?: string | null
           cohort_id?: string | null
           created_at?: string
           deposit_paid?: number
+          discount_amount?: number
           id?: string
+          list_price?: number
           order_status?: string
           payment_option?: string
           payment_status?: string
@@ -3429,16 +3648,23 @@ export type Database = {
           reservation_expires_at?: string | null
           reserved_at?: string | null
           salesflow_synced?: boolean
+          square_card_id?: string | null
+          square_customer_id?: string | null
           start_date_pending?: boolean
           total_amount?: number
           updated_at?: string
+          user_id?: string | null
           variant_id?: string | null
         }
         Update: {
+          auto_charge_enabled?: boolean
+          bundle_id?: string | null
           cohort_id?: string | null
           created_at?: string
           deposit_paid?: number
+          discount_amount?: number
           id?: string
+          list_price?: number
           order_status?: string
           payment_option?: string
           payment_status?: string
@@ -3446,12 +3672,22 @@ export type Database = {
           reservation_expires_at?: string | null
           reserved_at?: string | null
           salesflow_synced?: boolean
+          square_card_id?: string | null
+          square_customer_id?: string | null
           start_date_pending?: boolean
           total_amount?: number
           updated_at?: string
+          user_id?: string | null
           variant_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "bundles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_cohort_id_fkey"
             columns: ["cohort_id"]
@@ -3667,10 +3903,16 @@ export type Database = {
           due_date: string
           enrollment_id: string | null
           failure_reason: string | null
+          flagged_for_review: boolean
           id: string
           installment_number: number
+          last_attempt_at: string | null
+          next_retry_at: string | null
           order_id: string
           paid_at: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          retry_count: number
           square_payment_id: string | null
           status: string
           updated_at: string
@@ -3681,10 +3923,16 @@ export type Database = {
           due_date: string
           enrollment_id?: string | null
           failure_reason?: string | null
+          flagged_for_review?: boolean
           id?: string
           installment_number: number
+          last_attempt_at?: string | null
+          next_retry_at?: string | null
           order_id: string
           paid_at?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retry_count?: number
           square_payment_id?: string | null
           status?: string
           updated_at?: string
@@ -3695,10 +3943,16 @@ export type Database = {
           due_date?: string
           enrollment_id?: string | null
           failure_reason?: string | null
+          flagged_for_review?: boolean
           id?: string
           installment_number?: number
+          last_attempt_at?: string | null
+          next_retry_at?: string | null
           order_id?: string
           paid_at?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retry_count?: number
           square_payment_id?: string | null
           status?: string
           updated_at?: string
@@ -3821,6 +4075,8 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          alt_emails: string[]
+          alt_phones: string[]
           arc_level: number
           avatar_url: string | null
           bio: string | null
@@ -3855,6 +4111,8 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          alt_emails?: string[]
+          alt_phones?: string[]
           arc_level?: number
           avatar_url?: string | null
           bio?: string | null
@@ -3889,6 +4147,8 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          alt_emails?: string[]
+          alt_phones?: string[]
           arc_level?: number
           avatar_url?: string | null
           bio?: string | null
@@ -4141,6 +4401,7 @@ export type Database = {
         Row: {
           allow_reschedule: boolean
           auto_assign_consecutive: boolean
+          consecutive_cohorts: boolean
           created_at: string
           id: string
           max_reschedules_per_pass: number
@@ -4152,6 +4413,7 @@ export type Database = {
         Insert: {
           allow_reschedule?: boolean
           auto_assign_consecutive?: boolean
+          consecutive_cohorts?: boolean
           created_at?: string
           id?: string
           max_reschedules_per_pass?: number
@@ -4163,6 +4425,7 @@ export type Database = {
         Update: {
           allow_reschedule?: boolean
           auto_assign_consecutive?: boolean
+          consecutive_cohorts?: boolean
           created_at?: string
           id?: string
           max_reschedules_per_pass?: number
@@ -7118,9 +7381,21 @@ export type Database = {
         Args: { p_program_id: string; p_user_id: string }
         Returns: undefined
       }
+      find_active_order: {
+        Args: { p_program_id: string; p_user_id: string }
+        Returns: string
+      }
       find_duplicate_payment: {
         Args: { p_amount: number; p_email: string; p_paid_at: string }
         Returns: string
+      }
+      find_profile_by_contact: {
+        Args: { p_email: string; p_phone?: string }
+        Returns: {
+          email: string
+          profile_id: string
+          user_id: string
+        }[]
       }
       generate_cohort_sessions: {
         Args: { p_cohort_id: string; p_force?: boolean }
@@ -7180,6 +7455,42 @@ export type Database = {
       invoke_reconcile_schedules: { Args: never; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_org_member: { Args: { org_id: string }; Returns: boolean }
+      link_payment_to_order: {
+        Args: { p_order_id: string; p_payment_log_id: string }
+        Returns: undefined
+      }
+      merge_profile_contact: {
+        Args: {
+          p_email?: string
+          p_first_name?: string
+          p_last_name?: string
+          p_phone?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      normalize_phone: { Args: { p: string }; Returns: string }
+      search_unmatched_payments: {
+        Args: { p_amount?: number; p_days?: number; p_email?: string }
+        Returns: {
+          amount: number
+          buyer_email: string
+          created_at: string
+          id: string
+          provider: string
+          provider_transaction_id: string
+          status: string
+        }[]
+      }
+      upsert_lead: {
+        Args: {
+          p_email: string
+          p_name: string
+          p_phone: string
+          p_program: string
+        }
+        Returns: string
+      }
       wws_is_admin: { Args: { uid: string }; Returns: boolean }
     }
     Enums: {
@@ -7190,6 +7501,7 @@ export type Database = {
         | "instructor"
         | "super_instructor"
         | "super_admin"
+      bundle_access_type: "lifetime" | "months" | "until_exam"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "voice" | "video"
       connection_status: "pending" | "accepted" | "blocked"
@@ -7364,6 +7676,7 @@ export const Constants = {
         "super_instructor",
         "super_admin",
       ],
+      bundle_access_type: ["lifetime", "months", "until_exam"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["voice", "video"],
       connection_status: ["pending", "accepted", "blocked"],
