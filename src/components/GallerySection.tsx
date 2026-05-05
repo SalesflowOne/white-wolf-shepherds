@@ -1,15 +1,11 @@
-import gallery1 from "@/assets/gallery-1.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import gallery3 from "@/assets/gallery-3.jpg";
-import puppy2 from "@/assets/puppy-2.jpg";
-import heroImg from "@/assets/hero-dogs.jpg";
+import galleryPile from "@/assets/gallery-pile.jpg";
+import galleryYard from "@/assets/gallery-yard.jpg";
+import galleryHouses from "@/assets/gallery-houses.jpg";
 
 const images = [
-  { src: gallery1, alt: "Children playing with a white German Shepherd", span: "col-span-2 row-span-2" },
-  { src: gallery2, alt: "White shepherd on a mountain trail at sunrise", span: "" },
-  { src: gallery3, alt: "Mother shepherd with puppies in the snow", span: "" },
-  { src: puppy2, alt: "Mother with her puppies", span: "" },
-  { src: heroImg, alt: "Pack of white shepherds running", span: "col-span-2" },
+  { src: galleryYard, alt: "White shepherd mother with her pack in the yard", span: "col-span-2 row-span-2" },
+  { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together", span: "" },
+  { src: galleryHouses, alt: "White shepherds resting by their dog houses", span: "" },
 ];
 
 export default function GallerySection() {
