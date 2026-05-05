@@ -2723,6 +2723,8 @@ export type Database = {
       ghl_calendar_mappings: {
         Row: {
           active: boolean
+          cohort_frequency_anchor_date: string | null
+          cohort_frequency_weeks: number
           cohort_start_days: number[] | null
           created_at: string
           ghl_calendar_id: string
@@ -2736,6 +2738,8 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          cohort_frequency_anchor_date?: string | null
+          cohort_frequency_weeks?: number
           cohort_start_days?: number[] | null
           created_at?: string
           ghl_calendar_id: string
@@ -2749,6 +2753,8 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          cohort_frequency_anchor_date?: string | null
+          cohort_frequency_weeks?: number
           cohort_start_days?: number[] | null
           created_at?: string
           ghl_calendar_id?: string
@@ -3924,7 +3930,9 @@ export type Database = {
           provider: string
           provider_transaction_id: string | null
           raw_response_json: Json | null
+          square_customer_id: string | null
           status: string
+          user_id: string | null
         }
         Insert: {
           amount?: number
@@ -3934,7 +3942,9 @@ export type Database = {
           provider?: string
           provider_transaction_id?: string | null
           raw_response_json?: Json | null
+          square_customer_id?: string | null
           status?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -3944,7 +3954,9 @@ export type Database = {
           provider?: string
           provider_transaction_id?: string | null
           raw_response_json?: Json | null
+          square_customer_id?: string | null
           status?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -4126,6 +4138,72 @@ export type Database = {
           {
             foreignKeyName: "payout_settings_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pending_lead_followups: {
+        Row: {
+          attempt_count: number
+          cancelled_reason: string | null
+          created_at: string
+          dispatched_at: string | null
+          error_message: string | null
+          id: string
+          last_attempt_at: string | null
+          lead_application_id: string
+          profile_id: string | null
+          request_id: number | null
+          response_status: number | null
+          scheduled_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          cancelled_reason?: string | null
+          created_at?: string
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          lead_application_id: string
+          profile_id?: string | null
+          request_id?: number | null
+          response_status?: number | null
+          scheduled_at: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          cancelled_reason?: string | null
+          created_at?: string
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          lead_application_id?: string
+          profile_id?: string | null
+          request_id?: number | null
+          response_status?: number | null
+          scheduled_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_lead_followups_lead_application_id_fkey"
+            columns: ["lead_application_id"]
+            isOneToOne: true
+            referencedRelation: "lead_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_lead_followups_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -7412,8 +7490,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_user_directory: {
+        Args: {
+          p_filter_appt?: string
+          p_filter_cta?: string
+          p_filter_enroll_started?: string
+          p_filter_path?: string
+          p_filter_portal?: string
+          p_filter_program?: string
+          p_limit?: number
+          p_offset?: number
+          p_role?: string
+          p_search?: string
+          p_sort_asc?: boolean
+          p_sort_field?: string
+          p_status?: string
+          p_tab?: string
+        }
+        Returns: Json
+      }
+      admin_user_directory_counts: { Args: never; Returns: Json }
       auto_archive_inactive_leads: { Args: never; Returns: undefined }
       check_enrollment_expiry: { Args: never; Returns: undefined }
+      check_import_history_token: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
       create_cohort_with_sessions: {
         Args: {
           p_ghl_event_id?: string
@@ -7542,6 +7644,8 @@ export type Database = {
           status: string
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       upsert_lead: {
         Args: {
           p_email: string
