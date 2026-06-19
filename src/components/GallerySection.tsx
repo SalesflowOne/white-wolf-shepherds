@@ -19,7 +19,7 @@ export default function GallerySection() {
           </h2>
         </div>
 
-        <div className="mt-16 grid auto-rows-[220px] grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="mt-16 grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((img, i) => (
             <div
               key={i}
