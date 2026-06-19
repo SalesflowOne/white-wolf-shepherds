@@ -95,19 +95,18 @@ function PackFamilyPage() {
                   key={p.id}
                   className="rounded-2xl bg-card p-8 shadow-card"
                 >
-                  <div className="overflow-hidden rounded-xl bg-muted">
-                    {p.image_url ? (
-                      <img
-                        src={p.image_url}
-                        alt={`${p.name}, White Wolf Shepherds parent dog`}
-                        loading="lazy"
-                        className="h-72 w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-72 w-full items-center justify-center text-sm text-muted-foreground">
-                        Photo coming soon
-                      </div>
-                    )}
+                  <div className="relative overflow-hidden rounded-xl bg-muted">
+                    <img
+                      src={p.image_url ?? (p.sex === "male" ? demoSire : demoDam)}
+                      alt={`${p.name}, White Wolf Shepherds parent dog`}
+                      loading="lazy"
+                      className="h-72 w-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
+                        Real image coming soon
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mt-6 flex items-center gap-3">
