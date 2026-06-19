@@ -3,9 +3,9 @@ import galleryYard from "@/assets/gallery-yard.jpg";
 import galleryHouses from "@/assets/gallery-houses.jpg";
 
 const images = [
-  { src: galleryYard, alt: "White shepherd mother with her pack in the yard", span: "col-span-2 row-span-2" },
-  { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together", span: "" },
-  { src: galleryHouses, alt: "White shepherds resting by their dog houses", span: "" },
+  { src: galleryYard, alt: "White shepherd mother with her pack in the yard" },
+  { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together" },
+  { src: galleryHouses, alt: "White shepherds resting by their dog houses" },
 ];
 
 export default function GallerySection() {
@@ -23,7 +23,7 @@ export default function GallerySection() {
           {images.map((img, i) => (
             <div
               key={i}
-              className={`overflow-hidden rounded-xl ${img.span}`}
+              className="overflow-hidden rounded-xl"
             >
               <img
                 src={img.src}
