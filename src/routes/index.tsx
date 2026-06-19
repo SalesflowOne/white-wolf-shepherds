@@ -35,7 +35,7 @@ function Index() {
       <Navbar />
       <HeroSection />
       <AboutSection />
-      {/* <PuppiesSection /> */}
+      <PuppiesSection />
       <GallerySection />
       <TestimonialsSection />
       <ContactSection />
