@@ -23,7 +23,7 @@ export default function GallerySection() {
           {images.map((img, i) => (
             <div
               key={i}
-              className={`overflow-hidden rounded-xl ${img.span}`}
+              className="overflow-hidden rounded-xl"
             >
               <img
                 src={img.src}
