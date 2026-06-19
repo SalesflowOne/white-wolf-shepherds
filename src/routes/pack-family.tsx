@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase, T } from "@/integrations/supabase/client";
+import demoSire from "@/assets/demo-sire.jpg";
+import demoDam from "@/assets/demo-dam.jpg";
 
 export const Route = createFileRoute("/pack-family")({
   component: PackFamilyPage,
