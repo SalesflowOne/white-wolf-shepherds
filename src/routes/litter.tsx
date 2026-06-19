@@ -431,6 +431,11 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
             </span>
           </div>
         )}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
+            Real image coming soon
+          </span>
+        </div>
 
         {/* Status badge */}
         <span
