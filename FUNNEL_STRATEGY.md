@@ -69,7 +69,7 @@ the Stripe link is unset.
 
 - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (required for the server actions to write leads),
   `VITE_PUBLIC_SUPABASE_URL`, `VITE_PUBLIC_SUPABASE_ANON_KEY`.
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Optional: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (Stripe webhook destination `we_1TkTb03uAnQgrKo281RYGYc6` → Supabase `stripe-webhook`). Optional: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
 
 ### Tasks
 

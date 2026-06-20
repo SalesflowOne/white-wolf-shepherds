@@ -115,11 +115,21 @@ Already deployed as a Supabase edge function (`supabase/functions/stripe-webhook
 
 ### Register it in Stripe
 
+Configured endpoint:
+
+- **Destination ID:** `we_1TkTb03uAnQgrKo281RYGYc6`
+- **URL:** `https://ebjzdcnphkfpxfldnatm.supabase.co/functions/v1/stripe-webhook`
+- **Event:** `checkout.session.completed`
+- **Signing secret env var:** `STRIPE_WEBHOOK_SECRET`
+
+To recreate manually:
+
 1. Stripe Dashboard → **Developers → Webhooks → Add endpoint**.
 2. Endpoint URL: `https://ebjzdcnphkfpxfldnatm.supabase.co/functions/v1/stripe-webhook`.
 3. Events to listen for: `checkout.session.completed`.
-4. Copy the signing secret and set it as the function's `STRIPE_WEBHOOK_SECRET` secret (**Supabase Dashboard → Edge Functions → stripe-webhook → Manage secrets**).
-5. Also set `STRIPE_SECRET_KEY`, `TELEGRAM_BOT_TOKEN`, and `TELEGRAM_CHAT_ID` as secrets.
+4. Copy the signing secret and set it as the function's `STRIPE_WEBHOOK_SECRET` secret (**Supabase Dashboard → Edge Functions → stripe-webhook → Manage secrets**, or `supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_... --project-ref ebjzdcnphkfpxfldnatm`).
+5. Also set `STRIPE_WEBHOOK_SECRET` in Vercel (production/preview/development) and local `.env`.
+6. Also set `STRIPE_SECRET_KEY`, `TELEGRAM_BOT_TOKEN`, and `TELEGRAM_CHAT_ID` as Supabase edge secrets.
 
 ### Required Stripe metadata on Checkout Sessions
 
