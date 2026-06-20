@@ -2,22 +2,18 @@ import { createServerFn } from '@tanstack/react-start';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
-const SERVER_URL =
-  process.env.SUPABASE_URL ??
-  process.env.NEXT_PUBLIC_SUPABASE_URL ??
-  process.env.VITE_PUBLIC_SUPABASE_URL ??
-  '';
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-const ANON_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-  process.env.VITE_PUBLIC_SUPABASE_ANON_KEY ??
-  process.env.SUPABASE_PUBLISHABLE_KEY ??
-  '';
-
 // Service-role client used only inside server functions to perform
 // privileged operations (createUser, writing leads/profiles before the
 // user has a session, etc.). NEVER imported into client code.
+// Env vars are read inside the function: on the Worker runtime, process.env
+// is populated per-request, so module-scope reads return empty strings.
 function adminClient() {
+  const SERVER_URL =
+    process.env.SUPABASE_URL ??
+    process.env.NEXT_PUBLIC_SUPABASE_URL ??
+    process.env.VITE_PUBLIC_SUPABASE_URL ??
+    '';
+  const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
   if (!SERVER_URL || !SERVICE_ROLE_KEY) {
     throw new Error(
       'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set for server actions'
@@ -29,6 +25,12 @@ function adminClient() {
 }
 
 function anonServerClient() {
+  const SERVER_URL = process.env.SUPABASE_URL ?? '';
+  const ANON_KEY =
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.VITE_PUBLIC_SUPABASE_ANON_KEY ??
+    '';
   if (!SERVER_URL || !ANON_KEY) {
     throw new Error('SUPABASE_URL and anon key required');
   }
