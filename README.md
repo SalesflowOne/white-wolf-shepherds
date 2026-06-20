@@ -174,7 +174,10 @@ If you're using hosted Stripe Payment Links, use `metadata` on the link itself a
 
 ```bash
 supabase functions deploy stripe-webhook --no-verify-jwt
+supabase functions deploy wws-funnel --no-verify-jwt
 ```
+
+The apply funnel (`/apply`) calls the `wws-funnel` edge function directly so it does not require `SUPABASE_SERVICE_ROLE_KEY` on Vercel.
 
 (`--no-verify-jwt` is required — Stripe cannot send a Supabase JWT.)
 
