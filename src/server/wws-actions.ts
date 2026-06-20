@@ -84,7 +84,18 @@ function computeScore(i: z.infer<typeof applicationInput>): number {
 export const submitApplication = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => applicationInput.parse(data))
   .handler(async ({ data }: { data: z.infer<typeof applicationInput> }) => {
-    const admin = adminClient();
+    console.log('[submitApplication] env', {
+      hasUrl: !!process.env.SUPABASE_URL,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      hasAnon: !!process.env.SUPABASE_PUBLISHABLE_KEY,
+    });
+    let admin;
+    try {
+      admin = adminClient();
+    } catch (e) {
+      console.error('[submitApplication] adminClient init failed', e);
+      throw e;
+    }
 
     // 1. INSERT lead
     const score = computeScore(data);
