@@ -57,9 +57,7 @@ export default function HeroSection() {
           Rare White German Shepherd Puppies
         </p>
         <h1 className="font-display text-6xl font-semibold leading-[1.05] tracking-tight text-primary-foreground sm:text-7xl lg:text-8xl">
-          Welcome to the{" "}
-          <span className="text-gradient-ice font-bold">White Wolf</span>{" "}
-          Bloodline
+          Welcome to the <span className="text-gradient-ice font-bold">White Wolf</span> Bloodline
         </h1>
         <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-primary-foreground/75 sm:text-xl">
           Health-tested, family-raised White German Shepherd puppies for select homes.
@@ -80,27 +78,47 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <div
-          className="mt-12 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4 transition-opacity duration-300"
+          className="mt-12 flex flex-col items-center gap-4 transition-opacity duration-300"
           style={{ opacity: mounted ? 1 : 0 }}
         >
           <a
             href="/apply"
             className="rounded-lg bg-accent px-10 py-5 text-sm font-bold uppercase tracking-[0.18em] text-accent-foreground shadow-wolf transition-all hover:brightness-110"
           >
-            Begin Application
+            Meet the Puppies
           </a>
           <a
-            href="/litter"
-            className="rounded-lg border border-primary-foreground/25 px-10 py-5 text-sm font-semibold uppercase tracking-[0.18em] text-primary-foreground transition-all hover:border-primary-foreground/50 hover:bg-primary-foreground/5"
+            href="/apply"
+            className="text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground/80 underline-offset-4 transition-colors hover:text-primary-foreground hover:underline"
           >
-            View Current Litter
+            Start Your Puppy Match
+          </a>
+
+          <p className="mt-2 max-w-xl text-xs leading-relaxed text-primary-foreground/55">
+            Start with your contact info and a short Puppy Match Call, then complete your
+            application, place a $500 fully-refundable deposit to hold your spot, and meet the
+            puppies on a private video call.
+          </p>
+
+          <a
+            href="/litter"
+            className="text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground/45 transition-colors hover:text-primary-foreground/70"
+          >
+            or view the current litter →
           </a>
         </div>
       </div>
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-primary-foreground/50"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
       </div>

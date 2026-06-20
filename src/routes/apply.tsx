@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
-import { submitApplication } from "@/server/wws-actions";
+import { startLead, markMatchCallBooked, submitApplicationDetails } from "@/server/wws-actions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import GhlCalendarEmbed from "@/components/GhlCalendarEmbed";
 
 type AvailablePuppy = {
   id: string;
@@ -12,9 +13,16 @@ type AvailablePuppy = {
   price: number | null;
 };
 
+const MATCH_CALL_URL = import.meta.env.VITE_PUBLIC_GHL_MATCH_CALL_URL as string | undefined;
+const RESERVATION_LINK = import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK as string | undefined;
+
+const TOTAL_STEPS = 4;
+
 export const Route = createFileRoute("/apply")({
   component: ApplyPage,
-  validateSearch: (search: Record<string, unknown>): {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
     waitlist?: string;
     ref?: string;
     parent?: string;
@@ -27,11 +35,11 @@ export const Route = createFileRoute("/apply")({
   },
   head: () => ({
     meta: [
-      { title: "Apply — White Wolf Shepherds" },
+      { title: "Meet the Puppies — White Wolf Shepherds" },
       {
         name: "description",
         content:
-          "Apply to reserve a White German Shepherd puppy from our Spring 2026 litter.",
+          "Start your Puppy Match: share your contact info, book a Puppy Match Call, and reserve your spot for our White German Shepherd litter.",
       },
     ],
   }),
@@ -40,23 +48,25 @@ export const Route = createFileRoute("/apply")({
 function ApplyPage() {
   const { waitlist, ref, parent } = Route.useSearch();
   const navigate = useNavigate();
+  const isWaitlist = waitlist === "true";
+
   const [step, setStep] = useState(1);
-  const [submitting, setSubmitting] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [leadId, setLeadId] = useState<string | null>(null);
   const [availablePuppies, setAvailablePuppies] = useState<AvailablePuppy[]>([]);
 
-  // Step 1 fields
+  // Stage 1 — Contact
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [preferredSex, setPreferredSex] =
-    useState<"male" | "female" | "either">("either");
+
+  // Stage 3 — Application
+  const [preferredSex, setPreferredSex] = useState<"male" | "female" | "either">("either");
   const [timeline, setTimeline] = useState<"" | "ready_now" | "1_3_months" | "future">("");
   const [hasOwnedLargeDog, setHasOwnedLargeDog] = useState<"" | "yes" | "no">("");
   const [readyForDeposit, setReadyForDeposit] = useState<"" | "yes" | "no" | "info">("");
-
-  // Step 2 fields
   const [householdType, setHouseholdType] = useState("");
   const [hasFencedYard, setHasFencedYard] = useState<"" | "yes" | "no" | "in_progress">("");
   const [familySize, setFamilySize] = useState<number | "">("");
@@ -69,15 +79,15 @@ function ApplyPage() {
   );
   const [source, setSource] = useState("");
 
-  const [step1Errors, setStep1Errors] = useState<string[]>([]);
-  const [step2Errors, setStep2Errors] = useState<string[]>([]);
+  const [contactErrors, setContactErrors] = useState<string[]>([]);
+  const [appErrors, setAppErrors] = useState<string[]>([]);
 
   // Referral capture
   useEffect(() => {
     if (ref) sessionStorage.setItem("wwreferral", ref);
   }, [ref]);
 
-  // Load available puppies for Step 2 select
+  // Load available puppies for the application select
   useEffect(() => {
     async function fetchPuppies() {
       const { data } = await supabase
@@ -90,55 +100,107 @@ function ApplyPage() {
     fetchPuppies();
   }, []);
 
-  function validateStep1(): boolean {
+  function validateContact(): boolean {
     const errs: string[] = [];
     if (!fullName.trim()) errs.push("Full name is required");
     if (!email.trim() || !email.includes("@")) errs.push("A valid email is required");
     if (!phone.trim()) errs.push("Phone is required");
     if (!city.trim()) errs.push("City is required");
     if (!state.trim()) errs.push("State is required");
-    if (!timeline) errs.push("Timeline is required");
-    if (!hasOwnedLargeDog) errs.push("Large dog experience is required");
-    if (!readyForDeposit) errs.push("Reservation readiness is required");
-    setStep1Errors(errs);
+    setContactErrors(errs);
     return errs.length === 0;
   }
 
-  function validateStep2(): boolean {
+  function validateApplication(): boolean {
     const errs: string[] = [];
+    if (!timeline) errs.push("Timeline is required");
+    if (!hasOwnedLargeDog) errs.push("Large dog experience is required");
+    if (!readyForDeposit) errs.push("Reservation readiness is required");
     if (!householdType) errs.push("Household type is required");
     if (!hasFencedYard) errs.push("Fenced yard status is required");
     if (!familySize || familySize < 1) errs.push("Family size is required");
     if (!reasonForBreed.trim() || reasonForBreed.trim().length < 50)
       errs.push("Please share at least 50 characters about why you want this breed");
     if (!source) errs.push("How you heard about us is required");
-    setStep2Errors(errs);
+    setAppErrors(errs);
     return errs.length === 0;
   }
 
-  function handleContinue() {
-    if (validateStep1()) {
-      setStep(2);
-      window.scrollTo(0, 0);
+  function persistFunnel(id: string) {
+    try {
+      localStorage.setItem(
+        "wws_funnel",
+        JSON.stringify({
+          leadId: id,
+          name: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+        }),
+      );
+    } catch {
+      /* ignore storage failures */
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!validateStep2()) return;
-
-    setSubmitting(true);
-
+  async function handleContactContinue() {
+    if (!validateContact()) return;
+    setBusy(true);
     try {
       const referralCode = sessionStorage.getItem("wwreferral") ?? null;
-
-      const result = await submitApplication({
+      const result = await startLead({
         data: {
           fullName: fullName.trim(),
           email: email.trim().toLowerCase(),
           phone: phone.trim(),
           city: city.trim(),
           state: state.trim(),
+          referralCode,
+          waitlist: isWaitlist,
+        },
+      });
+      setLeadId(result.leadId);
+      persistFunnel(result.leadId);
+
+      if (isWaitlist) {
+        sessionStorage.removeItem("wwreferral");
+        navigate({ to: "/thank-you", search: { name: result.firstName } });
+        return;
+      }
+      setStep(2);
+      window.scrollTo(0, 0);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong.";
+      setContactErrors([`We couldn't save your info: ${msg}`]);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleMatchCallBooked() {
+    if (leadId) {
+      try {
+        await markMatchCallBooked({ data: { leadId } });
+      } catch {
+        /* non-blocking — don't trap the applicant if the marker write fails */
+      }
+    }
+    setStep(3);
+    window.scrollTo(0, 0);
+  }
+
+  async function handleApplicationSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validateApplication()) return;
+    if (!leadId) {
+      setAppErrors(["Your session expired. Please start again from your contact info."]);
+      setStep(1);
+      return;
+    }
+    setBusy(true);
+    try {
+      await submitApplicationDetails({
+        data: {
+          leadId,
           preferredSex,
           timeline: timeline as "ready_now" | "1_3_months" | "future",
           hasOwnedLargeDog: hasOwnedLargeDog === "yes",
@@ -152,17 +214,28 @@ function ApplyPage() {
           reasonForBreed: reasonForBreed.trim(),
           additionalNotes: additionalNotes.trim() || null,
           source,
-          waitlist: waitlist === "true",
-          referralCode,
         },
       });
-
       sessionStorage.removeItem("wwreferral");
-      navigate({ to: "/thank-you", search: { name: result.firstName } });
+      setStep(4);
+      window.scrollTo(0, 0);
     } catch (err) {
-      setSubmitting(false);
       const msg = err instanceof Error ? err.message : "Submission failed.";
-      setStep2Errors([`There was an error submitting your application: ${msg}`]);
+      setAppErrors([`There was an error submitting your application: ${msg}`]);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function depositHref(): string {
+    if (!RESERVATION_LINK) return "#";
+    try {
+      const url = new URL(RESERVATION_LINK);
+      if (leadId) url.searchParams.set("client_reference_id", leadId);
+      if (email.trim()) url.searchParams.set("prefilled_email", email.trim().toLowerCase());
+      return url.toString();
+    } catch {
+      return RESERVATION_LINK;
     }
   }
 
@@ -170,6 +243,26 @@ function ApplyPage() {
     tier === "premier" ? "Premier" : tier === "preferred" ? "Preferred" : "Companion";
 
   const charCount = reasonForBreed.trim().length;
+
+  const stepTitle =
+    step === 1
+      ? isWaitlist
+        ? "Join the Waitlist"
+        : "Let's Start Your Puppy Match"
+      : step === 2
+        ? "Book Your Puppy Match Call"
+        : step === 3
+          ? "Your Application"
+          : "Reserve Your Spot";
+
+  const stepSubtitle =
+    step === 1
+      ? "Start with your contact info — it takes less than a minute."
+      : step === 2
+        ? "A short, friendly call so we can get to know you and answer your questions."
+        : step === 3
+          ? "Tell us a little more about your home so we can find the right match."
+          : "Place your fully-refundable $500 deposit to hold your spot in line.";
 
   return (
     <div className="min-h-screen">
@@ -179,48 +272,42 @@ function ApplyPage() {
         <div className="mx-auto max-w-2xl px-6">
           <div className="text-center">
             <h1 className="font-display text-3xl font-bold text-foreground lg:text-4xl">
-              {waitlist ? "Join the Waitlist" : "Apply for This Litter"}
+              {stepTitle}
             </h1>
-            <p className="mt-3 text-muted-foreground">
-              {waitlist
-                ? "All puppies from this litter are reserved. Join our waitlist to be notified about our next litter."
-                : "We review every application personally and respond within 24\u201348 hours."}
-            </p>
+            <p className="mt-3 text-muted-foreground">{stepSubtitle}</p>
           </div>
 
           {/* Progress */}
-          <div className="mt-10">
-            <div className="flex items-center justify-between text-sm font-medium">
-              <span className={step >= 1 ? "text-accent" : "text-muted-foreground"}>
-                Step 1 of 2
-              </span>
-              <span className={step >= 2 ? "text-accent" : "text-muted-foreground"}>
-                Step 2 of 2
-              </span>
+          {!isWaitlist && (
+            <div className="mt-10">
+              <div className="flex items-center justify-between text-sm font-medium">
+                <span className="text-accent">
+                  Step {step} of {TOTAL_STEPS}
+                </span>
+                <span className="text-muted-foreground">
+                  {step === 1
+                    ? "Contact"
+                    : step === 2
+                      ? "Match Call"
+                      : step === 3
+                        ? "Application"
+                        : "Deposit"}
+                </span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-accent transition-all duration-300"
+                  style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
+                />
+              </div>
             </div>
-            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-accent transition-all duration-300"
-                style={{ width: step === 1 ? "50%" : "100%" }}
-              />
-            </div>
-          </div>
+          )}
 
-          <form
-            onSubmit={handleSubmit}
-            className="mt-10 rounded-2xl bg-card p-8 shadow-card sm:p-10"
-          >
+          <div className="mt-10 rounded-2xl bg-card p-8 shadow-card sm:p-10">
+            {/* ── Stage 1: Contact ── */}
             {step === 1 && (
               <div className="space-y-6">
-                {step1Errors.length > 0 && (
-                  <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-                    <ul className="list-inside list-disc text-sm text-red-700">
-                      {step1Errors.map((err) => (
-                        <li key={err}>{err}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {contactErrors.length > 0 && <ErrorList errors={contactErrors} />}
 
                 <Field label="Full Name *">
                   <input
@@ -241,7 +328,8 @@ function ApplyPage() {
                     placeholder="john@example.com"
                   />
                   <p className="mt-1 text-xs text-muted-foreground">
-                    We'll use this to create your portal account and send you a magic link — no password required.
+                    We'll use this to create your portal account and send you a magic link — no
+                    password required.
                   </p>
                 </Field>
 
@@ -275,6 +363,49 @@ function ApplyPage() {
                     />
                   </Field>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleContactContinue}
+                  disabled={busy}
+                  className="mt-2 w-full rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {busy ? "Saving..." : isWaitlist ? "Join the Waitlist →" : "Continue →"}
+                </button>
+              </div>
+            )}
+
+            {/* ── Stage 2: Puppy Match Call ── */}
+            {step === 2 && (
+              <div className="space-y-6">
+                <p className="text-sm text-muted-foreground">
+                  Pick a time that works for you below. Once you've booked, tap
+                  <span className="font-medium text-foreground"> continue</span> to finish your
+                  application.
+                </p>
+                <GhlCalendarEmbed
+                  src={MATCH_CALL_URL}
+                  prefill={{ name: fullName, email, phone }}
+                  onBooked={handleMatchCallBooked}
+                  continueLabel="I've booked my call — continue →"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep(1);
+                    window.scrollTo(0, 0);
+                  }}
+                  className="w-full rounded-xl border border-border py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
+                >
+                  ← Back
+                </button>
+              </div>
+            )}
+
+            {/* ── Stage 3: Application ── */}
+            {step === 3 && (
+              <form onSubmit={handleApplicationSubmit} className="space-y-6">
+                {appErrors.length > 0 && <ErrorList errors={appErrors} />}
 
                 <Field label="Preferred Sex">
                   <RadioRow
@@ -314,7 +445,7 @@ function ApplyPage() {
                   />
                 </Field>
 
-                <Field label="Are you ready to place a Reservation Fee if approved? *">
+                <Field label="Are you ready to place a refundable Reservation Fee? *">
                   <RadioStack
                     name="readyForDeposit"
                     value={readyForDeposit}
@@ -326,28 +457,6 @@ function ApplyPage() {
                     ]}
                   />
                 </Field>
-
-                <button
-                  type="button"
-                  onClick={handleContinue}
-                  className="mt-2 w-full rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
-                >
-                  Continue &rarr;
-                </button>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="space-y-6">
-                {step2Errors.length > 0 && (
-                  <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-                    <ul className="list-inside list-disc text-sm text-red-700">
-                      {step2Errors.map((err) => (
-                        <li key={err}>{err}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
 
                 <Field label="Household Type *">
                   <SelectInput
@@ -381,9 +490,7 @@ function ApplyPage() {
                     type="number"
                     min={1}
                     value={familySize}
-                    onChange={(e) =>
-                      setFamilySize(e.target.value ? parseInt(e.target.value) : "")
-                    }
+                    onChange={(e) => setFamilySize(e.target.value ? parseInt(e.target.value) : "")}
                     className={inputCls}
                     placeholder="4"
                   />
@@ -467,28 +574,67 @@ function ApplyPage() {
                   />
                 </Field>
 
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep(1);
-                      window.scrollTo(0, 0);
-                    }}
-                    className="flex-1 rounded-xl border border-border py-3 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:bg-muted"
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="w-full rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {busy ? "Submitting..." : "Submit Application →"}
+                </button>
+              </form>
+            )}
+
+            {/* ── Stage 4: Refundable Deposit ── */}
+            {step === 4 && (
+              <div className="space-y-6 text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-7 w-7 text-accent"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
                   >
-                    &larr; Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex-[2] rounded-xl bg-accent py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {submitting ? "Submitting..." : "Submit Application"}
-                  </button>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
+                <h2 className="font-display text-2xl font-bold text-foreground">
+                  Application received — let's hold your spot
+                </h2>
+                <p className="text-muted-foreground">
+                  Your{" "}
+                  <span className="font-semibold text-foreground">
+                    $500 deposit is fully refundable
+                  </span>{" "}
+                  and simply holds your place in line. It isn't tied to a specific puppy — you'll
+                  choose your puppy with us on your private video call.
+                </p>
+                <ul className="mx-auto max-w-sm space-y-2 text-left text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span> Fully refundable, no obligation
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span> Holds your spot in line for this litter
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span> Unlocks your private puppy video call
+                  </li>
+                </ul>
+                <a
+                  href={depositHref()}
+                  className="block w-full rounded-xl bg-accent py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
+                >
+                  Place $500 Refundable Deposit →
+                </a>
+                {!RESERVATION_LINK && (
+                  <p className="text-xs text-muted-foreground">
+                    (Reservation payment link isn't configured yet.)
+                  </p>
+                )}
               </div>
             )}
-          </form>
+          </div>
         </div>
       </div>
 
@@ -501,6 +647,18 @@ function ApplyPage() {
 
 const inputCls =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/20";
+
+function ErrorList({ errors }: { errors: string[] }) {
+  return (
+    <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <ul className="list-inside list-disc text-sm text-red-700">
+        {errors.map((err) => (
+          <li key={err}>{err}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
