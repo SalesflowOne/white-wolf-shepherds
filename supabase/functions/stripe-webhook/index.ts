@@ -16,13 +16,39 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
+async function resolveWebhookSecret(
+  supabase: ReturnType<typeof createClient>,
+): Promise<string> {
+  const fromEnv = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+  if (fromEnv) return fromEnv;
+
+  const { data, error } = await supabase
+    .schema("vault")
+    .from("decrypted_secrets")
+    .select("decrypted_secret")
+    .eq("name", "STRIPE_WEBHOOK_SECRET")
+    .maybeSingle();
+
+  if (error || !data?.decrypted_secret) {
+    throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
+  }
+
+  return data.decrypted_secret;
+}
+
 serve(async (req) => {
   const sig = req.headers.get("stripe-signature")!;
   const body = await req.text();
 
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, Deno.env.get("STRIPE_WEBHOOK_SECRET")!);
+    const webhookSecret = await resolveWebhookSecret(supabase);
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     return new Response(`Webhook error: ${err}`, { status: 400 });
   }
@@ -39,11 +65,6 @@ serve(async (req) => {
   const lead_id = meta.lead_id ?? session.client_reference_id ?? undefined;
   const tier = meta.tier;
   const pick_order = meta.pick_order;
-
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
 
   // 1. Puppy → reserved
   if (puppy_id) {
