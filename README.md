@@ -143,6 +143,15 @@ STRIPE_SECRET_KEY=sk_live_... node scripts/setup-stripe-wws.mjs
 
 This creates the $500 refundable reservation product + Payment Link (success URL → `/reserved`). Copy the printed URL into `VITE_PUBLIC_STRIPE_RESERVATION_LINK` on Vercel and redeploy.
 
+**Current WWS account catalog (live):**
+
+| Resource | ID / URL |
+| -------- | -------- |
+| Product | `prod_Ujy8PAKQX7fvtD` |
+| Price ($500) | `price_1TkUBkQMFzbE9sOPliBAav1s` |
+| Payment Link | `https://buy.stripe.com/28E3cx5VAc9zaMX8ROejK00` |
+| Event destination | `ed_61Utrc0MIRUP2HFoG26UcXFXDQSQ90Q262yfHCUp6Mn2` |
+
 ### Required Stripe metadata on Checkout Sessions
 
 The Stripe payment link must be created with these metadata keys so the webhook can correlate the payment back to the right puppy/lead:
