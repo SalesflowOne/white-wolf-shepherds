@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
-import { submitApplication } from "@/server/wws-actions";
+import { submitApplication } from "@/lib/wws-actions.functions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
