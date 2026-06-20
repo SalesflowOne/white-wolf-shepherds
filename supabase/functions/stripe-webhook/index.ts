@@ -36,7 +36,13 @@ serve(async (req) => {
   }
 
   const session = event.data.object as Stripe.Checkout.Session
-  const { puppy_id, lead_id, tier, pick_order } = session.metadata ?? {}
+  const meta = session.metadata ?? {}
+  const puppy_id = meta.puppy_id
+  // Per-puppy approvals set lead_id in metadata; the generic refundable
+  // reservation link (hosted Payment Link) forwards it as client_reference_id.
+  const lead_id = meta.lead_id ?? session.client_reference_id ?? undefined
+  const tier = meta.tier
+  const pick_order = meta.pick_order
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,

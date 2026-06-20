@@ -22,7 +22,9 @@ export default function MobileStickyBar() {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (count === null) return null;
@@ -37,7 +39,7 @@ export default function MobileStickyBar() {
         to="/apply"
         className="rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
       >
-        Begin Application
+        Meet the Puppies
       </Link>
     </div>
   );

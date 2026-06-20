@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as ReservedRouteImport } from './routes/reserved'
 import { Route as ProcessRouteImport } from './routes/process'
 import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as PackFamilyRouteImport } from './routes/pack-family'
@@ -35,6 +36,11 @@ const WaitlistRoute = WaitlistRouteImport.update({
 const ThankYouRoute = ThankYouRouteImport.update({
   id: '/thank-you',
   path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservedRoute = ReservedRouteImport.update({
+  id: '/reserved',
+  path: '/reserved',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProcessRoute = ProcessRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
+  '/reserved': typeof ReservedRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
+  '/reserved': typeof ReservedRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/pack-family': typeof PackFamilyRoute
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
+  '/reserved': typeof ReservedRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/pack-family'
     | '/parents'
     | '/process'
+    | '/reserved'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/pack-family'
     | '/parents'
     | '/process'
+    | '/reserved'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/pack-family'
     | '/parents'
     | '/process'
+    | '/reserved'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -241,6 +253,7 @@ export interface RootRouteChildren {
   PackFamilyRoute: typeof PackFamilyRoute
   ParentsRoute: typeof ParentsRoute
   ProcessRoute: typeof ProcessRoute
+  ReservedRoute: typeof ReservedRoute
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/thank-you'
       fullPath: '/thank-you'
       preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reserved': {
+      id: '/reserved'
+      path: '/reserved'
+      fullPath: '/reserved'
+      preLoaderRoute: typeof ReservedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/process': {
@@ -385,6 +405,7 @@ const rootRouteChildren: RootRouteChildren = {
   PackFamilyRoute: PackFamilyRoute,
   ParentsRoute: ParentsRoute,
   ProcessRoute: ProcessRoute,
+  ReservedRoute: ReservedRoute,
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
