@@ -127,6 +127,7 @@ export const submitApplication = createServerFn({ method: 'POST' })
       .single();
 
     if (leadErr || !lead) {
+      console.error('[submitApplication] lead insert failed', leadErr);
       throw new Error(`Lead insert failed: ${leadErr?.message ?? 'unknown'}`);
     }
 
