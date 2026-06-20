@@ -36,6 +36,8 @@ type Lead = {
   internal_notes: string | null;
   referral_code: string | null;
   referred_by_lead_id: string | null;
+  match_call_booked_at: string | null;
+  video_call_booked_at: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -66,7 +68,13 @@ type Litter = {
   priority_order: number;
 };
 
-type Reservation = { amount: number | null };
+type Reservation = {
+  id: string;
+  amount: number | null;
+  puppy_id: string | null;
+  lead_id: string | null;
+  created_at: string | null;
+};
 
 type Message = {
   id: string;
@@ -117,7 +125,9 @@ function AdminPage() {
 
   useEffect(() => {
     async function check() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
         navigate({ to: "/portal" });
         return;
@@ -150,7 +160,16 @@ function AdminPage() {
     );
   }
 
-  const tabs: AdminTab[] = ["overview", "leads", "dogs", "litters", "alumni", "messages", "updates", "referrals"];
+  const tabs: AdminTab[] = [
+    "overview",
+    "leads",
+    "dogs",
+    "litters",
+    "alumni",
+    "messages",
+    "updates",
+    "referrals",
+  ];
   const tabLabels: Record<AdminTab, string> = {
     overview: "Overview",
     leads: "Leads",
@@ -216,9 +235,7 @@ function AdminPage() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  tab === t
-                    ? "bg-accent/10 text-accent"
-                    : "text-muted-foreground hover:bg-muted"
+                  tab === t ? "bg-accent/10 text-accent" : "text-muted-foreground hover:bg-muted"
                 }`}
               >
                 {tabLabels[t]}
@@ -257,6 +274,7 @@ function OverviewTab() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [litters, setLitters] = useState<Litter[]>([]);
   const [leadNames, setLeadNames] = useState<Record<string, string>>({});
+  const [reservations, setReservations] = useState<Reservation[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -266,10 +284,13 @@ function OverviewTab() {
           supabase
             .from(T.puppies)
             .select(
-              "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id"
+              "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id",
             )
             .order("priority_order"),
-          supabase.from(T.reservations).select("amount"),
+          supabase
+            .from(T.reservations)
+            .select("id, amount, puppy_id, lead_id, created_at")
+            .order("created_at", { ascending: false }),
           supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
         ]);
 
@@ -283,6 +304,7 @@ function OverviewTab() {
       });
       setLeadNames(names);
       setPuppies(puppiesData);
+      setReservations(reservationsData);
       setLitters((lits ?? []) as Litter[]);
 
       setStats({
@@ -322,12 +344,7 @@ function OverviewTab() {
         )}
 
         {grouped.map(({ litter, puppies: pups }) => (
-          <LitterGroup
-            key={litter.id}
-            litter={litter}
-            puppies={pups}
-            leadNames={leadNames}
-          />
+          <LitterGroup key={litter.id} litter={litter} puppies={pups} leadNames={leadNames} />
         ))}
 
         {orphans.length > 0 && (
@@ -343,6 +360,74 @@ function OverviewTab() {
             <PuppyGrid puppies={orphans} leadNames={leadNames} />
           </div>
         )}
+      </div>
+
+      <ReservationsPanel
+        reservations={reservations}
+        leadNames={leadNames}
+        puppyNames={Object.fromEntries(puppies.map((p) => [p.id, p.name]))}
+      />
+    </div>
+  );
+}
+
+function ReservationsPanel({
+  reservations,
+  leadNames,
+  puppyNames,
+}: {
+  reservations: Reservation[];
+  leadNames: Record<string, string>;
+  puppyNames: Record<string, string>;
+}) {
+  if (reservations.length === 0) {
+    return (
+      <div>
+        <h2 className="font-display text-lg font-bold text-foreground">Reservations</h2>
+        <p className="mt-2 text-sm text-muted-foreground">No reservations yet.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h2 className="font-display text-lg font-bold text-foreground">Reservations</h2>
+      <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-border bg-muted/50">
+            <tr>
+              {["Lead", "Puppy", "Amount", "Date"].map((h) => (
+                <th key={h} className="px-4 py-3 font-semibold text-muted-foreground">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.map((r) => (
+              <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                <td className="px-4 py-3 font-medium">
+                  {r.lead_id ? (leadNames[r.lead_id] ?? r.lead_id) : "—"}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {r.puppy_id ? (
+                    (puppyNames[r.puppy_id] ?? r.puppy_id)
+                  ) : (
+                    <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">
+                      Spot in line
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {r.amount != null ? `$${r.amount.toLocaleString()}` : "—"}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -445,7 +530,9 @@ function StatBox({
 }) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
       <p
         className={`mt-2 font-display text-2xl font-bold ${
           accent ? "text-accent" : "text-foreground"
@@ -501,7 +588,7 @@ function LeadsTab() {
   }
 
   const puppyName = (id: string | null) =>
-    id ? puppies.find((p) => p.id === id)?.name ?? "—" : "—";
+    id ? (puppies.find((p) => p.id === id)?.name ?? "—") : "—";
 
   return (
     <div>
@@ -510,7 +597,17 @@ function LeadsTab() {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/50">
             <tr>
-              {["Name", "Email", "Score", "Stage", "Puppy", "Applied", "Actions"].map((h) => (
+              {[
+                "Name",
+                "Email",
+                "Score",
+                "Stage",
+                "Match Call",
+                "Video Call",
+                "Puppy",
+                "Applied",
+                "Actions",
+              ].map((h) => (
                 <th key={h} className="px-4 py-3 font-semibold text-muted-foreground">
                   {h}
                 </th>
@@ -520,7 +617,7 @@ function LeadsTab() {
           <tbody>
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
                   No leads yet.
                 </td>
               </tr>
@@ -534,6 +631,12 @@ function LeadsTab() {
                   </td>
                   <td className="px-4 py-3">
                     <StageBadge stage={l.stage} />
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    <FunnelTimestamp ts={l.match_call_booked_at} />
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    <FunnelTimestamp ts={l.video_call_booked_at} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {puppyName(l.preferred_puppy_id)}
@@ -589,6 +692,8 @@ function ScorePill({ score }: { score: number }) {
 function StageBadge({ stage }: { stage: string | null }) {
   const map: Record<string, string> = {
     new_inquiry: "bg-gray-100 text-gray-700",
+    match_call_booked: "bg-sky-100 text-sky-700",
+    application_complete: "bg-blue-100 text-blue-700",
     application_submitted: "bg-blue-100 text-blue-700",
     qualified: "bg-teal-100 text-teal-700",
     approved: "bg-purple-100 text-purple-700",
@@ -605,6 +710,15 @@ function StageBadge({ stage }: { stage: string | null }) {
       }`}
     >
       {s.replace(/_/g, " ")}
+    </span>
+  );
+}
+
+function FunnelTimestamp({ ts }: { ts: string | null }) {
+  if (!ts) return <span className="text-muted-foreground/50">—</span>;
+  return (
+    <span className="whitespace-nowrap text-xs" title={new Date(ts).toLocaleString()}>
+      {new Date(ts).toLocaleDateString()}
     </span>
   );
 }
@@ -650,6 +764,18 @@ function LeadSlideOver({
     { label: "Ready for reservation", value: lead.ready_for_deposit ? "Yes" : "No" },
     { label: "Source", value: lead.source },
     { label: "Referral code", value: lead.referral_code },
+    {
+      label: "Match call booked",
+      value: lead.match_call_booked_at
+        ? new Date(lead.match_call_booked_at).toLocaleString()
+        : null,
+    },
+    {
+      label: "Video call booked",
+      value: lead.video_call_booked_at
+        ? new Date(lead.video_call_booked_at).toLocaleString()
+        : null,
+    },
   ];
 
   return (
@@ -753,7 +879,11 @@ function ApproveModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
 
 function AdminMessagesTab() {
   const [threads, setThreads] = useState<
-    { lead: { id: string; full_name: string | null; email: string | null }; unread: number; last: string }[]
+    {
+      lead: { id: string; full_name: string | null; email: string | null };
+      unread: number;
+      last: string;
+    }[]
   >([]);
   const [selectedLead, setSelectedLead] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -765,10 +895,7 @@ function AdminMessagesTab() {
       .select("*")
       .order("created_at", { ascending: false });
     if (!msgs) return;
-    const perLead = new Map<
-      string,
-      { unread: number; last: string }
-    >();
+    const perLead = new Map<string, { unread: number; last: string }>();
     for (const m of msgs as Message[]) {
       const cur = perLead.get(m.lead_id) ?? { unread: 0, last: m.created_at };
       if (m.sender === "owner" && !m.read_at) cur.unread++;
@@ -804,7 +931,7 @@ function AdminMessagesTab() {
           .update({ read_at: new Date().toISOString() })
           .in(
             "id",
-            unread.map((m) => m.id)
+            unread.map((m) => m.id),
           );
       }
     }
@@ -926,7 +1053,7 @@ function UpdatesAdminTab() {
   const [videoUrl, setVideoUrl] = useState("");
   const [milestoneTag, setMilestoneTag] = useState("");
   const [visibility, setVisibility] = useState<"all_reserved" | "specific_puppy" | "alumni_only">(
-    "all_reserved"
+    "all_reserved",
   );
   const [puppyId, setPuppyId] = useState("");
   const [publishing, setPublishing] = useState(false);
@@ -1118,7 +1245,13 @@ function AlumniAdminTab() {
   const [sub, setSub] = useState<"pending" | "profiles">("pending");
   const [pending, setPending] = useState<AlumniPost[]>([]);
   const [profiles, setProfiles] = useState<
-    { id: string; call_name: string; puppy_id: string | null; lead_id: string; profile_photo_url: string | null }[]
+    {
+      id: string;
+      call_name: string;
+      puppy_id: string | null;
+      lead_id: string;
+      profile_photo_url: string | null;
+    }[]
   >([]);
 
   const load = useCallback(async () => {
@@ -1255,9 +1388,7 @@ function AlumniAdminTab() {
 // ─────────────────────────────────────────────────────────────
 
 function ReferralsAdminTab() {
-  const [rows, setRows] = useState<
-    { lead: Lead; referred: number; converted: number }[]
-  >([]);
+  const [rows, setRows] = useState<{ lead: Lead; referred: number; converted: number }[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -1406,7 +1537,16 @@ type DogRow = Puppy & {
   stripe_payment_link: string | null;
 };
 
-const DOG_STATUSES = ["available", "pending", "reserved", "sold", "placed", "alumni", "parent", "retired"] as const;
+const DOG_STATUSES = [
+  "available",
+  "pending",
+  "reserved",
+  "sold",
+  "placed",
+  "alumni",
+  "parent",
+  "retired",
+] as const;
 
 // Age category: an "Adult" is 1 year (365 days) or older. Puppies < 1 year.
 // Returns null when DOB is unknown so we can render an "Unknown age" tag.
@@ -1465,7 +1605,7 @@ function DogsAdminTab() {
       supabase
         .from(T.puppies)
         .select(
-          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link"
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link",
         )
         .order("name"),
       supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
@@ -1508,7 +1648,8 @@ function DogsAdminTab() {
     if (filter === "litter") return !!d.litter_id;
     if (filter === "pack") return d.status === "placed" || d.status === "alumni";
     if (filter === "parents") return d.status === "parent";
-    if (filter === "unassigned") return !d.litter_id && d.status !== "placed" && d.status !== "alumni";
+    if (filter === "unassigned")
+      return !d.litter_id && d.status !== "placed" && d.status !== "alumni";
     return true;
   });
 
@@ -1518,7 +1659,8 @@ function DogsAdminTab() {
         <div>
           <h2 className="font-display text-lg font-bold text-foreground">Dogs</h2>
           <p className="text-sm text-muted-foreground">
-            Every dog in the program. Assign to a litter, mark as placed (Pack Family), or keep unassigned.
+            Every dog in the program. Assign to a litter, mark as placed (Pack Family), or keep
+            unassigned.
           </p>
         </div>
         <button
@@ -1552,7 +1694,9 @@ function DogsAdminTab() {
             </button>
           ))}
         </div>
-        <span className="text-xs text-muted-foreground">{filtered.length} of {dogs.length}</span>
+        <span className="text-xs text-muted-foreground">
+          {filtered.length} of {dogs.length}
+        </span>
       </div>
 
       {filtered.length === 0 ? (
@@ -1599,9 +1743,7 @@ function DogsAdminTab() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 capitalize text-muted-foreground">
-                      {d.sex ?? "—"}
-                    </td>
+                    <td className="px-4 py-3 capitalize text-muted-foreground">{d.sex ?? "—"}</td>
                     <td className="px-4 py-3">
                       <select
                         value={d.status ?? ""}
@@ -1618,9 +1760,7 @@ function DogsAdminTab() {
                     <td className="px-4 py-3">
                       <select
                         value={d.litter_id ?? ""}
-                        onChange={(e) =>
-                          updateDog(d.id, { litter_id: e.target.value || null })
-                        }
+                        onChange={(e) => updateDog(d.id, { litter_id: e.target.value || null })}
                         className="rounded-md border border-input bg-background px-2 py-1 text-xs"
                       >
                         <option value="">— None —</option>
@@ -1708,7 +1848,7 @@ function DogFormModal({
   const [stripeLink, setStripeLink] = useState(dog?.stripe_payment_link ?? "");
   const [litterId, setLitterId] = useState<string>(dog?.litter_id ?? "");
   const [priorityStr, setPriorityStr] = useState(
-    dog?.priority_order != null ? String(dog.priority_order) : "0"
+    dog?.priority_order != null ? String(dog.priority_order) : "0",
   );
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -1734,10 +1874,7 @@ function DogFormModal({
       return;
     }
     let finalSlug = slug.trim() || slugify(name);
-    if (
-      !isEdit &&
-      existingSlugs.includes(finalSlug)
-    ) {
+    if (!isEdit && existingSlugs.includes(finalSlug)) {
       finalSlug = `${finalSlug}-${Date.now().toString(36).slice(-4)}`;
     }
     const priceNum = priceStr.trim() ? Number(priceStr) : null;
@@ -1783,21 +1920,14 @@ function DogFormModal({
           <h3 className="font-display text-xl font-bold text-foreground">
             {isEdit ? `Edit ${dog!.name}` : "New Dog"}
           </h3>
-          <button
-            onClick={onClose}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
+          <button onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground">
             ✕
           </button>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <LabeledInput label="Name *" value={name} onChange={setName} />
-          <LabeledInput
-            label="Slug (URL)"
-            value={slug}
-            onChange={setSlug}
-          />
+          <LabeledInput label="Slug (URL)" value={slug} onChange={setSlug} />
           <Field label="Sex">
             <select
               value={sex}
@@ -1824,7 +1954,9 @@ function DogFormModal({
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
             >
               {DOG_STATUSES.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
           </Field>
@@ -1836,7 +1968,9 @@ function DogFormModal({
             >
               <option value="">— None —</option>
               {litters.map((l) => (
-                <option key={l.id} value={l.id}>{l.name}</option>
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
               ))}
             </select>
           </Field>
@@ -1877,7 +2011,12 @@ function DogFormModal({
             <LabeledTextarea label="Personality bio" value={bio} onChange={setBio} rows={3} />
           </div>
           <div className="sm:col-span-2">
-            <LabeledTextarea label="Ideal home" value={idealHome} onChange={setIdealHome} rows={2} />
+            <LabeledTextarea
+              label="Ideal home"
+              value={idealHome}
+              onChange={setIdealHome}
+              rows={2}
+            />
           </div>
         </div>
 
@@ -1914,7 +2053,9 @@ function LittersAdminTab() {
       supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
       supabase
         .from(T.puppies)
-        .select("id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id")
+        .select(
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id",
+        )
         .order("priority_order"),
     ]);
     setLitters((lits ?? []) as Litter[]);
@@ -1990,9 +2131,7 @@ function LittersAdminTab() {
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {[
-                      lit.dam_name && lit.sire_name
-                        ? `${lit.dam_name} × ${lit.sire_name}`
-                        : null,
+                      lit.dam_name && lit.sire_name ? `${lit.dam_name} × ${lit.sire_name}` : null,
                       lit.born_date ? `Born ${new Date(lit.born_date).toLocaleDateString()}` : null,
                       lit.ready_date
                         ? `Ready ${new Date(lit.ready_date).toLocaleDateString()}`
@@ -2116,13 +2255,13 @@ function LitterFormModal({
   const [bornDate, setBornDate] = useState(litter?.born_date ?? "");
   const [readyDate, setReadyDate] = useState(litter?.ready_date ?? "");
   const [expectedCount, setExpectedCount] = useState<string>(
-    litter?.expected_count?.toString() ?? ""
+    litter?.expected_count?.toString() ?? "",
   );
   const [status, setStatus] = useState(litter?.status ?? "upcoming");
   const [description, setDescription] = useState(litter?.description ?? "");
   const [coverImageUrl, setCoverImageUrl] = useState(litter?.cover_image_url ?? "");
   const [priorityOrder, setPriorityOrder] = useState<string>(
-    litter?.priority_order?.toString() ?? "0"
+    litter?.priority_order?.toString() ?? "0",
   );
   const [saving, setSaving] = useState(false);
 
@@ -2201,18 +2340,36 @@ function LitterFormModal({
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Dam (mother)">
-              <input value={damName} onChange={(e) => setDamName(e.target.value)} className={inputCls} />
+              <input
+                value={damName}
+                onChange={(e) => setDamName(e.target.value)}
+                className={inputCls}
+              />
             </Field>
             <Field label="Sire (father)">
-              <input value={sireName} onChange={(e) => setSireName(e.target.value)} className={inputCls} />
+              <input
+                value={sireName}
+                onChange={(e) => setSireName(e.target.value)}
+                className={inputCls}
+              />
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Born date">
-              <input type="date" value={bornDate} onChange={(e) => setBornDate(e.target.value)} className={inputCls} />
+              <input
+                type="date"
+                value={bornDate}
+                onChange={(e) => setBornDate(e.target.value)}
+                className={inputCls}
+              />
             </Field>
             <Field label="Ready date">
-              <input type="date" value={readyDate} onChange={(e) => setReadyDate(e.target.value)} className={inputCls} />
+              <input
+                type="date"
+                value={readyDate}
+                onChange={(e) => setReadyDate(e.target.value)}
+                className={inputCls}
+              />
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -2226,7 +2383,11 @@ function LitterFormModal({
               />
             </Field>
             <Field label="Status">
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className={inputCls}>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className={inputCls}
+              >
                 {LITTER_STATUSES.map((s) => (
                   <option key={s} value={s}>
                     {s}

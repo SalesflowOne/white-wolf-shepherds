@@ -19,8 +19,7 @@ export const Route = createFileRoute("/pack-family")({
       { property: "og:title", content: "Pack Family — White Wolf Shepherds" },
       {
         property: "og:description",
-        content:
-          "Meet Haki and Mia, the parent dogs behind every White Wolf Shepherds litter.",
+        content: "Meet Haki and Mia, the parent dogs behind every White Wolf Shepherds litter.",
       },
     ],
   }),
@@ -72,8 +71,8 @@ function PackFamilyPage() {
             The Pack Family
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every White Wolf puppy carries the temperament, structure, and heart of
-            our parent dogs. Meet the dam and sire behind the program.
+            Every White Wolf puppy carries the temperament, structure, and heart of our parent dogs.
+            Meet the dam and sire behind the program.
           </p>
         </div>
       </header>
@@ -81,9 +80,7 @@ function PackFamilyPage() {
       <section className="py-16">
         <div className="mx-auto max-w-5xl px-6">
           {loading ? (
-            <p className="text-center text-sm text-muted-foreground">
-              Loading the pack…
-            </p>
+            <p className="text-center text-sm text-muted-foreground">Loading the pack…</p>
           ) : parents.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground">
               Pack family profiles coming soon.
@@ -91,10 +88,7 @@ function PackFamilyPage() {
           ) : (
             <div className="grid gap-12 md:grid-cols-2">
               {parents.map((p) => (
-                <article
-                  key={p.id}
-                  className="rounded-2xl bg-card p-8 shadow-card"
-                >
+                <article key={p.id} className="rounded-2xl bg-card p-8 shadow-card">
                   <div className="relative overflow-hidden rounded-xl bg-muted">
                     <img
                       src={p.image_url ?? (p.sex === "male" ? demoSire : demoDam)}
@@ -110,9 +104,7 @@ function PackFamilyPage() {
                   </div>
 
                   <div className="mt-6 flex items-center gap-3">
-                    <h2 className="font-display text-2xl font-bold text-foreground">
-                      {p.name}
-                    </h2>
+                    <h2 className="font-display text-2xl font-bold text-foreground">{p.name}</h2>
                     <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
                       {p.sex === "male" ? "Sire" : p.sex === "female" ? "Dam" : "Parent"}
                     </span>

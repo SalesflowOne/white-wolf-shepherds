@@ -20,12 +20,8 @@ export const Route = createFileRoute("/portal/")({
 type RoleName = "admin" | "applicant" | "owner" | "alumni";
 
 async function resolveRole(userId: string): Promise<RoleName> {
-  const { data } = await supabase
-    .from(T.profiles)
-    .select("role")
-    .eq("id", userId)
-    .maybeSingle();
-  return ((data?.role ?? "applicant") as RoleName);
+  const { data } = await supabase.from(T.profiles).select("role").eq("id", userId).maybeSingle();
+  return (data?.role ?? "applicant") as RoleName;
 }
 
 function PortalLoginPage() {
@@ -132,7 +128,9 @@ function PortalLoginPage() {
                 placeholder="you@example.com"
               />
 
-              <label className="mb-2 mt-4 block text-sm font-medium text-foreground">Password</label>
+              <label className="mb-2 mt-4 block text-sm font-medium text-foreground">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}

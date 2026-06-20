@@ -67,7 +67,9 @@ export default function ContactSection() {
     <section id="contact" className="bg-gradient-hero py-24 lg:py-32">
       <div className="mx-auto max-w-3xl px-6">
         <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ice">Reserve Your Spot</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ice">
+            Reserve Your Spot
+          </p>
           <h2 className="mt-3 font-display text-4xl font-bold text-primary-foreground lg:text-5xl">
             Join the Waitlist
           </h2>
@@ -79,7 +81,9 @@ export default function ContactSection() {
 
         {success ? (
           <div className="mt-12 rounded-2xl bg-card p-10 text-center shadow-wolf">
-            <h3 className="font-display text-2xl font-bold text-foreground">You're on the list 🐾</h3>
+            <h3 className="font-display text-2xl font-bold text-foreground">
+              You're on the list 🐾
+            </h3>
             <p className="mt-3 text-muted-foreground">
               Thank you for joining the White Wolf Shepherd waitlist. We'll reach out personally
               with updates on upcoming litters.
@@ -139,7 +143,9 @@ export default function ContactSection() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">Phone (optional)</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                  Phone (optional)
+                </label>
                 <input
                   name="phone"
                   value={form.phone}
@@ -152,7 +158,9 @@ export default function ContactSection() {
               </div>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-foreground">Preferred Puppy</label>
+              <label className="mb-2 block text-sm font-medium text-foreground">
+                Preferred Puppy
+              </label>
               <select
                 name="preferred_sex"
                 value={form.preferred_sex}

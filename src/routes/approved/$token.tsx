@@ -33,14 +33,19 @@ function ApprovedPage() {
   const [puppy, setPuppy] = useState<PuppyInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{
+    hours: number;
+    minutes: number;
+    seconds: number;
+  } | null>(null);
   const [expired, setExpired] = useState(false);
 
-  const stripeLink = typeof window !== "undefined"
-    ? (import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK ||
-       import.meta.env.NEXT_PUBLIC_STRIPE_RESERVATION_LINK ||
-       "#")
-    : "#";
+  const stripeLink =
+    typeof window !== "undefined"
+      ? import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK ||
+        import.meta.env.NEXT_PUBLIC_STRIPE_RESERVATION_LINK ||
+        "#"
+      : "#";
 
   useEffect(() => {
     async function fetchLead() {
@@ -122,7 +127,14 @@ function ApprovedPage() {
         <div className="flex min-h-[60vh] flex-col items-center justify-center pt-20 px-6">
           <div className="mx-auto max-w-md text-center">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
@@ -130,7 +142,8 @@ function ApprovedPage() {
               Invalid or Expired Link
             </h1>
             <p className="mt-4 text-muted-foreground">
-              This reservation link is invalid or has expired. Please contact us if you believe this is an error.
+              This reservation link is invalid or has expired. Please contact us if you believe this
+              is an error.
             </p>
           </div>
         </div>
@@ -150,7 +163,14 @@ function ApprovedPage() {
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -178,7 +198,9 @@ function ApprovedPage() {
               </div>
               <div className="flex justify-between border-b border-border pb-3">
                 <span className="text-sm text-muted-foreground">Applied toward</span>
-                <span className="text-sm font-semibold text-foreground">Your total purchase price</span>
+                <span className="text-sm font-semibold text-foreground">
+                  Your total purchase price
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Pick position</span>
@@ -238,9 +260,7 @@ function ApprovedPage() {
           <div className="mt-8">
             {expired ? (
               <div className="rounded-xl border border-border bg-muted p-6 text-center">
-                <p className="font-semibold text-foreground">
-                  This reservation window has closed.
-                </p>
+                <p className="font-semibold text-foreground">This reservation window has closed.</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Please contact us to request a new link.
                 </p>
@@ -258,7 +278,9 @@ function ApprovedPage() {
           {/* Portal access */}
           <div className="mt-12 rounded-2xl border border-border bg-card p-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Access your portal any time at <span className="font-semibold text-foreground">[site]/portal</span> using the email you applied with.
+              Access your portal any time at{" "}
+              <span className="font-semibold text-foreground">[site]/portal</span> using the email
+              you applied with.
             </p>
             <Link
               to="/portal"

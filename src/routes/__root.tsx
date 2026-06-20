@@ -30,15 +30,27 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "While Wold Shepherds" },
-      { name: "description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
+      {
+        name: "description",
+        content:
+          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "While Wold Shepherds" },
-      { property: "og:description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
+      {
+        property: "og:description",
+        content:
+          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "While Wold Shepherds" },
-      { name: "twitter:description", content: "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines." },
+      {
+        name: "twitter:description",
+        content:
+          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+      },
     ],
     links: [
       {

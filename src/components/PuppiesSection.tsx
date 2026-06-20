@@ -192,9 +192,7 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
         </div>
         <span
           className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-            isAvailable
-              ? "bg-accent text-accent-foreground"
-              : "bg-muted text-muted-foreground"
+            isAvailable ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
           }`}
         >
           {puppy.status ?? "—"}
@@ -202,9 +200,7 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
       </div>
       <div className="p-6">
         <h4 className="font-display text-2xl font-bold text-card-foreground">{puppy.name}</h4>
-        {puppy.sex && (
-          <p className="mt-2 text-sm capitalize text-muted-foreground">{puppy.sex}</p>
-        )}
+        {puppy.sex && <p className="mt-2 text-sm capitalize text-muted-foreground">{puppy.sex}</p>}
         {puppy.slug ? (
           <Link
             to="/puppies/$slug"

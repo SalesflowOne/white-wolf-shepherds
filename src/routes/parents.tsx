@@ -7,7 +7,11 @@ export const Route = createFileRoute("/parents")({
   head: () => ({
     meta: [
       { title: "Meet the Parents — White Wolf Shepherds" },
-      { name: "description", content: "OFA certified, AKC registered dam and sire behind our White German Shepherd litter." },
+      {
+        name: "description",
+        content:
+          "OFA certified, AKC registered dam and sire behind our White German Shepherd litter.",
+      },
     ],
   }),
 });
@@ -26,7 +30,8 @@ function ParentsPage() {
             Meet the Parents
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every exceptional puppy starts with exceptional parents. Both our dam and sire are health-tested, temperament-evaluated, and AKC registered.
+            Every exceptional puppy starts with exceptional parents. Both our dam and sire are
+            health-tested, temperament-evaluated, and AKC registered.
           </p>
         </div>
       </div>
@@ -59,9 +64,13 @@ function ParentsPage() {
                 </span>
               </div>
               <p className="mt-4 text-muted-foreground">
-                Temperament, health history, and lineage details coming soon. Our dam has passed all OFA health evaluations including hips, elbows, and cardiac.
+                Temperament, health history, and lineage details coming soon. Our dam has passed all
+                OFA health evaluations including hips, elbows, and cardiac.
               </p>
-              <a href="#" className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80">
+              <a
+                href="#"
+                className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80"
+              >
                 Health Test Results &rarr;
               </a>
             </div>
@@ -90,9 +99,13 @@ function ParentsPage() {
                 </span>
               </div>
               <p className="mt-4 text-muted-foreground">
-                Temperament, health history, and lineage details coming soon. Our sire has passed all OFA health evaluations including hips, elbows, and cardiac.
+                Temperament, health history, and lineage details coming soon. Our sire has passed
+                all OFA health evaluations including hips, elbows, and cardiac.
               </p>
-              <a href="#" className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80">
+              <a
+                href="#"
+                className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80"
+              >
                 Health Test Results &rarr;
               </a>
             </div>

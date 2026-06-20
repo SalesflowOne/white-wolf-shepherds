@@ -12,10 +12,18 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex gap-8 text-sm text-primary-foreground/50">
-            <a href="#about" className="hover:text-primary-foreground transition-colors">About</a>
-            <a href="#puppies" className="hover:text-primary-foreground transition-colors">Puppies</a>
-            <a href="#gallery" className="hover:text-primary-foreground transition-colors">Gallery</a>
-            <a href="#contact" className="hover:text-primary-foreground transition-colors">Contact</a>
+            <a href="#about" className="hover:text-primary-foreground transition-colors">
+              About
+            </a>
+            <a href="#puppies" className="hover:text-primary-foreground transition-colors">
+              Puppies
+            </a>
+            <a href="#gallery" className="hover:text-primary-foreground transition-colors">
+              Gallery
+            </a>
+            <a href="#contact" className="hover:text-primary-foreground transition-colors">
+              Contact
+            </a>
           </div>
         </div>
         <div className="mt-8 border-t border-primary-foreground/10 pt-6 text-center text-xs text-primary-foreground/30">

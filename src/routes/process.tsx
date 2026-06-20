@@ -7,7 +7,11 @@ export const Route = createFileRoute("/process")({
   head: () => ({
     meta: [
       { title: "Our Process — White Wolf Shepherds" },
-      { name: "description", content: "How we raise our White German Shepherd puppies using Puppy Culture and ENS protocol." },
+      {
+        name: "description",
+        content:
+          "How we raise our White German Shepherd puppies using Puppy Culture and ENS protocol.",
+      },
     ],
   }),
 });
@@ -67,7 +71,8 @@ function ProcessPage() {
             How We Raise Our Puppies
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every puppy is raised in our home using Puppy Culture and Early Neurological Stimulation (ENS) protocols from day one.
+            Every puppy is raised in our home using Puppy Culture and Early Neurological Stimulation
+            (ENS) protocols from day one.
           </p>
         </div>
       </div>
@@ -83,9 +88,7 @@ function ProcessPage() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-accent-foreground">
                     {i + 1}
                   </div>
-                  {i < timeline.length - 1 && (
-                    <div className="mt-2 h-full w-px bg-border" />
-                  )}
+                  {i < timeline.length - 1 && <div className="mt-2 h-full w-px bg-border" />}
                 </div>
                 {/* Content */}
                 <div className="pt-1">
@@ -111,7 +114,10 @@ function ProcessPage() {
           </h2>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             {goHomeWith.map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-lg bg-card px-4 py-3 shadow-card">
+              <div
+                key={item}
+                className="flex items-center gap-3 rounded-lg bg-card px-4 py-3 shadow-card"
+              >
                 <span className="text-accent">&#10003;</span>
                 <span className="text-sm text-foreground">{item}</span>
               </div>

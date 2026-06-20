@@ -19,11 +19,13 @@ export const Route = createFileRoute("/")({
         content:
           "Discover exceptional white German Shepherd puppies from champion bloodlines. Health-tested, family-raised, and bred for beauty, temperament, and loyalty.",
       },
-      { property: "og:title", content: "White Wolf Shepherds — Premium White German Shepherd Breeder" },
+      {
+        property: "og:title",
+        content: "White Wolf Shepherds — Premium White German Shepherd Breeder",
+      },
       {
         property: "og:description",
-        content:
-          "Discover exceptional white German Shepherd puppies from champion bloodlines.",
+        content: "Discover exceptional white German Shepherd puppies from champion bloodlines.",
       },
     ],
   }),

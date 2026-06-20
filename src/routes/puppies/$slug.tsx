@@ -44,11 +44,7 @@ function PuppyProfilePage() {
 
   useEffect(() => {
     async function fetchPuppy() {
-      const { data, error } = await supabase
-        .from(T.puppies)
-        .select("*")
-        .eq("slug", slug)
-        .single();
+      const { data, error } = await supabase.from(T.puppies).select("*").eq("slug", slug).single();
 
       if (error || !data) {
         setNotFound(true);
@@ -226,7 +222,9 @@ function PuppyProfilePage() {
 
               {/* Tier badge */}
               <div className="mt-4">
-                <span className={`inline-flex rounded-full px-4 py-1.5 text-sm font-semibold ${tierColor}`}>
+                <span
+                  className={`inline-flex rounded-full px-4 py-1.5 text-sm font-semibold ${tierColor}`}
+                >
                   {tierLabel}
                 </span>
               </div>
@@ -255,7 +253,9 @@ function PuppyProfilePage() {
               {/* Bio */}
               {puppy.personality_bio && (
                 <div className="mt-8">
-                  <p className="text-lg leading-relaxed text-foreground/80">{puppy.personality_bio}</p>
+                  <p className="text-lg leading-relaxed text-foreground/80">
+                    {puppy.personality_bio}
+                  </p>
                 </div>
               )}
 
@@ -278,7 +278,8 @@ function PuppyProfilePage() {
                       Reserve {puppy.name} &mdash; $500 Reservation Fee
                     </a>
                     <p className="mt-3 text-center text-xs text-muted-foreground">
-                      Non-refundable &middot; Applied toward purchase price &middot; Secures your pick position
+                      Non-refundable &middot; Applied toward purchase price &middot; Secures your
+                      pick position
                     </p>
                   </div>
                 )}
@@ -325,7 +326,9 @@ function PuppyProfilePage() {
           {/* Available Siblings */}
           {siblings.length > 0 && (
             <section className="mt-20">
-              <h2 className="font-display text-2xl font-bold text-foreground">Available Siblings</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                Available Siblings
+              </h2>
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {siblings.map((sib) => (
                   <Link
@@ -355,7 +358,9 @@ function PuppyProfilePage() {
                         </h3>
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                            sib.sex === "male" ? "bg-blue-100 text-blue-700" : "bg-rose-100 text-rose-700"
+                            sib.sex === "male"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-rose-100 text-rose-700"
                           }`}
                         >
                           {sib.sex === "male" ? "Male" : "Female"}
@@ -385,14 +390,18 @@ function PuppyProfilePage() {
                   <span className="font-display text-3xl text-muted-foreground/30">Dam</span>
                 </div>
                 <h3 className="mt-4 font-display text-lg font-bold text-foreground">Dam</h3>
-                <p className="mt-1 text-sm text-accent">OFA Health Tested &middot; AKC Registered</p>
+                <p className="mt-1 text-sm text-accent">
+                  OFA Health Tested &middot; AKC Registered
+                </p>
               </div>
               <div className="rounded-2xl bg-card p-6 shadow-card">
                 <div className="flex h-32 items-center justify-center rounded-xl bg-muted">
                   <span className="font-display text-3xl text-muted-foreground/30">Sire</span>
                 </div>
                 <h3 className="mt-4 font-display text-lg font-bold text-foreground">Sire</h3>
-                <p className="mt-1 text-sm text-accent">OFA Health Tested &middot; AKC Registered</p>
+                <p className="mt-1 text-sm text-accent">
+                  OFA Health Tested &middot; AKC Registered
+                </p>
               </div>
             </div>
             <div className="mt-6">
