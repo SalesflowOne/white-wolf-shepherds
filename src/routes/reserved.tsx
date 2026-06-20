@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GhlCalendarEmbed from "@/components/GhlCalendarEmbed";
-import { markVideoCallBooked } from "@/server/wws-actions";
+import { markVideoCallBooked } from "@/lib/wws-actions.functions";
 
 const VIDEO_CALL_URL = import.meta.env.VITE_PUBLIC_GHL_VIDEO_CALL_URL as string | undefined;
 
