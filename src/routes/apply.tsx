@@ -1,7 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
-import { startLead, markMatchCallBooked, submitApplicationDetails } from "@/server/wws-actions";
+import {
+  startLead,
+  markMatchCallBooked,
+  submitApplicationDetails,
+} from "@/lib/wws-actions.functions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GhlCalendarEmbed from "@/components/GhlCalendarEmbed";
