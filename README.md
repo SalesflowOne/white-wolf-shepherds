@@ -22,20 +22,20 @@ The dev server runs on port 3000 by default.
 
 Copy `.env.local` and fill in values.
 
-| Var | Where used | Required |
-| --- | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` / `VITE_PUBLIC_SUPABASE_URL` | Browser | ✅ |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `VITE_PUBLIC_SUPABASE_ANON_KEY` | Browser | ✅ |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server functions (`/apply` submit, admin operations) | ✅ |
-| `STRIPE_SECRET_KEY` | Edge function | ✅ |
-| `STRIPE_WEBHOOK_SECRET` | Edge function | ✅ |
-| `NEXT_PUBLIC_STRIPE_RESERVATION_LINK` / `VITE_PUBLIC_STRIPE_RESERVATION_LINK` | `/approved/[token]` CTA | ✅ |
-| `NEXT_PUBLIC_STRIPE_BALANCE_LINK` / `VITE_PUBLIC_STRIPE_BALANCE_LINK` | Portal Payments tab | optional |
-| `TELEGRAM_BOT_TOKEN` | Edge function (notify on reservation) | optional |
-| `TELEGRAM_CHAT_ID` | Edge function | optional |
-| `RESEND_API_KEY` | Transactional email (future) | optional |
-| `ADMIN_PASSWORD` | Legacy `/admin` gate (now superseded by role-based auth) | optional |
-| `NEXT_PUBLIC_SITE_URL` / `VITE_PUBLIC_SITE_URL` | Magic-link redirect, referral links | ✅ |
+| Var                                                                           | Where used                                               | Required |
+| ----------------------------------------------------------------------------- | -------------------------------------------------------- | -------- |
+| `NEXT_PUBLIC_SUPABASE_URL` / `VITE_PUBLIC_SUPABASE_URL`                       | Browser                                                  | ✅       |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `VITE_PUBLIC_SUPABASE_ANON_KEY`             | Browser                                                  | ✅       |
+| `SUPABASE_SERVICE_ROLE_KEY`                                                   | Server functions (`/apply` submit, admin operations)     | ✅       |
+| `STRIPE_SECRET_KEY`                                                           | Edge function                                            | ✅       |
+| `STRIPE_WEBHOOK_SECRET`                                                       | Edge function                                            | ✅       |
+| `NEXT_PUBLIC_STRIPE_RESERVATION_LINK` / `VITE_PUBLIC_STRIPE_RESERVATION_LINK` | `/approved/[token]` CTA                                  | ✅       |
+| `NEXT_PUBLIC_STRIPE_BALANCE_LINK` / `VITE_PUBLIC_STRIPE_BALANCE_LINK`         | Portal Payments tab                                      | optional |
+| `TELEGRAM_BOT_TOKEN`                                                          | Edge function (notify on reservation)                    | optional |
+| `TELEGRAM_CHAT_ID`                                                            | Edge function                                            | optional |
+| `RESEND_API_KEY`                                                              | Transactional email (future)                             | optional |
+| `ADMIN_PASSWORD`                                                              | Legacy `/admin` gate (now superseded by role-based auth) | optional |
+| `NEXT_PUBLIC_SITE_URL` / `VITE_PUBLIC_SITE_URL`                               | Magic-link redirect, referral links                      | ✅       |
 
 Every client-readable value is mirrored with both `NEXT_PUBLIC_*` (for spec parity) and `VITE_PUBLIC_*` (what Vite actually reads). The client prefers `VITE_PUBLIC_*`.
 
@@ -45,17 +45,17 @@ Every client-readable value is mirrored with both `NEXT_PUBLIC_*` (for spec pari
 
 All White Wolf Shepherds tables live in the **`public` schema prefixed with `wws_`** so they coexist safely with other apps that share this Supabase project.
 
-| App table | Physical table |
-| --- | --- |
-| `puppies` | `public.wws_puppies` |
-| `leads` | `public.wws_leads` |
-| `reservations` | `public.wws_reservations` |
-| `profiles` | `public.wws_profiles` |
+| App table        | Physical table              |
+| ---------------- | --------------------------- |
+| `puppies`        | `public.wws_puppies`        |
+| `leads`          | `public.wws_leads`          |
+| `reservations`   | `public.wws_reservations`   |
+| `profiles`       | `public.wws_profiles`       |
 | `portal_updates` | `public.wws_portal_updates` |
-| `messages` | `public.wws_messages` |
-| `alumni_posts` | `public.wws_alumni_posts` |
-| `dog_profiles` | `public.wws_dog_profiles` |
-| `resources` | `public.wws_resources` |
+| `messages`       | `public.wws_messages`       |
+| `alumni_posts`   | `public.wws_alumni_posts`   |
+| `dog_profiles`   | `public.wws_dog_profiles`   |
+| `resources`      | `public.wws_resources`      |
 
 A lookup constant `T` is exported from `src/integrations/supabase/client.ts` — always use `supabase.from(T.puppies)` rather than hard-coding the prefix.
 
@@ -99,11 +99,11 @@ Route guards live inside each `/portal/*` route.
 2. Find your user's UUID (Auth → Users → click your row).
 3. Run in the SQL editor:
 
-    ```sql
-    insert into public.wws_profiles (id, role, lead_id)
-    values ('<YOUR_USER_UUID>', 'admin', null)
-    on conflict (id) do update set role = 'admin';
-    ```
+   ```sql
+   insert into public.wws_profiles (id, role, lead_id)
+   values ('<YOUR_USER_UUID>', 'admin', null)
+   on conflict (id) do update set role = 'admin';
+   ```
 
 4. Sign in at `/portal` with your email → magic link → you land on `/portal/admin`.
 
@@ -157,20 +157,20 @@ Uploads (portal updates, alumni photos, dog profile photos) go to the **`wws-med
 
 ## Route map
 
-| Path | Notes |
-| --- | --- |
-| `/` | Marketing home — temperature-based CTA, live scarcity, mobile sticky bar |
-| `/litter` | 9-card litter grid with Realtime badges |
-| `/puppies/[slug]` | Individual puppy profile |
-| `/apply` | 2-step application form (magic-link, no passwords) |
-| `/thank-you` | Post-submit confirmation + portal link |
-| `/approved/[token]` | Approved applicant reservation page with 48h countdown |
-| `/portal` | Magic-link login page (also the landing for logged-in redirect) |
-| `/portal/me` | Unified portal — renders Tier 1/2/3 based on `profiles.role` |
-| `/portal/admin` | Admin dashboard (requires `role='admin'`) |
-| `/portal/dashboard` | Legacy → redirects to `/portal/me` |
-| `/admin` | Legacy → redirects to `/portal/admin` |
-| `/parents`, `/process`, `/health-guarantee`, `/faq`, `/waitlist` | Marketing stubs |
+| Path                                                             | Notes                                                                    |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `/`                                                              | Marketing home — temperature-based CTA, live scarcity, mobile sticky bar |
+| `/litter`                                                        | 9-card litter grid with Realtime badges                                  |
+| `/puppies/[slug]`                                                | Individual puppy profile                                                 |
+| `/apply`                                                         | 2-step application form (magic-link, no passwords)                       |
+| `/thank-you`                                                     | Post-submit confirmation + portal link                                   |
+| `/approved/[token]`                                              | Approved applicant reservation page with 48h countdown                   |
+| `/portal`                                                        | Magic-link login page (also the landing for logged-in redirect)          |
+| `/portal/me`                                                     | Unified portal — renders Tier 1/2/3 based on `profiles.role`             |
+| `/portal/admin`                                                  | Admin dashboard (requires `role='admin'`)                                |
+| `/portal/dashboard`                                              | Legacy → redirects to `/portal/me`                                       |
+| `/admin`                                                         | Legacy → redirects to `/portal/admin`                                    |
+| `/parents`, `/process`, `/health-guarantee`, `/faq`, `/waitlist` | Marketing stubs                                                          |
 
 ---
 

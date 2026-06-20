@@ -63,14 +63,10 @@ function LitterPage() {
     // Subscribe to realtime changes on puppies table
     const channel = supabase
       .channel("puppies-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: T.puppies },
-        () => {
-          // Re-fetch on any change
-          fetchPuppies();
-        }
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: T.puppies }, () => {
+        // Re-fetch on any change
+        fetchPuppies();
+      })
       .subscribe();
 
     return () => {
@@ -128,7 +124,8 @@ function LitterPage() {
               Choose Your Selection Level
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Your tier determines your pick order. Earlier reservation = earlier pick of the litter.
+              Your tier determines your pick order. Earlier reservation = earlier pick of the
+              litter.
             </p>
           </div>
 
@@ -304,12 +301,25 @@ function LitterPage() {
           <div className="grid gap-8 md:grid-cols-3">
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
               <div>
-                <h3 className="font-display text-base font-bold text-foreground">Health-Tested Parents</h3>
+                <h3 className="font-display text-base font-bold text-foreground">
+                  Health-Tested Parents
+                </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                   OFA certified hips, elbows, and cardiac. Full genetic panel completed.
                 </p>
@@ -318,8 +328,19 @@ function LitterPage() {
 
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
                 </svg>
               </div>
               <div>
@@ -332,12 +353,25 @@ function LitterPage() {
 
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
                 </svg>
               </div>
               <div>
-                <h3 className="font-display text-base font-bold text-foreground">Fully Documented</h3>
+                <h3 className="font-display text-base font-bold text-foreground">
+                  Fully Documented
+                </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Vet-checked, microchipped, vaccinated, and dewormed with complete health records.
                 </p>
@@ -369,7 +403,8 @@ function LitterPage() {
             Ready to Apply?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-primary-foreground/70">
-            We review every application personally. If approved, you'll receive a private link to secure your reservation.
+            We review every application personally. If approved, you'll receive a private link to
+            secure your reservation.
           </p>
           <div className="mt-10">
             <Link

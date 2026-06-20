@@ -5,7 +5,7 @@ current implementation status, and the remaining work to take it fully live.
 
 ## The funnel
 
-A 5-step flow designed to build human trust *before* the energy-intensive video
+A 5-step flow designed to build human trust _before_ the energy-intensive video
 call, while keeping the front door light for volume:
 
 1. **Contact Info** — captured first; creates the lead immediately so drop-offs stay reachable.
@@ -22,6 +22,7 @@ Two calls-to-action, one funnel:
 - **Secondary link (quieter):** "Start Your Puppy Match" — for intentional buyers who already understand there's a process.
 
 Microcopy under the hero CTAs:
+
 > Start with your contact info and a short Puppy Match Call, then complete your
 > application, place a $500 fully-refundable deposit to hold your spot, and meet
 > the puppies on a private video call.
@@ -29,10 +30,10 @@ Microcopy under the hero CTAs:
 ## Key decisions & rationale
 
 - **Match Call sits right after contact capture** (before the application), so a human
-  builds trust before asking for a serious application. The application landing *after*
+  builds trust before asking for a serious application. The application landing _after_
   the call keeps the front door light and lifts appointment volume.
 - **Deposit is refundable and spot-holding, not puppy-specific.** Because nobody is
-  committing to a specific puppy sight-unseen, it's fair to collect the deposit *before*
+  committing to a specific puppy sight-unseen, it's fair to collect the deposit _before_
   the video call — which protects the breeder's most expensive step while keeping the
   puppy-video as the closing moment.
 - **No admin approval gate.** Anyone who completes the application can place the refundable
@@ -46,7 +47,7 @@ Microcopy under the hero CTAs:
 - Reusable **`GhlCalendarEmbed`** component for both calendar steps (`src/components/GhlCalendarEmbed.tsx`).
 - Hero + mobile CTAs updated (`src/components/HeroSection.tsx`, `src/components/MobileStickyBar.tsx`).
 - Granular **server actions** that never downgrade a returning owner's role
-  (`startLead`, `submitApplicationDetails`, `markMatchCallBooked`, `markVideoCallBooked` in `src/server/wws-actions.ts`).
+  (`startLead`, `submitApplicationDetails`, `markMatchCallBooked`, `markVideoCallBooked` in `src/lib/wws-actions.functions.ts`).
 - **Stripe webhook** attributes the generic deposit via `client_reference_id`
   (`supabase/functions/stripe-webhook/index.ts`).
 - **Migration** adding `match_call_booked_at` / `video_call_booked_at` to `wws_leads`
@@ -59,22 +60,25 @@ the Stripe link is unset.
 ## Remaining work to go live (next session)
 
 ### New env vars (browser-readable, `VITE_PUBLIC_*`)
+
 - `VITE_PUBLIC_GHL_MATCH_CALL_URL` — GoHighLevel calendar embed URL for the Puppy Match Call.
 - `VITE_PUBLIC_GHL_VIDEO_CALL_URL` — GoHighLevel calendar embed URL for the private puppy video call.
 - `VITE_PUBLIC_STRIPE_RESERVATION_LINK` — generic $500 refundable Stripe Payment Link.
 
 ### Existing secrets that must be set in the deploy environment (Vercel/Cloudflare)
+
 - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (required for the server actions to write leads),
   `VITE_PUBLIC_SUPABASE_URL`, `VITE_PUBLIC_SUPABASE_ANON_KEY`.
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Optional: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
 
 ### Tasks
+
 1. Create the two GoHighLevel calendars; copy their embed URLs into the GHL env vars.
 2. Create a generic **$500 refundable** Stripe Payment Link; set its **success URL to `https://<site>/reserved`** (Payment Links forward `client_reference_id` automatically, which the code appends).
 3. Set all env vars in the deploy environment and local `.env` / `.dev.vars`.
 4. Redeploy the edge function (the `client_reference_id` change): `supabase functions deploy stripe-webhook --no-verify-jwt`.
 5. End-to-end test in **Stripe test mode**: walk Contact → Match Call → Application → Deposit → `/reserved` video call; confirm the `wws_leads` row advances (`new_inquiry` → `match_call_booked` → `application_complete` → `deposit_paid`) and `match_call_booked_at` / `video_call_booked_at` populate, and that a `wws_reservations` row is created with `puppy_id` null.
-6. *Optional:* surface `match_call_booked_at` / `video_call_booked_at` and puppy-less reservations in the admin dashboard (`src/routes/portal/admin.tsx`).
+6. _Optional:_ surface `match_call_booked_at` / `video_call_booked_at` and puppy-less reservations in the admin dashboard (`src/routes/portal/admin.tsx`).
 
 ## Copy-paste prompt for the next session
 

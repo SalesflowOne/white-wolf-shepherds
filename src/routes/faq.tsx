@@ -8,7 +8,11 @@ export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
       { title: "FAQ — White Wolf Shepherds" },
-      { name: "description", content: "Frequently asked questions about our White German Shepherd puppies, reservation process, and health guarantee." },
+      {
+        name: "description",
+        content:
+          "Frequently asked questions about our White German Shepherd puppies, reservation process, and health guarantee.",
+      },
     ],
   }),
 });
@@ -98,10 +102,7 @@ function FAQPage() {
         <div className="mx-auto max-w-3xl px-6">
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-border bg-card overflow-hidden"
-              >
+              <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="flex w-full items-center justify-between px-6 py-5 text-left"

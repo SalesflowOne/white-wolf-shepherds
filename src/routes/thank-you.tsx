@@ -16,9 +16,21 @@ function ThankYouPage() {
   const { name } = Route.useSearch();
 
   const cards = [
-    { title: "Meet the Parents", desc: "Learn about the health-tested dam and sire behind this litter.", href: "/parents" as const },
-    { title: "Our Process", desc: "See how we raise our puppies using Puppy Culture and ENS protocol.", href: "/process" as const },
-    { title: "Health Guarantee", desc: "Every puppy comes with a comprehensive health guarantee.", href: "/health-guarantee" as const },
+    {
+      title: "Meet the Parents",
+      desc: "Learn about the health-tested dam and sire behind this litter.",
+      href: "/parents" as const,
+    },
+    {
+      title: "Our Process",
+      desc: "See how we raise our puppies using Puppy Culture and ENS protocol.",
+      href: "/process" as const,
+    },
+    {
+      title: "Health Guarantee",
+      desc: "Every puppy comes with a comprehensive health guarantee.",
+      href: "/health-guarantee" as const,
+    },
   ];
 
   return (
@@ -75,11 +87,10 @@ function ThankYouPage() {
 
           {/* Portal access */}
           <div className="mt-14 rounded-2xl border border-border bg-card p-8 text-center shadow-card">
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              Access Your Portal
-            </h2>
+            <h2 className="font-display text-2xl font-bold text-foreground">Access Your Portal</h2>
             <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
-              Your portal account has been created. Check your application status, message us, and track your puppy — all in one place.
+              Your portal account has been created. Check your application status, message us, and
+              track your puppy — all in one place.
             </p>
             <Link
               to="/portal"

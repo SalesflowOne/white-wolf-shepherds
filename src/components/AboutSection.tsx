@@ -29,14 +29,16 @@ export default function AboutSection() {
 
           {/* Content */}
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Our Story</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              Our Story
+            </p>
             <h2 className="mt-3 font-display text-4xl font-bold leading-tight text-foreground lg:text-5xl">
               A Legacy of Excellence
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              For over 15 years, White Wolf Shepherds has been dedicated to preserving and perfecting
-              the white German Shepherd bloodline. Our breeding philosophy centers on three pillars:
-              exceptional health, balanced temperament, and breathtaking beauty.
+              For over 15 years, White Wolf Shepherds has been dedicated to preserving and
+              perfecting the white German Shepherd bloodline. Our breeding philosophy centers on
+              three pillars: exceptional health, balanced temperament, and breathtaking beauty.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
               Every puppy is raised in a loving home environment, socialized from birth, and

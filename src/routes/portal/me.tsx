@@ -132,7 +132,9 @@ function PortalMe() {
 
   useEffect(() => {
     async function load() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
         navigate({ to: "/portal" });
         return;
@@ -162,7 +164,7 @@ function PortalMe() {
         const { data: ld } = await supabase
           .from(T.leads)
           .select(
-            "id, full_name, email, stage, preferred_puppy_id, pickup_date, signature_agreed_at, referral_code, portal_last_seen_at, created_at"
+            "id, full_name, email, stage, preferred_puppy_id, pickup_date, signature_agreed_at, referral_code, portal_last_seen_at, created_at",
           )
           .eq("id", prof.lead_id)
           .maybeSingle();
@@ -220,7 +222,8 @@ function PortalMe() {
             Your application is being set up.
           </h1>
           <p className="mt-4 max-w-md text-muted-foreground">
-            If you just applied, we're still wiring up your portal. Refresh in a moment, or contact us if this persists.
+            If you just applied, we're still wiring up your portal. Refresh in a moment, or contact
+            us if this persists.
           </p>
           <button
             onClick={handleSignOut}
@@ -402,7 +405,10 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
             const done = i < currentIdx;
             const active = i === currentIdx;
             return (
-              <div key={s.key} className="flex flex-1 min-w-[120px] flex-col items-center text-center">
+              <div
+                key={s.key}
+                className="flex flex-1 min-w-[120px] flex-col items-center text-center"
+              >
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold ${
                     done
@@ -465,7 +471,10 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
           </>
         ) : (
           <>
-            <StatCard label="Available Puppies" value={availableCount !== null ? `${availableCount} / 9` : "—"} />
+            <StatCard
+              label="Available Puppies"
+              value={availableCount !== null ? `${availableCount} / 9` : "—"}
+            />
             <StatCard
               label="Preferred Pick"
               value={preferredPuppy ? preferredPuppy.name : "No preference"}
@@ -478,7 +487,9 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
   );
 }
 
-function stageFromLead(stage: string | null): "applied" | "review" | "approved" | "reserved" | "pickup" {
+function stageFromLead(
+  stage: string | null,
+): "applied" | "review" | "approved" | "reserved" | "pickup" {
   switch (stage) {
     case "new_inquiry":
     case "application_submitted":
@@ -506,33 +517,28 @@ function stageCopy(stage: string | null): { headline: string; body: string } {
     case "deposit_pending":
       return {
         headline: "You're approved!",
-        body:
-          "Check your email for a private link to complete your reservation with a $500 Reservation Fee. The link is valid for 48 hours.",
+        body: "Check your email for a private link to complete your reservation with a $500 Reservation Fee. The link is valid for 48 hours.",
       };
     case "deposit_paid":
     case "reserved":
       return {
         headline: "Your pick is secured.",
-        body:
-          "Your Reservation Fee is received and your pick position is locked. Weekly updates will begin shortly. Balance is due one week before pickup.",
+        body: "Your Reservation Fee is received and your pick position is locked. Weekly updates will begin shortly. Balance is due one week before pickup.",
       };
     case "waitlist":
       return {
         headline: "You're on the waitlist.",
-        body:
-          "We'll reach out as soon as a spot opens in this litter or when the next litter is planned. You'll always be first to know.",
+        body: "We'll reach out as soon as a spot opens in this litter or when the next litter is planned. You'll always be first to know.",
       };
     case "completed":
       return {
         headline: "Welcome to the pack!",
-        body:
-          "Your puppy is home. Check the Resources and Pack tabs to share updates and connect with other White Wolf Shepherd families.",
+        body: "Your puppy is home. Check the Resources and Pack tabs to share updates and connect with other White Wolf Shepherd families.",
       };
     default:
       return {
         headline: "We have your application.",
-        body:
-          "Every application is reviewed personally. You'll hear from us within 24–48 hours. Feel free to message us directly anytime.",
+        body: "Every application is reviewed personally. You'll hear from us within 24–48 hours. Feel free to message us directly anytime.",
       };
   }
 }
@@ -544,7 +550,9 @@ function formatTimeline(_stage: string | null): string {
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-2 font-display text-2xl font-bold text-foreground">{value}</p>
     </div>
   );
@@ -674,9 +682,7 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
                       </span>
                     )}
                     <span className="text-xs text-muted-foreground">
-                      {u.published_at
-                        ? new Date(u.published_at).toLocaleDateString()
-                        : ""}
+                      {u.published_at ? new Date(u.published_at).toLocaleDateString() : ""}
                     </span>
                   </div>
                   {u.title && (
@@ -684,9 +690,7 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
                       {u.title}
                     </h3>
                   )}
-                  {u.body && (
-                    <p className="mt-1 text-sm text-muted-foreground">{u.body}</p>
-                  )}
+                  {u.body && <p className="mt-1 text-sm text-muted-foreground">{u.body}</p>}
                 </div>
               </div>
             ))
@@ -698,17 +702,14 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
       <div>
         <h2 className="font-display text-xl font-bold text-foreground">Health Records</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {[
-            "First Vet Check",
-            "First Deworming",
-            "First Vaccine",
-            "Microchip Registration",
-          ].map((label) => (
-            <div key={label} className="rounded-xl border border-border bg-card p-4">
-              <p className="font-semibold text-foreground">{label}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Pending</p>
-            </div>
-          ))}
+          {["First Vet Check", "First Deworming", "First Vaccine", "Microchip Registration"].map(
+            (label) => (
+              <div key={label} className="rounded-xl border border-border bg-card p-4">
+                <p className="font-semibold text-foreground">{label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Pending</p>
+              </div>
+            ),
+          )}
         </div>
       </div>
 
@@ -822,7 +823,12 @@ function MyDogTab({ lead }: { lead: Lead }) {
             value={weight === "" ? "" : String(weight)}
             onChange={(v) => setWeight(v ? parseFloat(v) : "")}
           />
-          <LabeledTextarea label="Health Notes" value={healthNotes} onChange={setHealthNotes} rows={3} />
+          <LabeledTextarea
+            label="Health Notes"
+            value={healthNotes}
+            onChange={setHealthNotes}
+            rows={3}
+          />
           <LabeledInput
             label="Titles Earned (comma-separated)"
             value={titles}
@@ -939,9 +945,7 @@ function LitterTab({ lead }: { lead: Lead }) {
                   {p.tier} · ${p.price?.toLocaleString()}
                 </p>
                 {preferred && (
-                  <p className="mt-2 text-xs font-semibold text-amber-600">
-                    Your preferred pick
-                  </p>
+                  <p className="mt-2 text-xs font-semibold text-amber-600">Your preferred pick</p>
                 )}
               </div>
             </div>
@@ -996,7 +1000,7 @@ function MessagesTab({ lead }: { lead: Lead }) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: T.messages, filter: `lead_id=eq.${lead.id}` },
-        () => fetchMessages()
+        () => fetchMessages(),
       )
       .subscribe();
     return () => {
@@ -1049,13 +1053,13 @@ function MessagesTab({ lead }: { lead: Lead }) {
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
-                  mine
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-muted text-foreground"
+                  mine ? "bg-accent text-accent-foreground" : "bg-muted text-foreground"
                 }`}
               >
                 <p>{m.body}</p>
-                <p className={`mt-1 text-xs ${mine ? "text-accent-foreground/70" : "text-muted-foreground"}`}>
+                <p
+                  className={`mt-1 text-xs ${mine ? "text-accent-foreground/70" : "text-muted-foreground"}`}
+                >
                   {new Date(m.created_at).toLocaleString()}
                 </p>
               </div>
@@ -1132,8 +1136,8 @@ function DocumentsTab({
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
           <h2 className="font-display text-lg font-bold text-amber-900">Purchase Contract</h2>
           <p className="mt-2 text-sm text-amber-900/80">
-            Please review and sign the purchase contract. This acknowledges the Reservation Fee terms,
-            right of first refusal, and health guarantee clauses.
+            Please review and sign the purchase contract. This acknowledges the Reservation Fee
+            terms, right of first refusal, and health guarantee clauses.
           </p>
           <label className="mt-4 flex items-start gap-2 text-sm text-amber-900">
             <input
@@ -1192,7 +1196,7 @@ function UpdatesTab({ lead }: { lead: Lead }) {
         .or(
           lead.preferred_puppy_id
             ? `visibility.eq.all_reserved,and(visibility.eq.specific_puppy,puppy_id.eq.${lead.preferred_puppy_id})`
-            : `visibility.eq.all_reserved`
+            : `visibility.eq.all_reserved`,
         )
         .order("published_at", { ascending: false });
       if (data) setUpdates(data as PortalUpdate[]);
@@ -1323,9 +1327,7 @@ function PackTab({ lead }: { lead: Lead }) {
     <div className="space-y-10">
       <div>
         <h1 className="font-display text-3xl font-bold text-foreground">The Pack</h1>
-        <p className="mt-1 text-muted-foreground">
-          Share with other White Wolf Shepherd families.
-        </p>
+        <p className="mt-1 text-muted-foreground">Share with other White Wolf Shepherd families.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -1485,7 +1487,7 @@ function ReferralsTab({ lead }: { lead: Lead }) {
       import.meta.env.VITE_PUBLIC_SITE_URL ??
       import.meta.env.NEXT_PUBLIC_SITE_URL ??
       (typeof window !== "undefined" ? window.location.origin : ""),
-    []
+    [],
   );
 
   const link = `${siteUrl}/apply?ref=${lead.referral_code ?? ""}`;
@@ -1499,7 +1501,7 @@ function ReferralsTab({ lead }: { lead: Lead }) {
       if (refs) {
         setReferred(refs.length);
         setConverted(
-          refs.filter((r) => r.stage === "deposit_paid" || r.stage === "reserved").length
+          refs.filter((r) => r.stage === "deposit_paid" || r.stage === "reserved").length,
         );
       }
     }
@@ -1618,7 +1620,8 @@ function PaymentsTab({ lead }: { lead: Lead }) {
           </div>
           {reservation ? (
             <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-              Paid {reservation.created_at ? new Date(reservation.created_at).toLocaleDateString() : ""}
+              Paid{" "}
+              {reservation.created_at ? new Date(reservation.created_at).toLocaleDateString() : ""}
             </span>
           ) : (
             <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
