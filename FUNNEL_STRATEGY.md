@@ -24,7 +24,7 @@
 
 ## Environment
 
-- `GHL_API_TOKEN` — GoHighLevel Private Integration token (Supabase secret).
+- `GHL_API_TOKEN` — optional; falls back to existing GHL Private Integration key in Supabase Vault (`pit-*` integration key)
 - `GHL_LOCATION_ID` — `5NAfvhQ3uPhKkODcgT78`
 - `GHL_FAMILY_FIT_CALENDAR_ID` — `n5pSWKKDXVP80Wng70GI`
 - `GHL_VIDEO_CALL_CALENDAR_ID` — `nZgAqy954cD6FPRbiMmM`
