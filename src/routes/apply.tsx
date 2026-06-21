@@ -1,11 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
-import {
-  startLead,
-  markMatchCallBooked,
-  submitApplicationDetails,
-} from "@/lib/wws-actions.functions";
+import { startLead, markMatchCallBooked, submitApplicationDetails } from "@/lib/wws-funnel";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GhlCalendarEmbed from "@/components/GhlCalendarEmbed";
@@ -60,7 +56,8 @@ function ApplyPage() {
   const [availablePuppies, setAvailablePuppies] = useState<AvailablePuppy[]>([]);
 
   // Stage 1 — Contact
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
@@ -106,7 +103,8 @@ function ApplyPage() {
 
   function validateContact(): boolean {
     const errs: string[] = [];
-    if (!fullName.trim()) errs.push("Full name is required");
+    if (!firstName.trim()) errs.push("First name is required");
+    if (!lastName.trim()) errs.push("Last name is required");
     if (!email.trim() || !email.includes("@")) errs.push("A valid email is required");
     if (!phone.trim()) errs.push("Phone is required");
     if (!city.trim()) errs.push("City is required");
@@ -131,12 +129,13 @@ function ApplyPage() {
   }
 
   function persistFunnel(id: string) {
+    const name = `${firstName.trim()} ${lastName.trim()}`.trim();
     try {
       localStorage.setItem(
         "wws_funnel",
         JSON.stringify({
           leadId: id,
-          name: fullName.trim(),
+          name,
           email: email.trim(),
           phone: phone.trim(),
         }),
@@ -152,15 +151,14 @@ function ApplyPage() {
     try {
       const referralCode = sessionStorage.getItem("wwreferral") ?? null;
       const result = await startLead({
-        data: {
-          fullName: fullName.trim(),
-          email: email.trim().toLowerCase(),
-          phone: phone.trim(),
-          city: city.trim(),
-          state: state.trim(),
-          referralCode,
-          waitlist: isWaitlist,
-        },
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        city: city.trim(),
+        state: state.trim(),
+        referralCode,
+        waitlist: isWaitlist,
       });
       setLeadId(result.leadId);
       persistFunnel(result.leadId);
@@ -183,7 +181,7 @@ function ApplyPage() {
   async function handleMatchCallBooked() {
     if (leadId) {
       try {
-        await markMatchCallBooked({ data: { leadId } });
+        await markMatchCallBooked({ leadId });
       } catch {
         /* non-blocking — don't trap the applicant if the marker write fails */
       }
@@ -203,22 +201,20 @@ function ApplyPage() {
     setBusy(true);
     try {
       await submitApplicationDetails({
-        data: {
-          leadId,
-          preferredSex,
-          timeline: timeline as "ready_now" | "1_3_months" | "future",
-          hasOwnedLargeDog: hasOwnedLargeDog === "yes",
-          readyForDeposit: readyForDeposit as "yes" | "no" | "info",
-          householdType,
-          hasFencedYard: hasFencedYard as "yes" | "no" | "in_progress",
-          familySize: typeof familySize === "number" ? familySize : 1,
-          childrenAges: childrenAges.trim() || null,
-          otherPets: otherPets.trim() || null,
-          preferredPuppyId: preferredPuppyId || null,
-          reasonForBreed: reasonForBreed.trim(),
-          additionalNotes: additionalNotes.trim() || null,
-          source,
-        },
+        leadId,
+        preferredSex,
+        timeline: timeline as "ready_now" | "1_3_months" | "future",
+        hasOwnedLargeDog: hasOwnedLargeDog === "yes",
+        readyForDeposit: readyForDeposit as "yes" | "no" | "info",
+        householdType,
+        hasFencedYard: hasFencedYard as "yes" | "no" | "in_progress",
+        familySize: typeof familySize === "number" ? familySize : 1,
+        childrenAges: childrenAges.trim() || null,
+        otherPets: otherPets.trim() || null,
+        preferredPuppyId: preferredPuppyId || null,
+        reasonForBreed: reasonForBreed.trim(),
+        additionalNotes: additionalNotes.trim() || null,
+        source,
       });
       sessionStorage.removeItem("wwreferral");
       setStep(4);
@@ -313,15 +309,28 @@ function ApplyPage() {
               <div className="space-y-6">
                 {contactErrors.length > 0 && <ErrorList errors={contactErrors} />}
 
-                <Field label="Full Name *">
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className={inputCls}
-                    placeholder="John Smith"
-                  />
-                </Field>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="First Name *">
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className={inputCls}
+                      placeholder="Alfredo"
+                      autoComplete="given-name"
+                    />
+                  </Field>
+                  <Field label="Last Name *">
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className={inputCls}
+                      placeholder="Soler"
+                      autoComplete="family-name"
+                    />
+                  </Field>
+                </div>
 
                 <Field label="Email *">
                   <input
@@ -389,7 +398,7 @@ function ApplyPage() {
                 </p>
                 <GhlCalendarEmbed
                   src={MATCH_CALL_URL}
-                  prefill={{ name: fullName, email, phone }}
+                  prefill={{ name: `${firstName.trim()} ${lastName.trim()}`.trim(), email, phone }}
                   onBooked={handleMatchCallBooked}
                   continueLabel="I've booked my call — continue →"
                 />

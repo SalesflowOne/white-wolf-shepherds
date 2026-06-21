@@ -27,8 +27,9 @@ Copy `.env.local` and fill in values.
 | `NEXT_PUBLIC_SUPABASE_URL` / `VITE_PUBLIC_SUPABASE_URL`                       | Browser                                                  | ✅       |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `VITE_PUBLIC_SUPABASE_ANON_KEY`             | Browser                                                  | ✅       |
 | `SUPABASE_SERVICE_ROLE_KEY`                                                   | Server functions (`/apply` submit, admin operations)     | ✅       |
-| `STRIPE_SECRET_KEY`                                                           | Edge function                                            | ✅       |
-| `STRIPE_WEBHOOK_SECRET`                                                       | Edge function                                            | ✅       |
+| `STRIPE_SECRET_KEY`                                                           | Edge function (Vault fallback)                           | ✅       |
+| `STRIPE_WEBHOOK_SECRET`                                                       | Edge function (Vault fallback)                           | ✅       |
+| `STRIPE_WEBHOOK_ENDPOINT_ID`                                                  | Docs / ops reference (Stripe event destination)          | optional |
 | `NEXT_PUBLIC_STRIPE_RESERVATION_LINK` / `VITE_PUBLIC_STRIPE_RESERVATION_LINK` | `/approved/[token]` CTA                                  | ✅       |
 | `NEXT_PUBLIC_STRIPE_BALANCE_LINK` / `VITE_PUBLIC_STRIPE_BALANCE_LINK`         | Portal Payments tab                                      | optional |
 | `TELEGRAM_BOT_TOKEN`                                                          | Edge function (notify on reservation)                    | optional |
@@ -115,21 +116,41 @@ Already deployed as a Supabase edge function (`supabase/functions/stripe-webhook
 
 ### Register it in Stripe
 
-Configured endpoint:
+Configured endpoint (White Wolf Shepherds Stripe account):
 
-- **Destination ID:** `we_1TkTb03uAnQgrKo281RYGYc6`
+- **Destination ID:** `ed_61Utrc0MIRUP2HFoG26UcXFXDQSQ90Q262yfHCUp6Mn2`
+- **Name:** White Wolf Shepherds
 - **URL:** `https://ebjzdcnphkfpxfldnatm.supabase.co/functions/v1/stripe-webhook`
 - **Event:** `checkout.session.completed`
-- **Signing secret env var:** `STRIPE_WEBHOOK_SECRET`
+- **Signing secret env var:** `STRIPE_WEBHOOK_SECRET` (also stored in Supabase Vault)
 
 To recreate manually:
 
-1. Stripe Dashboard → **Developers → Webhooks → Add endpoint**.
+1. In the **White Wolf Shepherds** Stripe account → **Developers → Webhooks / Event destinations → Add destination**.
 2. Endpoint URL: `https://ebjzdcnphkfpxfldnatm.supabase.co/functions/v1/stripe-webhook`.
 3. Events to listen for: `checkout.session.completed`.
-4. Copy the signing secret and set it as the function's `STRIPE_WEBHOOK_SECRET` secret (**Supabase Dashboard → Edge Functions → stripe-webhook → Manage secrets**, or `supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_... --project-ref ebjzdcnphkfpxfldnatm`).
-5. Also set `STRIPE_WEBHOOK_SECRET` in Vercel (production/preview/development) and local `.env`.
-6. Also set `STRIPE_SECRET_KEY`, `TELEGRAM_BOT_TOKEN`, and `TELEGRAM_CHAT_ID` as Supabase edge secrets.
+4. Copy the signing secret and set it as `STRIPE_WEBHOOK_SECRET` (**Supabase Dashboard → Edge Functions → stripe-webhook → Manage secrets**, Supabase Vault, Vercel, and local `.env`).
+5. Set `STRIPE_SECRET_KEY` from the **same** WWS Stripe account as a Supabase edge secret (or Vault entry `STRIPE_SECRET_KEY` — the function reads Vault when edge env is empty).
+6. Optional: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
+
+### Reservation product (WWS account)
+
+Run after creating a secret key in the WWS Stripe dashboard:
+
+```bash
+STRIPE_SECRET_KEY=sk_live_... node scripts/setup-stripe-wws.mjs
+```
+
+This creates the $500 refundable reservation product + Payment Link (success URL → `/reserved`). Copy the printed URL into `VITE_PUBLIC_STRIPE_RESERVATION_LINK` on Vercel and redeploy.
+
+**Current WWS account catalog (live):**
+
+| Resource | ID / URL |
+| -------- | -------- |
+| Product | `prod_Ujy8PAKQX7fvtD` |
+| Price ($500) | `price_1TkUBkQMFzbE9sOPliBAav1s` |
+| Payment Link | `https://buy.stripe.com/28E3cx5VAc9zaMX8ROejK00` |
+| Event destination | `ed_61Utrc0MIRUP2HFoG26UcXFXDQSQ90Q262yfHCUp6Mn2` |
 
 ### Required Stripe metadata on Checkout Sessions
 
@@ -153,7 +174,10 @@ If you're using hosted Stripe Payment Links, use `metadata` on the link itself a
 
 ```bash
 supabase functions deploy stripe-webhook --no-verify-jwt
+supabase functions deploy wws-funnel --no-verify-jwt
 ```
+
+The apply funnel (`/apply`) calls the `wws-funnel` edge function directly so it does not require `SUPABASE_SERVICE_ROLE_KEY` on Vercel.
 
 (`--no-verify-jwt` is required — Stripe cannot send a Supabase JWT.)
 
