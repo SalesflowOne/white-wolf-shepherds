@@ -15,15 +15,22 @@ type NativeCalendarPickerProps = {
 function flattenSlots(slots: unknown): string[] {
   if (!slots || typeof slots !== "object") return [];
   const raw =
-    (slots as { slots?: Record<string, string[]> }).slots ?? (slots as Record<string, string[]>);
+    (slots as { slots?: Record<string, unknown> }).slots ?? (slots as Record<string, unknown>);
   const out: string[] = [];
-  for (const [date, times] of Object.entries(raw)) {
-    if (!Array.isArray(times)) continue;
+
+  for (const [date, value] of Object.entries(raw)) {
+    const times = Array.isArray(value)
+      ? value
+      : value && typeof value === "object" && Array.isArray((value as { slots?: string[] }).slots)
+        ? (value as { slots: string[] }).slots
+        : [];
+
     for (const time of times) {
       if (typeof time !== "string") continue;
       out.push(time.includes("T") ? time : `${date}T${time}`);
     }
   }
+
   return out.sort();
 }
 
@@ -133,7 +140,8 @@ export default function NativeCalendarPicker({
               <div className="flex flex-wrap gap-2">
                 {times.map((time) => {
                   const iso =
-                    slots.find((s) => s.startsWith(date) && s.includes(time)) ?? `${date}T${time}`;
+                    slots.find((s) => s.startsWith(date) && s.includes(`T${time.slice(0, 5)}`)) ??
+                    `${date}T${time}`;
                   const active = selected === iso;
                   return (
                     <button
