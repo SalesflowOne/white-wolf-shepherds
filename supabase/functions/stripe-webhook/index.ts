@@ -11,29 +11,39 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@12";
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
-  apiVersion: "2023-10-16",
-  httpClient: Stripe.createFetchHttpClient(),
-});
-
-async function resolveWebhookSecret(
+async function resolveVaultSecret(
   supabase: ReturnType<typeof createClient>,
-): Promise<string> {
-  const fromEnv = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-  if (fromEnv) return fromEnv;
-
+  name: string,
+): Promise<string | null> {
   const { data, error } = await supabase
     .schema("vault")
     .from("decrypted_secrets")
     .select("decrypted_secret")
-    .eq("name", "STRIPE_WEBHOOK_SECRET")
+    .eq("name", name)
     .maybeSingle();
 
-  if (error || !data?.decrypted_secret) {
-    throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
-  }
-
+  if (error || !data?.decrypted_secret) return null;
   return data.decrypted_secret;
+}
+
+async function resolveStripeSecretKey(supabase: ReturnType<typeof createClient>): Promise<string> {
+  const fromEnv = Deno.env.get("STRIPE_SECRET_KEY");
+  if (fromEnv) return fromEnv;
+
+  const fromVault = await resolveVaultSecret(supabase, "STRIPE_SECRET_KEY");
+  if (fromVault) return fromVault;
+
+  throw new Error("STRIPE_SECRET_KEY is not configured");
+}
+
+async function resolveWebhookSecret(supabase: ReturnType<typeof createClient>): Promise<string> {
+  const fromEnv = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+  if (fromEnv) return fromEnv;
+
+  const fromVault = await resolveVaultSecret(supabase, "STRIPE_WEBHOOK_SECRET");
+  if (fromVault) return fromVault;
+
+  throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
 }
 
 serve(async (req) => {
@@ -47,6 +57,11 @@ serve(async (req) => {
 
   let event: Stripe.Event;
   try {
+    const stripeSecretKey = await resolveStripeSecretKey(supabase);
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16",
+      httpClient: Stripe.createFetchHttpClient(),
+    });
     const webhookSecret = await resolveWebhookSecret(supabase);
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
