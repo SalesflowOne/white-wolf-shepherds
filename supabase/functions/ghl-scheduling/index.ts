@@ -37,7 +37,8 @@ async function resolveVaultSecret(
 async function resolveGhlToken(supabase: SupabaseClient): Promise<string> {
   if (cachedToken) return cachedToken;
 
-  const fromEnv = Deno.env.get("GHL_API_TOKEN");
+  // Matches existing project functions (ghl-book, ghl-calendars).
+  const fromEnv = Deno.env.get("GHL_API_KEY") ?? Deno.env.get("GHL_API_TOKEN");
   if (fromEnv) {
     cachedToken = fromEnv;
     return fromEnv;
@@ -47,6 +48,15 @@ async function resolveGhlToken(supabase: SupabaseClient): Promise<string> {
   if (fromVault) {
     cachedToken = fromVault;
     return fromVault;
+  }
+
+  const fromIntegration = await resolveVaultSecret(
+    supabase,
+    "integration_api_key_3a112427-5409-406d-a0bd-fd4721e82aad",
+  );
+  if (fromIntegration) {
+    cachedToken = fromIntegration;
+    return fromIntegration;
   }
 
   // Shared project vault: GHL Private Integration tokens are stored as pit-* keys.
@@ -64,7 +74,7 @@ async function resolveGhlToken(supabase: SupabaseClient): Promise<string> {
     }
   }
 
-  throw new Error("GHL_API_TOKEN is not configured");
+  throw new Error("GHL API key is not configured (set GHL_API_KEY)");
 }
 
 function adminClient(): SupabaseClient {
@@ -111,9 +121,12 @@ const bookInput = z.object({
 
 async function handleFreeSlots(supabase: SupabaseClient, data: z.infer<typeof freeSlotsInput>) {
   const calId = calendarId(data.calendarType);
+  const startMs = Date.parse(`${data.startDate}T00:00:00Z`);
+  const endMs = Date.parse(`${data.endDate}T23:59:59Z`);
   const params = new URLSearchParams({
-    startDate: data.startDate,
-    endDate: data.endDate,
+    startDate: String(startMs),
+    endDate: String(endMs),
+    timezone: "America/New_York",
   });
   const result = await ghlFetch(supabase, `/calendars/${calId}/free-slots?${params}`);
   return { slots: result?.slots ?? result };
