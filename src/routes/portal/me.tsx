@@ -170,6 +170,12 @@ function PortalMe() {
           .maybeSingle();
         if (ld) resolvedLead = ld as Lead;
 
+        const earlyStages = ["new_inquiry", "match_call_booked", "application_complete"];
+        if (prof.role === "applicant" && ld?.stage && earlyStages.includes(ld.stage)) {
+          navigate({ to: "/portal/onboarding" });
+          return;
+        }
+
         // Upgrade owner → alumni if pickup_date is > 7 days ago
         if (
           prof.role === "owner" &&
@@ -444,6 +450,24 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
       <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6">
         <h3 className="font-display text-base font-bold text-foreground">{copy.headline}</h3>
         <p className="mt-2 text-sm text-muted-foreground">{copy.body}</p>
+        {["new_inquiry", "match_call_booked", "application_complete"].includes(
+          lead.stage ?? "",
+        ) && (
+          <Link
+            to="/portal/onboarding"
+            className="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground"
+          >
+            Continue onboarding →
+          </Link>
+        )}
+        {["placement_approved", "approved"].includes(lead.stage ?? "") && (
+          <Link
+            to="/reserved"
+            className="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground"
+          >
+            Book Meet the Puppies call →
+          </Link>
+        )}
       </div>
 
       {/* Stat cards */}
@@ -483,6 +507,69 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
           </>
         )}
       </div>
+
+      <SupportTicketPanel leadId={lead.id} />
+    </div>
+  );
+}
+
+function SupportTicketPanel({ leadId }: { leadId: string }) {
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!subject.trim() || !body.trim()) return;
+    setBusy(true);
+    const { error } = await supabase.from(T.supportTickets).insert({
+      lead_id: leadId,
+      subject: subject.trim(),
+      body: body.trim(),
+    });
+    setBusy(false);
+    if (!error) {
+      setSent(true);
+      setSubject("");
+      setBody("");
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6">
+      <h3 className="font-display text-base font-bold text-foreground">Need help?</h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Send us a message and we'll get back to you within one business day.
+      </p>
+      {sent ? (
+        <p className="mt-4 text-sm text-accent">Message sent — we'll be in touch soon.</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+          <input
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="Subject"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            required
+          />
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="How can we help?"
+            rows={3}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            required
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground disabled:opacity-50"
+          >
+            {busy ? "Sending..." : "Send message"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }
@@ -492,20 +579,26 @@ function stageFromLead(
 ): "applied" | "review" | "approved" | "reserved" | "pickup" {
   switch (stage) {
     case "new_inquiry":
+    case "match_call_booked":
+    case "application_complete":
     case "application_submitted":
-      return "review";
+      return "applied";
+    case "under_review":
+    case "deposit_paid":
     case "qualified":
     case "video_call_scheduled":
       return "review";
+    case "placement_approved":
     case "approved":
     case "deposit_pending":
       return "approved";
-    case "deposit_paid":
     case "reserved":
     case "final_payment_pending":
       return "reserved";
     case "completed":
       return "pickup";
+    case "denied":
+      return "applied";
     default:
       return "applied";
   }
@@ -513,14 +606,36 @@ function stageFromLead(
 
 function stageCopy(stage: string | null): { headline: string; body: string } {
   switch (stage) {
+    case "match_call_booked":
+      return {
+        headline: "Family Fit Call booked",
+        body: "Complete your application and deposit in your onboarding portal when you're ready.",
+      };
+    case "application_complete":
+      return {
+        headline: "Application received",
+        body: "Place your $500 deposit to hold your spot. It's refundable if we aren't able to approve you for placement.",
+      };
+    case "under_review":
+    case "deposit_paid":
+      return {
+        headline: "Under review",
+        body: "Your deposit is received and your application is being reviewed personally. We'll email you within 24–48 hours with a decision.",
+      };
+    case "placement_approved":
     case "approved":
     case "deposit_pending":
       return {
         headline: "You're approved!",
-        body: "Check your email for a private link to complete your reservation with a $500 Reservation Fee. The link is valid for 48 hours.",
+        body: "Your deposit is locked in and adoption has begun. Book your Meet the Puppies call to choose your puppy.",
       };
-    case "deposit_paid":
+    case "denied":
+      return {
+        headline: "Application update",
+        body: "We weren't able to approve your application for this litter. Your deposit has been refunded. You're welcome to apply for a future litter.",
+      };
     case "reserved":
+    case "final_payment_pending":
       return {
         headline: "Your pick is secured.",
         body: "Your Reservation Fee is received and your pick position is locked. Weekly updates will begin shortly. Balance is due one week before pickup.",

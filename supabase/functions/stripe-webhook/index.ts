@@ -1,9 +1,9 @@
 // White Wolf Shepherds — Stripe reservation webhook
 // Triggered by `checkout.session.completed` from Stripe.
 // On a successful reservation payment:
-//   1. Mark the puppy as reserved (status, deposit_paid_at, reserved_by_lead_id)
-//   2. Advance the lead to stage='deposit_paid'
-//   3. Flip the linked profile to role='owner'
+//   1. Mark the puppy as reserved when puppy_id is present
+//   2. Advance the lead to stage='under_review' (refundable until admin approves)
+//   3. Set deposit_status='paid' — do NOT flip to owner until placement approved
 //   4. Insert a reservations row
 //   5. Telegram-notify the breeder
 
@@ -93,21 +93,19 @@ serve(async (req) => {
       .eq("id", puppy_id);
   }
 
-  // 2. Lead → deposit_paid
+  // 2. Lead → under_review (deposit paid, awaiting breeder approval)
   if (lead_id) {
     await supabase
       .from("wws_leads")
-      .update({ stage: "deposit_paid", updated_at: new Date().toISOString() })
+      .update({
+        stage: "under_review",
+        deposit_status: "paid",
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", lead_id);
-
-    // 3. Profile → owner
-    await supabase
-      .from("wws_profiles")
-      .update({ role: "owner", updated_at: new Date().toISOString() })
-      .eq("lead_id", lead_id);
   }
 
-  // 4. Reservation record
+  // 3. Reservation record (refundable until placement approved)
   await supabase.from("wws_reservations").insert({
     puppy_id: puppy_id ?? null,
     lead_id: lead_id ?? null,
@@ -116,6 +114,7 @@ serve(async (req) => {
     stripe_payment_intent_id: session.payment_intent as string,
     tier: tier ?? null,
     pick_order: pick_order ? parseInt(pick_order) : null,
+    deposit_status: "paid",
   });
 
   // Fetch names + remaining for Telegram message
@@ -139,7 +138,7 @@ serve(async (req) => {
   if (botToken && chatId) {
     const amt = Math.round((session.amount_total ?? 0) / 100);
     const text = [
-      "🐾 <b>New Reservation</b>",
+      "🐾 <b>New Deposit — Under Review</b>",
       `👤 ${lead?.full_name ?? "Unknown"}`,
       `🐕 ${puppy?.name ?? puppy_id ?? "Unknown puppy"}`,
       `💰 $${amt} | Tier: ${tier ?? "N/A"}`,

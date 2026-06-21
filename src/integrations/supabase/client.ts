@@ -36,6 +36,8 @@ export const T = {
   alumniPosts: "wws_alumni_posts",
   dogProfiles: "wws_dog_profiles",
   resources: "wws_resources",
+  appointments: "wws_appointments",
+  supportTickets: "wws_support_tickets",
 } as const;
 
 export const STORAGE_BUCKET = "wws-media";
