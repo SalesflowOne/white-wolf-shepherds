@@ -96,6 +96,11 @@ const contactInput = z.object({
 
 const leadIdInput = z.object({ leadId: z.string().uuid() });
 
+const draftInput = z.object({
+  leadId: z.string().uuid(),
+  draft: z.record(z.unknown()),
+});
+
 const detailsInput = z.object({
   leadId: z.string().uuid(),
   preferredSex: z.enum(["male", "female", "either"]),
@@ -204,6 +209,19 @@ async function handleMarkVideoCallBooked(data: z.infer<typeof leadIdInput>) {
   return { ok: true };
 }
 
+async function handleSaveApplicationDraft(data: z.infer<typeof draftInput>) {
+  const admin = adminClient();
+  const { error } = await admin
+    .from("wws_leads")
+    .update({
+      application_draft: data.draft,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", data.leadId);
+  if (error) throw new Error(`Draft save failed: ${error.message}`);
+  return { ok: true };
+}
+
 async function handleSubmitApplicationDetails(data: z.infer<typeof detailsInput>) {
   const admin = adminClient();
   const score = computeScore(data);
@@ -226,6 +244,7 @@ async function handleSubmitApplicationDetails(data: z.infer<typeof detailsInput>
       source: data.source,
       score,
       stage: "application_complete",
+      application_draft: null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", data.leadId);
@@ -234,11 +253,26 @@ async function handleSubmitApplicationDetails(data: z.infer<typeof detailsInput>
   return { ok: true };
 }
 
+async function handleGetLeadProgress(data: z.infer<typeof leadIdInput>) {
+  const admin = adminClient();
+  const { data: lead, error } = await admin
+    .from("wws_leads")
+    .select(
+      "id, stage, deposit_status, match_call_booked_at, video_call_booked_at, application_draft, full_name, email, phone",
+    )
+    .eq("id", data.leadId)
+    .single();
+  if (error || !lead) throw new Error("Lead not found");
+  return { lead };
+}
+
 const bodySchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("startLead"), data: contactInput }),
   z.object({ action: z.literal("markMatchCallBooked"), data: leadIdInput }),
   z.object({ action: z.literal("markVideoCallBooked"), data: leadIdInput }),
+  z.object({ action: z.literal("saveApplicationDraft"), data: draftInput }),
   z.object({ action: z.literal("submitApplicationDetails"), data: detailsInput }),
+  z.object({ action: z.literal("getLeadProgress"), data: leadIdInput }),
 ]);
 
 serve(async (req) => {
@@ -261,8 +295,14 @@ serve(async (req) => {
       case "markVideoCallBooked":
         result = await handleMarkVideoCallBooked(parsed.data);
         break;
+      case "saveApplicationDraft":
+        result = await handleSaveApplicationDraft(parsed.data);
+        break;
       case "submitApplicationDetails":
         result = await handleSubmitApplicationDetails(parsed.data);
+        break;
+      case "getLeadProgress":
+        result = await handleGetLeadProgress(parsed.data);
         break;
     }
 

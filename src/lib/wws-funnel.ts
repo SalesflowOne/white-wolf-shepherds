@@ -37,6 +37,26 @@ export function markVideoCallBooked(data: { leadId: string }) {
   return callFunnel<{ ok: true }>("markVideoCallBooked", data);
 }
 
+export function saveApplicationDraft(data: { leadId: string; draft: Record<string, unknown> }) {
+  return callFunnel<{ ok: true }>("saveApplicationDraft", data);
+}
+
+export type LeadProgress = {
+  id: string;
+  stage: string | null;
+  deposit_status: string | null;
+  match_call_booked_at: string | null;
+  video_call_booked_at: string | null;
+  application_draft: Record<string, unknown> | null;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+};
+
+export function getLeadProgress(data: { leadId: string }) {
+  return callFunnel<{ lead: LeadProgress }>("getLeadProgress", data);
+}
+
 export type SubmitApplicationInput = {
   leadId: string;
   preferredSex: "male" | "female" | "either";
@@ -56,4 +76,30 @@ export type SubmitApplicationInput = {
 
 export function submitApplicationDetails(data: SubmitApplicationInput) {
   return callFunnel<{ ok: true }>("submitApplicationDetails", data);
+}
+
+export const FUNNEL_STORAGE_KEY = "wws_funnel";
+
+export type FunnelStorage = {
+  leadId: string;
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export function persistFunnelState(state: FunnelStorage) {
+  try {
+    localStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function readFunnelState(): FunnelStorage | null {
+  try {
+    const raw = localStorage.getItem(FUNNEL_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as FunnelStorage) : null;
+  } catch {
+    return null;
+  }
 }

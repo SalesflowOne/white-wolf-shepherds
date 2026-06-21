@@ -91,13 +91,13 @@ export default function HeroSection() {
             href="/apply"
             className="text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground/80 underline-offset-4 transition-colors hover:text-primary-foreground hover:underline"
           >
-            Start Your Puppy Match
+            Start Your Application
           </a>
 
           <p className="mt-2 max-w-xl text-xs leading-relaxed text-primary-foreground/55">
-            Start with your contact info and a short Puppy Match Call, then complete your
-            application, place a $500 fully-refundable deposit to hold your spot, and meet the
-            puppies on a private video call.
+            Start with your contact info and a short Family Fit Call, then complete your
+            application, place a $500 deposit (refundable if not approved), and meet the
+            puppies on a private video call after approval.
           </p>
 
           <a

@@ -23,6 +23,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalIndexRouteImport } from './routes/portal/index'
 import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
+import { Route as PortalOnboardingRouteImport } from './routes/portal/onboarding'
 import { Route as PortalMeRouteImport } from './routes/portal/me'
 import { Route as PortalDashboardRouteImport } from './routes/portal/dashboard'
 import { Route as PortalAdminRouteImport } from './routes/portal/admin'
@@ -98,6 +99,11 @@ const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
   path: '/puppies/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalOnboardingRoute = PortalOnboardingRouteImport.update({
+  id: '/portal/onboarding',
+  path: '/portal/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortalMeRoute = PortalMeRouteImport.update({
   id: '/portal/me',
   path: '/portal/me',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
+  '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
   '/portal/': typeof PortalIndexRoute
 }
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
+  '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
   '/portal': typeof PortalIndexRoute
 }
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
+  '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
   '/portal/': typeof PortalIndexRoute
 }
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
+    | '/portal/onboarding'
     | '/puppies/$slug'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
+    | '/portal/onboarding'
     | '/puppies/$slug'
     | '/portal'
   id:
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
+    | '/portal/onboarding'
     | '/puppies/$slug'
     | '/portal/'
   fileRoutesById: FileRoutesById
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   PortalAdminRoute: typeof PortalAdminRoute
   PortalDashboardRoute: typeof PortalDashboardRoute
   PortalMeRoute: typeof PortalMeRoute
+  PortalOnboardingRoute: typeof PortalOnboardingRoute
   PuppiesSlugRoute: typeof PuppiesSlugRoute
   PortalIndexRoute: typeof PortalIndexRoute
 }
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PuppiesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/onboarding': {
+      id: '/portal/onboarding'
+      path: '/portal/onboarding'
+      fullPath: '/portal/onboarding'
+      preLoaderRoute: typeof PortalOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portal/me': {
       id: '/portal/me'
       path: '/portal/me'
@@ -412,6 +432,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortalAdminRoute: PortalAdminRoute,
   PortalDashboardRoute: PortalDashboardRoute,
   PortalMeRoute: PortalMeRoute,
+  PortalOnboardingRoute: PortalOnboardingRoute,
   PuppiesSlugRoute: PuppiesSlugRoute,
   PortalIndexRoute: PortalIndexRoute,
 }

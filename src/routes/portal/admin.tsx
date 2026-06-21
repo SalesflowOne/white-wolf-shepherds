@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
+import { approvePlacement, denyAndRefund } from "@/lib/wws-admin";
 
 export const Route = createFileRoute("/portal/admin")({
   component: AdminPage,
@@ -310,8 +311,13 @@ function OverviewTab() {
       setStats({
         totalLeads: leadsData.length,
         hot: leadsData.filter((l) => (l.score ?? 0) >= 70).length,
-        deposits: leadsData.filter((l) => l.stage === "deposit_paid" || l.stage === "reserved")
-          .length,
+        deposits: leadsData.filter(
+          (l) =>
+            l.stage === "under_review" ||
+            l.stage === "deposit_paid" ||
+            l.stage === "placement_approved" ||
+            l.stage === "reserved",
+        ).length,
         revenue: reservationsData.reduce((sum, r) => sum + (r.amount ?? 0), 0),
         available: puppiesData.filter((p) => p.status === "available").length,
       });
@@ -553,6 +559,7 @@ function LeadsTab() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [selected, setSelected] = useState<Lead | null>(null);
   const [approveModal, setApproveModal] = useState<Lead | null>(null);
+  const [actionError, setActionError] = useState("");
 
   const fetchData = useCallback(async () => {
     const [{ data: leadsData }, { data: puppiesData }] = await Promise.all([
@@ -568,6 +575,29 @@ function LeadsTab() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  async function handleApprove(id: string) {
+    setActionError("");
+    try {
+      await approvePlacement({ leadId: id });
+      await fetchData();
+      const l = leads.find((x) => x.id === id);
+      if (l) setApproveModal(l);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Approve failed");
+    }
+  }
+
+  async function handleDeny(id: string) {
+    if (!confirm("Deny this applicant and refund their deposit?")) return;
+    setActionError("");
+    try {
+      await denyAndRefund({ leadId: id });
+      await fetchData();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Deny/refund failed");
+    }
+  }
 
   async function updateStage(id: string, stage: string) {
     const updates: Record<string, unknown> = { stage, updated_at: new Date().toISOString() };
@@ -593,6 +623,7 @@ function LeadsTab() {
   return (
     <div>
       <h2 className="font-display text-lg font-bold text-foreground">Leads</h2>
+      {actionError && <p className="mt-2 text-sm text-red-600">{actionError}</p>}
       <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/50">
@@ -602,7 +633,7 @@ function LeadsTab() {
                 "Email",
                 "Score",
                 "Stage",
-                "Match Call",
+                "Family Fit",
                 "Video Call",
                 "Puppy",
                 "Applied",
@@ -645,9 +676,14 @@ function LeadsTab() {
                     {l.created_at ? new Date(l.created_at).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap gap-1">
+                      {l.stage === "under_review" && (
+                        <>
+                          <TinyBtn onClick={() => handleApprove(l.id)}>Approve</TinyBtn>
+                          <TinyBtn onClick={() => handleDeny(l.id)}>Deny & Refund</TinyBtn>
+                        </>
+                      )}
                       <TinyBtn onClick={() => updateStage(l.id, "qualified")}>Qualify</TinyBtn>
-                      <TinyBtn onClick={() => updateStage(l.id, "approved")}>Approve</TinyBtn>
                       <TinyBtn onClick={() => updateStage(l.id, "waitlist")}>Waitlist</TinyBtn>
                       <TinyBtn onClick={() => setSelected(l)}>View</TinyBtn>
                     </div>
@@ -694,6 +730,9 @@ function StageBadge({ stage }: { stage: string | null }) {
     new_inquiry: "bg-gray-100 text-gray-700",
     match_call_booked: "bg-sky-100 text-sky-700",
     application_complete: "bg-blue-100 text-blue-700",
+    under_review: "bg-amber-100 text-amber-800",
+    placement_approved: "bg-purple-100 text-purple-700",
+    denied: "bg-red-100 text-red-700",
     application_submitted: "bg-blue-100 text-blue-700",
     qualified: "bg-teal-100 text-teal-700",
     approved: "bg-purple-100 text-purple-700",
@@ -831,37 +870,15 @@ function LeadSlideOver({
 }
 
 function ApproveModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
-  const [copied, setCopied] = useState(false);
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/approved/${lead.approval_token}`
-      : "";
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div className="relative w-full max-w-md rounded-2xl bg-card p-8 shadow-wolf">
-        <h2 className="font-display text-lg font-bold text-foreground">Approval Link Ready</h2>
+        <h2 className="font-display text-lg font-bold text-foreground">Placement Approved</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Send this link to <strong>{lead.full_name}</strong>. It expires in 48 hours.
+          <strong>{lead.full_name}</strong> has been approved. Their deposit is now locked and they
+          can book their Meet the Puppies call from their portal.
         </p>
-        <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-muted/50 p-3">
-          <input
-            readOnly
-            value={url}
-            className="flex-1 bg-transparent text-xs text-foreground outline-none"
-          />
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(url);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2000);
-            }}
-            className="rounded-md bg-accent px-3 py-1.5 text-xs font-bold text-accent-foreground"
-          >
-            {copied ? "Copied!" : "Copy"}
-          </button>
-        </div>
         <button
           onClick={onClose}
           className="mt-6 w-full rounded-xl border border-border py-3 text-sm font-bold uppercase tracking-wider"
