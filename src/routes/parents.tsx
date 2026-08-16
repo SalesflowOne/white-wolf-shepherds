@@ -38,7 +38,6 @@ function ParentsPage() {
 
       <div className="py-16">
         <div className="mx-auto max-w-5xl px-6">
-          {/* Owner: replace placeholder content with actual parent profiles */}
           <div className="grid gap-12 md:grid-cols-2">
             {/* Dam */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
@@ -79,12 +78,12 @@ function ParentsPage() {
             <div className="rounded-2xl bg-card p-8 shadow-card">
               <div className="overflow-hidden rounded-xl bg-muted">
                 <img
-                  src="/parents/haki.jpg"
-                  alt="Haki, our white German Shepherd sire"
-                  width={1024}
-                  height={1024}
+                  src="/parents/haki-golden-main.webp"
+                  alt="Haki, our white German Shepherd sire, posing in a park at golden hour"
+                  width={500}
+                  height={625}
                   loading="lazy"
-                  className="h-64 w-full object-cover"
+                  className="h-64 w-full object-cover object-center"
                 />
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
@@ -108,6 +107,43 @@ function ParentsPage() {
               >
                 Health Test Results &rarr;
               </a>
+            </div>
+          </div>
+
+          <div className="mt-16">
+            <div className="text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Haki
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-bold text-foreground">
+                Golden Hour Portraits
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+                A closer look at Haki&apos;s expression, structure, and signature white coat.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="overflow-hidden rounded-2xl bg-muted shadow-card sm:col-span-2 lg:col-span-2">
+                <img
+                  src="/parents/haki-golden-happy.webp"
+                  alt="Haki relaxing in a beautiful park during golden hour"
+                  width={500}
+                  height={625}
+                  loading="lazy"
+                  className="h-80 w-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+              <div className="overflow-hidden rounded-2xl bg-muted shadow-card">
+                <img
+                  src="/parents/haki-golden-main.webp"
+                  alt="Haki posing attentively in warm golden-hour light"
+                  width={500}
+                  height={625}
+                  loading="lazy"
+                  className="h-80 w-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                />
+              </div>
             </div>
           </div>
 
