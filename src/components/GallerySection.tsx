@@ -4,7 +4,15 @@ import galleryHouses from "@/assets/gallery-houses.jpg";
 
 const images = [
   { src: galleryYard, alt: "White shepherd mother with her pack in the yard" },
+  {
+    src: "/parents/haki-golden-main.webp",
+    alt: "Haki, our white German Shepherd sire, posing in a park at golden hour",
+  },
   { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together" },
+  {
+    src: "/parents/haki-golden-happy.webp",
+    alt: "Haki relaxing on the grass in warm golden-hour light",
+  },
   { src: galleryHouses, alt: "White shepherds resting by their dog houses" },
 ];
 
