@@ -1871,25 +1871,62 @@ function DogFormModal({
   const [idealHome, setIdealHome] = useState(dog?.ideal_home ?? "");
   const [stripeLink, setStripeLink] = useState(dog?.stripe_payment_link ?? "");
   const [litterId, setLitterId] = useState<string>(dog?.litter_id ?? "");
+  const [readyDate, setReadyDate] = useState(dog?.ready_date ?? "");
+  const [videoUrl, setVideoUrl] = useState(dog?.video_url ?? "");
+  const [tagsStr, setTagsStr] = useState((dog?.temperament_tags ?? []).join(", "));
+  const [gallery, setGallery] = useState<string[]>(dog?.gallery_urls ?? []);
   const [priorityStr, setPriorityStr] = useState(
     dog?.priority_order != null ? String(dog.priority_order) : "0",
   );
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  async function handleImageUpload(file: File) {
-    setUploading(true);
+  async function uploadOne(file: File): Promise<string | null> {
     const ext = file.name.split(".").pop() ?? "jpg";
-    const key = `dogs/${slugify(name || "dog")}-${Date.now()}.${ext}`;
+    const key = `dogs/${slugify(name || "dog")}-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 7)}.${ext}`;
     const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(key, file);
     if (error) {
       alert(`Upload error: ${error.message}`);
-      setUploading(false);
-      return;
+      return null;
     }
-    const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key);
-    setImageUrl(data.publicUrl);
+    return supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key).data.publicUrl;
+  }
+
+  async function handleImageUpload(file: File) {
+    setUploading(true);
+    const url = await uploadOne(file);
+    if (url) setImageUrl(url);
     setUploading(false);
+  }
+
+  async function handleGalleryUpload(files: FileList) {
+    setUploading(true);
+    const uploaded: string[] = [];
+    for (const f of Array.from(files)) {
+      const url = await uploadOne(f);
+      if (url) uploaded.push(url);
+    }
+    if (uploaded.length > 0) {
+      setGallery((prev) => [...prev, ...uploaded]);
+      if (!imageUrl) setImageUrl(uploaded[0]);
+    }
+    setUploading(false);
+  }
+
+  function removeFromGallery(url: string) {
+    setGallery((prev) => prev.filter((u) => u !== url));
+  }
+
+  function moveInGallery(index: number, dir: -1 | 1) {
+    setGallery((prev) => {
+      const next = [...prev];
+      const target = index + dir;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   async function handleSave() {
