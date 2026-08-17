@@ -460,9 +460,9 @@ function LitterGroup({
               litter.dam_name && litter.sire_name
                 ? `${litter.dam_name} × ${litter.sire_name}`
                 : null,
-              litter.born_date ? `Born ${new Date(litter.born_date).toLocaleDateString()}` : null,
+              litter.born_date ? `Born ${formatDateOnly(litter.born_date)}` : null,
               litter.ready_date
-                ? `Ready ${new Date(litter.ready_date).toLocaleDateString()}`
+                ? `Ready ${formatDateOnly(litter.ready_date)}`
                 : null,
             ]
               .filter(Boolean)
@@ -1569,7 +1569,8 @@ const DOG_STATUSES = [
 // Returns null when DOB is unknown so we can render an "Unknown age" tag.
 function getAgeCategory(dob: string | null): "puppy" | "adult" | null {
   if (!dob) return null;
-  const birth = new Date(dob);
+  const birth = parseDateOnly(dob);
+  if (!birth) return null;
   if (Number.isNaN(birth.getTime())) return null;
   const ageMs = Date.now() - birth.getTime();
   const oneYearMs = 365.25 * 24 * 60 * 60 * 1000;
@@ -1754,7 +1755,7 @@ function DogsAdminTab() {
                           </div>
                           {d.dob && (
                             <p className="text-xs text-muted-foreground">
-                              Born {new Date(d.dob).toLocaleDateString()}
+                              Born {formatDateOnly(d.dob)}
                             </p>
                           )}
                         </div>
@@ -2149,9 +2150,9 @@ function LittersAdminTab() {
                   <p className="mt-1 text-xs text-muted-foreground">
                     {[
                       lit.dam_name && lit.sire_name ? `${lit.dam_name} × ${lit.sire_name}` : null,
-                      lit.born_date ? `Born ${new Date(lit.born_date).toLocaleDateString()}` : null,
+                      lit.born_date ? `Born ${formatDateOnly(lit.born_date)}` : null,
                       lit.ready_date
-                        ? `Ready ${new Date(lit.ready_date).toLocaleDateString()}`
+                        ? `Ready ${formatDateOnly(lit.ready_date)}`
                         : null,
                       `${litPups.length}${lit.expected_count ? ` of ${lit.expected_count}` : ""} puppies`,
                     ]

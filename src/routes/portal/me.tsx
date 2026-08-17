@@ -745,8 +745,8 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
           <h1 className="font-display text-4xl font-bold text-foreground">{puppy.name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {puppy.sex === "male" ? "Male" : "Female"} · Born{" "}
-            {puppy.dob ? new Date(puppy.dob).toLocaleDateString() : "TBD"} · Ready{" "}
-            {puppy.ready_date ? new Date(puppy.ready_date).toLocaleDateString() : "TBD"}
+            {puppy.dob ? formatDateOnly(puppy.dob) : "TBD"} · Ready{" "}
+            {puppy.ready_date ? formatDateOnly(puppy.ready_date) : "TBD"}
           </p>
           {puppy.personality_bio && (
             <p className="mt-6 leading-relaxed text-foreground/80">{puppy.personality_bio}</p>

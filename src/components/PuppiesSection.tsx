@@ -128,10 +128,10 @@ function LitterBlock({ litter, puppies }: { litter: Litter; puppies: Puppy[] }) 
                     ? `${litter.dam_name} × ${litter.sire_name}`
                     : null,
                   litter.born_date
-                    ? `Born ${new Date(litter.born_date).toLocaleDateString(undefined, { month: "long", year: "numeric" })}`
+                    ? `Born ${formatDateOnly(litter.born_date, { month: "long", year: "numeric" })}`
                     : null,
                   litter.ready_date
-                    ? `Ready ${new Date(litter.ready_date).toLocaleDateString(undefined, { month: "long", year: "numeric" })}`
+                    ? `Ready ${formatDateOnly(litter.ready_date, { month: "long", year: "numeric" })}`
                     : null,
                 ]
                   .filter(Boolean)
