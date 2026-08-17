@@ -1546,7 +1546,11 @@ function slugify(s: string) {
 type DogRow = Puppy & {
   sex: string | null;
   dob: string | null;
+  ready_date: string | null;
   image_url: string | null;
+  gallery_urls: string[] | null;
+  video_url: string | null;
+  temperament_tags: string[] | null;
   tier: string | null;
   price: number | null;
   collar_color: string | null;
