@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReservedRouteImport } from './routes/reserved'
 import { Route as ProcessRouteImport } from './routes/process'
 import { Route as ParentsRouteImport } from './routes/parents'
@@ -37,6 +38,11 @@ const WaitlistRoute = WaitlistRouteImport.update({
 const ThankYouRoute = ThankYouRouteImport.update({
   id: '/thank-you',
   path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReservedRoute = ReservedRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/parents'
     | '/process'
     | '/reserved'
+    | '/reset-password'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/parents'
     | '/process'
     | '/reserved'
+    | '/reset-password'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/parents'
     | '/process'
     | '/reserved'
+    | '/reset-password'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   ParentsRoute: typeof ParentsRoute
   ProcessRoute: typeof ProcessRoute
   ReservedRoute: typeof ReservedRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/thank-you'
       fullPath: '/thank-you'
       preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reserved': {
@@ -426,6 +446,7 @@ const rootRouteChildren: RootRouteChildren = {
   ParentsRoute: ParentsRoute,
   ProcessRoute: ProcessRoute,
   ReservedRoute: ReservedRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
