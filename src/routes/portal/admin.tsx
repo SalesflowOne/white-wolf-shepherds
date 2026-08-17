@@ -1758,11 +1758,12 @@ function DogsAdminTab() {
                             <AgeTag dob={d.dob} />
                             {d.status === "parent" && <ParentTag />}
                           </div>
-                          {d.dob && (
-                            <p className="text-xs text-muted-foreground">
-                              Born {formatDateOnly(d.dob)}
-                            </p>
-                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {d.dob ? `Born ${formatDateOnly(d.dob)}` : "No DOB"}
+                            {" · "}
+                            {(d.gallery_urls?.length ?? 0) + (d.image_url ? 1 : 0)} photo
+                            {(d.gallery_urls?.length ?? 0) + (d.image_url ? 1 : 0) === 1 ? "" : "s"}
+                          </p>
                         </div>
                       </div>
                     </td>
