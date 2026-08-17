@@ -1628,7 +1628,7 @@ function DogsAdminTab() {
       supabase
         .from(T.puppies)
         .select(
-          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link",
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, ready_date, image_url, gallery_urls, video_url, temperament_tags, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link",
         )
         .order("name"),
       supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
