@@ -2061,7 +2061,9 @@ function DogFormModal({
             <LabeledInput label="Stripe payment link" value={stripeLink} onChange={setStripeLink} />
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-foreground">Profile image</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">
+              Profile image (default photo)
+            </label>
             <div className="flex items-center gap-3">
               {imageUrl ? (
                 <img src={imageUrl} alt="" className="h-16 w-16 rounded-lg object-cover" />
@@ -2085,6 +2087,105 @@ function DogFormModal({
               placeholder="or paste image URL"
               className="mt-2 w-full rounded-lg border border-input bg-background px-3 py-2 text-xs"
             />
+          </div>
+
+          <div className="sm:col-span-2 rounded-xl border border-border p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground">Photo gallery</label>
+                <p className="text-xs text-muted-foreground">
+                  Upload multiple photos, reorder them, or set any one as the profile picture.
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) handleGalleryUpload(files);
+                  e.currentTarget.value = "";
+                }}
+                className="text-xs"
+              />
+            </div>
+
+            {gallery.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No gallery photos yet.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {gallery.map((u, i) => {
+                  const isProfile = u === imageUrl;
+                  return (
+                    <div
+                      key={`${u}-${i}`}
+                      className={`overflow-hidden rounded-lg border ${
+                        isProfile ? "border-accent ring-2 ring-accent/40" : "border-border"
+                      }`}
+                    >
+                      <img src={u} alt="" className="h-24 w-full object-cover" />
+                      <div className="flex items-center justify-between gap-1 p-1">
+                        <button
+                          type="button"
+                          onClick={() => setImageUrl(u)}
+                          disabled={isProfile}
+                          className="rounded px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent disabled:text-muted-foreground"
+                        >
+                          {isProfile ? "Profile" : "Set profile"}
+                        </button>
+                        <div className="flex items-center gap-0.5">
+                          <button
+                            type="button"
+                            onClick={() => moveInGallery(i, -1)}
+                            className="rounded px-1 text-xs text-muted-foreground hover:text-foreground"
+                            aria-label="Move left"
+                          >
+                            ←
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveInGallery(i, 1)}
+                            className="rounded px-1 text-xs text-muted-foreground hover:text-foreground"
+                            aria-label="Move right"
+                          >
+                            →
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFromGallery(u)}
+                            className="rounded px-1 text-xs text-destructive"
+                            aria-label="Remove photo"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {imageUrl && !gallery.includes(imageUrl) && (
+              <button
+                type="button"
+                onClick={() => setGallery((prev) => [...prev, imageUrl])}
+                className="mt-3 rounded-md border border-border px-2 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+              >
+                + Add current profile image to gallery
+              </button>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            <LabeledInput
+              label="Temperament tags (comma separated)"
+              value={tagsStr}
+              onChange={setTagsStr}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <LabeledInput label="Video URL" value={videoUrl} onChange={setVideoUrl} />
           </div>
           <div className="sm:col-span-2">
             <LabeledTextarea label="Personality bio" value={bio} onChange={setBio} rows={3} />
