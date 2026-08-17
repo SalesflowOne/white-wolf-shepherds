@@ -487,6 +487,9 @@ function LitterGroup({
   );
 }
 
+const DOG_SELECT =
+  "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, ready_date, image_url, gallery_urls, video_url, temperament_tags, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link";
+
 function PuppyGrid({
   puppies,
   leadNames,
@@ -494,10 +497,32 @@ function PuppyGrid({
   puppies: Puppy[];
   leadNames: Record<string, string>;
 }) {
+  const [openDog, setOpenDog] = useState<DogRow | null>(null);
+  const [litters, setLitters] = useState<Litter[]>([]);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  async function openProfile(id: string) {
+    setLoadingId(id);
+    const [{ data: dog }, { data: lits }] = await Promise.all([
+      supabase.from(T.puppies).select(DOG_SELECT).eq("id", id).maybeSingle(),
+      supabase.from(T.litters).select("*").order("created_at", { ascending: false }),
+    ]);
+    setLitters((lits ?? []) as Litter[]);
+    if (dog) setOpenDog(dog as DogRow);
+    setLoadingId(null);
+  }
+
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div key={refreshKey} className="grid gap-4 sm:grid-cols-3">
       {puppies.map((p) => (
-        <div key={p.id} className="rounded-xl border border-border bg-card p-4">
+        <button
+          key={p.id}
+          type="button"
+          onClick={() => openProfile(p.id)}
+          className="rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-muted/40 disabled:opacity-60"
+          disabled={loadingId === p.id}
+        >
           <div className="flex items-center justify-between">
             <h4 className="font-display text-base font-bold text-foreground">{p.name}</h4>
             <span
@@ -522,11 +547,29 @@ function PuppyGrid({
               Paid: {new Date(p.deposit_paid_at).toLocaleDateString()}
             </p>
           )}
-        </div>
+          <p className="mt-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
+            {loadingId === p.id ? "Opening…" : "Open profile →"}
+          </p>
+        </button>
       ))}
+
+      {openDog && (
+        <DogFormModal
+          dog={openDog}
+          litters={litters}
+          existingSlugs={[]}
+          onClose={() => setOpenDog(null)}
+          onSaved={() => {
+            setOpenDog(null);
+            setRefreshKey((k) => k + 1);
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }
+
 
 function StatBox({
   label,
