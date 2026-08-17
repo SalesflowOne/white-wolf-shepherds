@@ -8,10 +8,18 @@ const images = [
     src: "/parents/haki-golden-main.webp",
     alt: "Haki, our white German Shepherd sire, posing in a park at golden hour",
   },
+  {
+    src: "/parents/mia-profile.webp",
+    alt: "Mia, our white German Shepherd dam, posing in warm golden-hour light",
+  },
   { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together" },
   {
     src: "/parents/haki-golden-happy.webp",
     alt: "Haki relaxing on the grass in warm golden-hour light",
+  },
+  {
+    src: "/parents/mia.jpg",
+    alt: "Mia, our white German Shepherd dam",
   },
   { src: galleryHouses, alt: "White shepherds resting by their dog houses" },
 ];
