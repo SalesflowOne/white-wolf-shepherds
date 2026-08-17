@@ -96,11 +96,13 @@ function PackFamilyPage() {
                       loading="lazy"
                       className="h-72 w-full object-cover"
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
-                        Real image coming soon
-                      </span>
-                    </div>
+                    {!p.image_url && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
+                          Real image coming soon
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-6 flex items-center gap-3">
