@@ -442,15 +442,17 @@ function ReservationsPanel({
 
 function LitterGroup({
   litter,
-  puppies,
+  puppies: allPuppies,
   leadNames,
 }: {
   litter: Litter;
   puppies: Puppy[];
   leadNames: Record<string, string>;
 }) {
+  const puppies = allPuppies.filter((p) => p.status !== "parent");
   const available = puppies.filter((p) => p.status === "available").length;
   const total = puppies.length || litter.expected_count || 0;
+
   return (
     <div className="rounded-2xl border border-border bg-card/40 p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -2298,7 +2300,9 @@ function LittersAdminTab() {
 
       <div className="space-y-4">
         {litters.map((lit) => {
-          const litPups = puppies.filter((p) => p.litter_id === lit.id);
+          const litPups = puppies.filter(
+            (p) => p.litter_id === lit.id && p.status !== "parent",
+          );
           return (
             <div key={lit.id} className="rounded-2xl border border-border bg-card p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
