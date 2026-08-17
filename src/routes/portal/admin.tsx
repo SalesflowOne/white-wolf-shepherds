@@ -1950,7 +1950,17 @@ function DogFormModal({
       slug: finalSlug,
       sex: sex || null,
       dob: dob || null,
+      ready_date: readyDate || null,
       status: status || "available",
+      video_url: videoUrl.trim() || null,
+      gallery_urls: gallery.length > 0 ? gallery : null,
+      temperament_tags:
+        tagsStr.trim().length > 0
+          ? tagsStr
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : null,
       tier: tier || null,
       price: priceNum,
       collar_color: collarColor.trim() || null,
