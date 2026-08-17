@@ -10,7 +10,7 @@ export const Route = createFileRoute("/parents")({
       {
         name: "description",
         content:
-          "OFA certified, AKC registered dam and sire behind our White German Shepherd litter.",
+          "Meet Mia and Haki, the White German Shepherd parents behind our White Wolf Shepherds litter.",
       },
     ],
   }),
@@ -30,8 +30,8 @@ function ParentsPage() {
             Meet the Parents
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every exceptional puppy starts with exceptional parents. Both our dam and sire are
-            health-tested, temperament-evaluated, and AKC registered.
+            Every exceptional puppy starts with exceptional parents. Meet Mia and Haki, the heart
+            of our White Wolf Shepherds family.
           </p>
         </div>
       </div>
@@ -43,12 +43,12 @@ function ParentsPage() {
             <div className="rounded-2xl bg-card p-8 shadow-card">
               <div className="overflow-hidden rounded-xl bg-muted">
                 <img
-                  src="/parents/mia.jpg"
+                  src="/parents/mia-profile.webp"
                   alt="Mia, our white German Shepherd dam"
-                  width={1024}
-                  height={1024}
+                  width={640}
+                  height={640}
                   loading="lazy"
-                  className="h-64 w-full object-cover"
+                  className="h-64 w-full object-cover object-center"
                 />
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold text-foreground">
@@ -63,25 +63,21 @@ function ParentsPage() {
                 </span>
               </div>
               <p className="mt-4 text-muted-foreground">
-                Temperament, health history, and lineage details coming soon. Our dam has passed all
-                OFA health evaluations including hips, elbows, and cardiac.
+                Mia is graceful, affectionate, and attentive, with a sweet personality and elegant
+                presence. She is playful, loving, and highly observant, with a calm demeanor that
+                makes her easy to adore. Mia combines beauty, intelligence, and warmth, making her
+                a wonderful dam and a true favorite of the pack.
               </p>
-              <a
-                href="#"
-                className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-              >
-                Health Test Results &rarr;
-              </a>
             </div>
 
             {/* Sire */}
             <div className="rounded-2xl bg-card p-8 shadow-card">
               <div className="overflow-hidden rounded-xl bg-muted">
                 <img
-                  src="/parents/haki-golden-main.webp"
-                  alt="Haki, our white German Shepherd sire, posing in a park at golden hour"
-                  width={500}
-                  height={625}
+                  src="/parents/haki-profile.webp"
+                  alt="Haki, our white German Shepherd sire"
+                  width={640}
+                  height={640}
                   loading="lazy"
                   className="h-64 w-full object-cover object-center"
                 />
@@ -98,23 +94,17 @@ function ParentsPage() {
                 </span>
               </div>
               <p className="mt-4 text-muted-foreground">
-                Temperament, health history, and lineage details coming soon. Our sire has passed
-                all OFA health evaluations including hips, elbows, and cardiac.
+                Haki is confident, intelligent, and loyal, with a strong presence and steady
+                temperament. He is athletic, alert, and naturally protective while remaining deeply
+                affectionate with his people. Haki carries himself with strength and confidence,
+                making him a standout sire with both beauty and character.
               </p>
-              <a
-                href="#"
-                className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-              >
-                Health Test Results &rarr;
-              </a>
             </div>
           </div>
 
           <div className="mt-16">
             <div className="text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                Haki
-              </p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Haki</p>
               <h2 className="mt-3 font-display text-3xl font-bold text-foreground">
                 Golden Hour Portraits
               </h2>
@@ -147,7 +137,42 @@ function ParentsPage() {
             </div>
           </div>
 
-          {/* CTA */}
+          <div className="mt-16">
+            <div className="text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Mia</p>
+              <h2 className="mt-3 font-display text-3xl font-bold text-foreground">
+                Grace in the Park
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+                Mia&apos;s calm confidence and athletic structure come through naturally in motion
+                and at rest.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-2xl bg-muted shadow-card">
+                <img
+                  src="/parents/mia-profile.webp"
+                  alt="Mia relaxing in warm golden-hour light"
+                  width={640}
+                  height={640}
+                  loading="lazy"
+                  className="h-80 w-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+              <div className="overflow-hidden rounded-2xl bg-muted shadow-card">
+                <img
+                  src="/parents/mia.jpg"
+                  alt="Mia, our white German Shepherd dam"
+                  width={1024}
+                  height={1024}
+                  loading="lazy"
+                  className="h-80 w-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="mt-16 text-center">
             <Link
               to="/litter"
