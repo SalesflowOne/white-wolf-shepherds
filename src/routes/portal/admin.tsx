@@ -1546,7 +1546,11 @@ function slugify(s: string) {
 type DogRow = Puppy & {
   sex: string | null;
   dob: string | null;
+  ready_date: string | null;
   image_url: string | null;
+  gallery_urls: string[] | null;
+  video_url: string | null;
+  temperament_tags: string[] | null;
   tier: string | null;
   price: number | null;
   collar_color: string | null;
@@ -1624,7 +1628,7 @@ function DogsAdminTab() {
       supabase
         .from(T.puppies)
         .select(
-          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, image_url, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link",
+          "id, name, slug, status, reserved_by_lead_id, deposit_paid_at, priority_order, litter_id, sex, dob, ready_date, image_url, gallery_urls, video_url, temperament_tags, tier, price, collar_color, personality_bio, ideal_home, stripe_payment_link",
         )
         .order("name"),
       supabase.from(T.litters).select("*").order("priority_order", { ascending: false }),
@@ -1754,11 +1758,12 @@ function DogsAdminTab() {
                             <AgeTag dob={d.dob} />
                             {d.status === "parent" && <ParentTag />}
                           </div>
-                          {d.dob && (
-                            <p className="text-xs text-muted-foreground">
-                              Born {formatDateOnly(d.dob)}
-                            </p>
-                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {d.dob ? `Born ${formatDateOnly(d.dob)}` : "No DOB"}
+                            {" · "}
+                            {(d.gallery_urls?.length ?? 0) + (d.image_url ? 1 : 0)} photo
+                            {(d.gallery_urls?.length ?? 0) + (d.image_url ? 1 : 0) === 1 ? "" : "s"}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -1866,25 +1871,62 @@ function DogFormModal({
   const [idealHome, setIdealHome] = useState(dog?.ideal_home ?? "");
   const [stripeLink, setStripeLink] = useState(dog?.stripe_payment_link ?? "");
   const [litterId, setLitterId] = useState<string>(dog?.litter_id ?? "");
+  const [readyDate, setReadyDate] = useState(dog?.ready_date ?? "");
+  const [videoUrl, setVideoUrl] = useState(dog?.video_url ?? "");
+  const [tagsStr, setTagsStr] = useState((dog?.temperament_tags ?? []).join(", "));
+  const [gallery, setGallery] = useState<string[]>(dog?.gallery_urls ?? []);
   const [priorityStr, setPriorityStr] = useState(
     dog?.priority_order != null ? String(dog.priority_order) : "0",
   );
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  async function handleImageUpload(file: File) {
-    setUploading(true);
+  async function uploadOne(file: File): Promise<string | null> {
     const ext = file.name.split(".").pop() ?? "jpg";
-    const key = `dogs/${slugify(name || "dog")}-${Date.now()}.${ext}`;
+    const key = `dogs/${slugify(name || "dog")}-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 7)}.${ext}`;
     const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(key, file);
     if (error) {
       alert(`Upload error: ${error.message}`);
-      setUploading(false);
-      return;
+      return null;
     }
-    const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key);
-    setImageUrl(data.publicUrl);
+    return supabase.storage.from(STORAGE_BUCKET).getPublicUrl(key).data.publicUrl;
+  }
+
+  async function handleImageUpload(file: File) {
+    setUploading(true);
+    const url = await uploadOne(file);
+    if (url) setImageUrl(url);
     setUploading(false);
+  }
+
+  async function handleGalleryUpload(files: FileList) {
+    setUploading(true);
+    const uploaded: string[] = [];
+    for (const f of Array.from(files)) {
+      const url = await uploadOne(f);
+      if (url) uploaded.push(url);
+    }
+    if (uploaded.length > 0) {
+      setGallery((prev) => [...prev, ...uploaded]);
+      if (!imageUrl) setImageUrl(uploaded[0]);
+    }
+    setUploading(false);
+  }
+
+  function removeFromGallery(url: string) {
+    setGallery((prev) => prev.filter((u) => u !== url));
+  }
+
+  function moveInGallery(index: number, dir: -1 | 1) {
+    setGallery((prev) => {
+      const next = [...prev];
+      const target = index + dir;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   async function handleSave() {
@@ -1908,7 +1950,17 @@ function DogFormModal({
       slug: finalSlug,
       sex: sex || null,
       dob: dob || null,
+      ready_date: readyDate || null,
       status: status || "available",
+      video_url: videoUrl.trim() || null,
+      gallery_urls: gallery.length > 0 ? gallery : null,
+      temperament_tags:
+        tagsStr.trim().length > 0
+          ? tagsStr
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : null,
       tier: tier || null,
       price: priceNum,
       collar_color: collarColor.trim() || null,
@@ -1966,6 +2018,14 @@ function DogFormModal({
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
             />
           </Field>
+          <Field label="Ready / go-home date">
+            <input
+              type="date"
+              value={readyDate}
+              onChange={(e) => setReadyDate(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+            />
+          </Field>
           <Field label="Status">
             <select
               value={status}
@@ -2001,7 +2061,9 @@ function DogFormModal({
             <LabeledInput label="Stripe payment link" value={stripeLink} onChange={setStripeLink} />
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-foreground">Profile image</label>
+            <label className="mb-1 block text-sm font-medium text-foreground">
+              Profile image (default photo)
+            </label>
             <div className="flex items-center gap-3">
               {imageUrl ? (
                 <img src={imageUrl} alt="" className="h-16 w-16 rounded-lg object-cover" />
@@ -2025,6 +2087,105 @@ function DogFormModal({
               placeholder="or paste image URL"
               className="mt-2 w-full rounded-lg border border-input bg-background px-3 py-2 text-xs"
             />
+          </div>
+
+          <div className="sm:col-span-2 rounded-xl border border-border p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground">Photo gallery</label>
+                <p className="text-xs text-muted-foreground">
+                  Upload multiple photos, reorder them, or set any one as the profile picture.
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) handleGalleryUpload(files);
+                  e.currentTarget.value = "";
+                }}
+                className="text-xs"
+              />
+            </div>
+
+            {gallery.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No gallery photos yet.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {gallery.map((u, i) => {
+                  const isProfile = u === imageUrl;
+                  return (
+                    <div
+                      key={`${u}-${i}`}
+                      className={`overflow-hidden rounded-lg border ${
+                        isProfile ? "border-accent ring-2 ring-accent/40" : "border-border"
+                      }`}
+                    >
+                      <img src={u} alt="" className="h-24 w-full object-cover" />
+                      <div className="flex items-center justify-between gap-1 p-1">
+                        <button
+                          type="button"
+                          onClick={() => setImageUrl(u)}
+                          disabled={isProfile}
+                          className="rounded px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent disabled:text-muted-foreground"
+                        >
+                          {isProfile ? "Profile" : "Set profile"}
+                        </button>
+                        <div className="flex items-center gap-0.5">
+                          <button
+                            type="button"
+                            onClick={() => moveInGallery(i, -1)}
+                            className="rounded px-1 text-xs text-muted-foreground hover:text-foreground"
+                            aria-label="Move left"
+                          >
+                            ←
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveInGallery(i, 1)}
+                            className="rounded px-1 text-xs text-muted-foreground hover:text-foreground"
+                            aria-label="Move right"
+                          >
+                            →
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFromGallery(u)}
+                            className="rounded px-1 text-xs text-destructive"
+                            aria-label="Remove photo"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {imageUrl && !gallery.includes(imageUrl) && (
+              <button
+                type="button"
+                onClick={() => setGallery((prev) => [...prev, imageUrl])}
+                className="mt-3 rounded-md border border-border px-2 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+              >
+                + Add current profile image to gallery
+              </button>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            <LabeledInput
+              label="Temperament tags (comma separated)"
+              value={tagsStr}
+              onChange={setTagsStr}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <LabeledInput label="Video URL" value={videoUrl} onChange={setVideoUrl} />
           </div>
           <div className="sm:col-span-2">
             <LabeledTextarea label="Personality bio" value={bio} onChange={setBio} rows={3} />
