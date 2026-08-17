@@ -1,0 +1,1 @@
+delete from public.wws_reservations where id = 'e734ffec-3331-44d6-b0c6-5644c33639fb';
