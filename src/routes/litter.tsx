@@ -49,6 +49,7 @@ function LitterPage() {
       const { data, error } = await supabase
         .from(T.puppies)
         .select("*")
+        .neq("status", "parent")
         .order("priority_order", { ascending: true });
 
       if (!error && data) {

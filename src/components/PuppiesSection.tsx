@@ -45,6 +45,7 @@ export default function PuppiesSection() {
         supabase
           .from(T.puppies)
           .select("id, name, slug, sex, status, image_url, litter_id, priority_order")
+          .neq("status", "parent")
           .order("priority_order", { ascending: true }),
       ]);
       setLitters((lits ?? []) as Litter[]);
