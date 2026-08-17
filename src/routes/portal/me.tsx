@@ -1,6 +1,6 @@
 import { formatDateOnly } from "@/lib/utils";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 
@@ -43,6 +43,9 @@ type Puppy = {
   personality_bio: string | null;
   ideal_home: string | null;
   image_url: string | null;
+  gallery_urls: string[] | null;
+  video_url: string | null;
+  collar_color: string | null;
   deposit_paid_at: string | null;
   priority_order: number | null;
 };
@@ -749,6 +752,47 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
             {puppy.dob ? formatDateOnly(puppy.dob) : "TBD"} · Ready{" "}
             {puppy.ready_date ? formatDateOnly(puppy.ready_date) : "TBD"}
           </p>
+
+          {/* Quick facts */}
+          <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <FactItem label="Collar color">
+              {puppy.collar_color ? (
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className="inline-block h-4 w-4 rounded-full border border-border"
+                    style={{ backgroundColor: collarSwatch(puppy.collar_color) }}
+                    aria-hidden="true"
+                  />
+                  <span className="capitalize">{puppy.collar_color}</span>
+                </span>
+              ) : (
+                "TBD"
+              )}
+            </FactItem>
+            <FactItem label="Tier">
+              <span className="capitalize">{puppy.tier ?? "—"}</span>
+            </FactItem>
+            <FactItem label="Pick order">
+              {puppy.priority_order ? `#${puppy.priority_order}` : "—"}
+            </FactItem>
+            <FactItem label="Reservation">
+              {puppy.deposit_paid_at ? "Paid ✓" : "Pending"}
+            </FactItem>
+          </dl>
+
+          {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {puppy.temperament_tags.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground/70"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
           {puppy.personality_bio && (
             <p className="mt-6 leading-relaxed text-foreground/80">{puppy.personality_bio}</p>
           )}
@@ -758,8 +802,41 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
               <p className="mt-2 text-muted-foreground">{puppy.ideal_home}</p>
             </div>
           )}
+
+          {puppy.gallery_urls && puppy.gallery_urls.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-display text-base font-bold text-foreground">Photo gallery</h3>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {puppy.gallery_urls.map((u, i) => (
+                  <a key={u + i} href={u} target="_blank" rel="noreferrer">
+                    <img
+                      src={u}
+                      alt={`${puppy.name} photo ${i + 1}`}
+                      loading="lazy"
+                      className="h-28 w-full rounded-xl object-cover transition-opacity hover:opacity-90"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {puppy.video_url && (
+            <div className="mt-8">
+              <h3 className="font-display text-base font-bold text-foreground">Video</h3>
+              <a
+                href={puppy.video_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm font-semibold text-accent hover:underline"
+              >
+                Watch {puppy.name}'s latest video →
+              </a>
+            </div>
+          )}
         </div>
       </div>
+
 
       {/* Pickup countdown */}
       <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6 text-center">
@@ -1817,4 +1894,39 @@ function LabeledTextarea({
       />
     </div>
   );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Puppy profile helpers
+// ─────────────────────────────────────────────────────────────
+
+function FactItem({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="rounded-xl bg-muted/50 px-3 py-2">
+      <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 text-sm font-medium text-foreground">{children}</dd>
+    </div>
+  );
+}
+
+const COLLAR_SWATCHES: Record<string, string> = {
+  red: "#dc2626",
+  blue: "#2563eb",
+  green: "#16a34a",
+  yellow: "#eab308",
+  orange: "#ea580c",
+  purple: "#7c3aed",
+  pink: "#ec4899",
+  black: "#111827",
+  white: "#f8fafc",
+  gray: "#9ca3af",
+  grey: "#9ca3af",
+  teal: "#0d9488",
+  brown: "#92400e",
+};
+
+function collarSwatch(color: string): string {
+  return COLLAR_SWATCHES[color.trim().toLowerCase()] ?? color;
 }
