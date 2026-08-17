@@ -752,6 +752,47 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
             {puppy.dob ? formatDateOnly(puppy.dob) : "TBD"} · Ready{" "}
             {puppy.ready_date ? formatDateOnly(puppy.ready_date) : "TBD"}
           </p>
+
+          {/* Quick facts */}
+          <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <FactItem label="Collar color">
+              {puppy.collar_color ? (
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className="inline-block h-4 w-4 rounded-full border border-border"
+                    style={{ backgroundColor: collarSwatch(puppy.collar_color) }}
+                    aria-hidden="true"
+                  />
+                  <span className="capitalize">{puppy.collar_color}</span>
+                </span>
+              ) : (
+                "TBD"
+              )}
+            </FactItem>
+            <FactItem label="Tier">
+              <span className="capitalize">{puppy.tier ?? "—"}</span>
+            </FactItem>
+            <FactItem label="Pick order">
+              {puppy.priority_order ? `#${puppy.priority_order}` : "—"}
+            </FactItem>
+            <FactItem label="Reservation">
+              {puppy.deposit_paid_at ? "Paid ✓" : "Pending"}
+            </FactItem>
+          </dl>
+
+          {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {puppy.temperament_tags.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground/70"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
           {puppy.personality_bio && (
             <p className="mt-6 leading-relaxed text-foreground/80">{puppy.personality_bio}</p>
           )}
@@ -761,8 +802,41 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
               <p className="mt-2 text-muted-foreground">{puppy.ideal_home}</p>
             </div>
           )}
+
+          {puppy.gallery_urls && puppy.gallery_urls.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-display text-base font-bold text-foreground">Photo gallery</h3>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {puppy.gallery_urls.map((u, i) => (
+                  <a key={u + i} href={u} target="_blank" rel="noreferrer">
+                    <img
+                      src={u}
+                      alt={`${puppy.name} photo ${i + 1}`}
+                      loading="lazy"
+                      className="h-28 w-full rounded-xl object-cover transition-opacity hover:opacity-90"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {puppy.video_url && (
+            <div className="mt-8">
+              <h3 className="font-display text-base font-bold text-foreground">Video</h3>
+              <a
+                href={puppy.video_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm font-semibold text-accent hover:underline"
+              >
+                Watch {puppy.name}'s latest video →
+              </a>
+            </div>
+          )}
         </div>
       </div>
+
 
       {/* Pickup countdown */}
       <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6 text-center">
