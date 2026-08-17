@@ -40,6 +40,7 @@ export const Route = createFileRoute("/litter")({
 function LitterPage() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [availableCount, setAvailableCount] = useState<number>(0);
+  const [parents, setParents] = useState<Puppy[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,6 +61,15 @@ function LitterPage() {
     }
 
     fetchPuppies();
+
+    (async () => {
+      const { data } = await supabase
+        .from(T.puppies)
+        .select("*")
+        .eq("status", "parent")
+        .order("sex", { ascending: false });
+      if (data) setParents(data as Puppy[]);
+    })();
 
     // Subscribe to realtime changes on puppies table
     const channel = supabase
@@ -254,35 +264,44 @@ function LitterPage() {
           </div>
 
           <div className="mt-12 grid gap-8 md:grid-cols-2">
-            <div className="rounded-2xl bg-card p-8 shadow-card">
-              <div className="flex h-48 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-4xl text-muted-foreground/30">Dam</span>
+            {(parents.length > 0
+              ? parents.map((p) => ({
+                  key: p.id,
+                  role: p.sex === "male" ? "Sire" : "Dam",
+                  name: p.name,
+                  image: p.image_url,
+                  bio: p.personality_bio,
+                }))
+              : [
+                  { key: "dam", role: "Dam", name: null, image: null, bio: null },
+                  { key: "sire", role: "Sire", name: null, image: null, bio: null },
+                ]
+            ).map((p) => (
+              <div key={p.key} className="rounded-2xl bg-card p-8 shadow-card">
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={`${p.name ?? p.role}, White Wolf Shepherds ${p.role.toLowerCase()}`}
+                    loading="lazy"
+                    className="h-48 w-full rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="flex h-48 items-center justify-center rounded-xl bg-muted">
+                    <span className="font-display text-4xl text-muted-foreground/30">{p.role}</span>
+                  </div>
+                )}
+                <h3 className="mt-6 font-display text-2xl font-bold text-foreground">
+                  {p.role} &mdash; {p.name ?? "Name TBD"}
+                </h3>
+                <p className="mt-2 text-sm font-medium text-accent">
+                  OFA Health Tested &middot; AKC Registered
+                </p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {p.bio ??
+                    "Health certifications, temperament details, and lineage information coming soon."}
+                </p>
               </div>
-              <h3 className="mt-6 font-display text-2xl font-bold text-foreground">
-                Dam &mdash; Name TBD
-              </h3>
-              <p className="mt-2 text-sm font-medium text-accent">
-                OFA Health Tested &middot; AKC Registered
-              </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Health certifications, temperament details, and lineage information coming soon.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-card p-8 shadow-card">
-              <div className="flex h-48 items-center justify-center rounded-xl bg-muted">
-                <span className="font-display text-4xl text-muted-foreground/30">Sire</span>
-              </div>
-              <h3 className="mt-6 font-display text-2xl font-bold text-foreground">
-                Sire &mdash; Name TBD
-              </h3>
-              <p className="mt-2 text-sm font-medium text-accent">
-                OFA Health Tested &middot; AKC Registered
-              </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Health certifications, temperament details, and lineage information coming soon.
-              </p>
-            </div>
+            ))}
           </div>
 
           <div className="mt-8 text-center">
