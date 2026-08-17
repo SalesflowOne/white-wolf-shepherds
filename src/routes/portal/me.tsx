@@ -1,6 +1,6 @@
 import { formatDateOnly } from "@/lib/utils";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 
@@ -1900,7 +1900,7 @@ function LabeledTextarea({
 // Puppy profile helpers
 // ─────────────────────────────────────────────────────────────
 
-function FactItem({ label, children }: { label: string; children: React.ReactNode }) {
+function FactItem({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-xl bg-muted/50 px-3 py-2">
       <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
