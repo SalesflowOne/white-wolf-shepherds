@@ -43,6 +43,9 @@ type Puppy = {
   personality_bio: string | null;
   ideal_home: string | null;
   image_url: string | null;
+  gallery_urls: string[] | null;
+  video_url: string | null;
+  collar_color: string | null;
   deposit_paid_at: string | null;
   priority_order: number | null;
 };
