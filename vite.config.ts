@@ -8,11 +8,12 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     tanstackStart(),
-    nitro(),
+    nitro({ output: { dir: "dist" } }),
     react(),
     tailwindcss(),
     viteTsConfigPaths(),
   ],
+
   resolve: {
     dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-start"],
   },
