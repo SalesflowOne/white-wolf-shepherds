@@ -184,6 +184,9 @@ function PuppyProfilePage() {
                 </div>
               )}
 
+              <LitterPhotoStrip puppyName={puppy.name} />
+
+
               {/* Video */}
               {videoEmbed && (
                 <div className="mt-4 overflow-hidden rounded-xl">
