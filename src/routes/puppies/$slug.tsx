@@ -5,6 +5,9 @@ import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterPhotoStrip from "@/components/LitterPhotoStrip";
+import MeetTheParents from "@/components/MeetTheParents";
+import { useCurrentLitter, useParents, formatLongDate, ageFrom } from "@/hooks/useParents";
+
 
 
 type Puppy = {
@@ -32,10 +35,16 @@ export const Route = createFileRoute("/puppies/$slug")({
   component: PuppyProfilePage,
 });
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "TBD";
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+function MetaItem({ label, value }: { label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 text-sm font-medium capitalize text-foreground">{value}</dd>
+    </div>
+  );
 }
 
 function PuppyProfilePage() {
@@ -44,6 +53,10 @@ function PuppyProfilePage() {
   const [siblings, setSiblings] = useState<Puppy[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const litter = useCurrentLitter();
+  const { dam, sire } = useParents();
+
+
 
   useEffect(() => {
     async function fetchPuppy() {
@@ -129,8 +142,16 @@ function PuppyProfilePage() {
   const sexColor = puppy.sex === "male" ? "bg-blue-100 text-blue-700" : "bg-rose-100 text-rose-700";
   const sexLabel = puppy.sex === "male" ? "Male" : "Female";
 
+  // Dates fall back to the litter record so profiles never show gaps
+  const dobValue = puppy.dob ?? litter?.born_date ?? null;
+  const readyValue = puppy.ready_date ?? litter?.ready_date ?? null;
+  const bornLabel = formatLongDate(dobValue);
+  const ageLabel = ageFrom(dobValue);
+  const readyLabel = formatLongDate(readyValue);
+
   // Parse video embed URL
   const videoEmbed = puppy.video_url ? getVideoEmbed(puppy.video_url) : null;
+
 
   return (
     <div className="min-h-screen">
@@ -215,22 +236,8 @@ function PuppyProfilePage() {
                   {sexLabel}
                 </span>
                 <CollarBadge color={puppy.collar_color} />
-                {puppy.dob && (
-                  <span className="text-sm text-muted-foreground">
-                    Born {formatDate(puppy.dob)}
-                  </span>
-                )}
-                {puppy.ready_date && (
-                  <span className="text-sm text-muted-foreground">
-                    &middot; Ready {formatDate(puppy.ready_date)}
-                  </span>
-                )}
-              </div>
-
-              {/* Tier badge */}
-              <div className="mt-4">
                 <span
-                  className={`inline-flex rounded-full px-4 py-1.5 text-sm font-semibold ${tierColor}`}
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tierColor}`}
                 >
                   {tierLabel}
                 </span>
@@ -241,7 +248,29 @@ function PuppyProfilePage() {
                 <span className="font-display text-3xl font-bold text-foreground">
                   ${puppy.price?.toLocaleString()}
                 </span>
+                <span className="ml-2 text-sm text-muted-foreground">
+                  all-in &middot; $500 reservation applies to purchase
+                </span>
               </div>
+
+              {/* Vitals / metadata */}
+              <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-border bg-card/60 p-5">
+                <MetaItem label="Date of Birth" value={bornLabel} />
+                <MetaItem label="Age Today" value={ageLabel} />
+                <MetaItem label="Go-Home Date" value={readyLabel} />
+                <MetaItem label="Litter" value={litter?.name ?? null} />
+                <MetaItem label="Collar" value={puppy.collar_color} />
+                <MetaItem label="Sex" value={sexLabel} />
+                <MetaItem label="Dam" value={dam?.name ?? null} />
+                <MetaItem label="Sire" value={sire?.name ?? null} />
+              </dl>
+
+              <p className="mt-3 text-xs text-muted-foreground">
+                Every puppy goes home vet-checked, dewormed, age-appropriately vaccinated,
+                microchipped, and AKC-registerable — with a written health guarantee and lifetime
+                breeder support.
+              </p>
+
 
               {/* Temperament tags */}
               {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
@@ -388,38 +417,14 @@ function PuppyProfilePage() {
             </section>
           )}
 
-          {/* Meet the Parents teaser */}
-          <section className="mt-20">
-            <h2 className="font-display text-2xl font-bold text-foreground">Meet the Parents</h2>
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl bg-card p-6 shadow-card">
-                <div className="flex h-32 items-center justify-center rounded-xl bg-muted">
-                  <span className="font-display text-3xl text-muted-foreground/30">Dam</span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">Dam</h3>
-                <p className="mt-1 text-sm text-accent">
-                  OFA Health Tested &middot; AKC Registered
-                </p>
-              </div>
-              <div className="rounded-2xl bg-card p-6 shadow-card">
-                <div className="flex h-32 items-center justify-center rounded-xl bg-muted">
-                  <span className="font-display text-3xl text-muted-foreground/30">Sire</span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">Sire</h3>
-                <p className="mt-1 text-sm text-accent">
-                  OFA Health Tested &middot; AKC Registered
-                </p>
-              </div>
-            </div>
-            <div className="mt-6">
-              <Link
-                to="/parents"
-                className="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-              >
-                View Parent Profiles &rarr;
-              </Link>
-            </div>
-          </section>
+          {/* Meet the Parents — pulled live from the parent profiles */}
+          <MeetTheParents
+            className="mt-20"
+            eyebrow="Behind This Litter"
+            title="Meet the Parents"
+            subtitle={`${puppy.name} comes from health-tested, AKC-registered White Shepherd parents — structure, temperament, and coat you can trace.`}
+          />
+
         </div>
       </div>
 
