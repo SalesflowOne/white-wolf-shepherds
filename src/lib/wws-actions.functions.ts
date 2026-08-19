@@ -6,12 +6,7 @@ import {
   startLeadHandler,
   submitApplicationDetailsHandler,
 } from "./wws-actions.server";
-import {
-  contactInput,
-  detailsInput,
-  leadIdInput,
-  profileRoleInput,
-} from "./wws-actions.schemas";
+import { contactInput, detailsInput, leadIdInput, profileRoleInput } from "./wws-actions.schemas";
 
 export const startLead = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => contactInput.parse(data))

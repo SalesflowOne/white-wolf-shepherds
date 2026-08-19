@@ -145,11 +145,11 @@ This creates the $500 refundable reservation product + Payment Link (success URL
 
 **Current WWS account catalog (live):**
 
-| Resource | ID / URL |
-| -------- | -------- |
-| Product | `prod_Ujy8PAKQX7fvtD` |
-| Price ($500) | `price_1TkUBkQMFzbE9sOPliBAav1s` |
-| Payment Link | `https://buy.stripe.com/28E3cx5VAc9zaMX8ROejK00` |
+| Resource          | ID / URL                                          |
+| ----------------- | ------------------------------------------------- |
+| Product           | `prod_Ujy8PAKQX7fvtD`                             |
+| Price ($500)      | `price_1TkUBkQMFzbE9sOPliBAav1s`                  |
+| Payment Link      | `https://buy.stripe.com/28E3cx5VAc9zaMX8ROejK00`  |
 | Event destination | `ed_61Utrc0MIRUP2HFoG26UcXFXDQSQ90Q262yfHCUp6Mn2` |
 
 ### Required Stripe metadata on Checkout Sessions

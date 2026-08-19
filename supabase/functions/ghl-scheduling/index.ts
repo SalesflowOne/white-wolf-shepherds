@@ -19,10 +19,7 @@ const GHL_LOCATION_ID = Deno.env.get("GHL_LOCATION_ID") ?? "5NAfvhQ3uPhKkODcgT78
 
 let cachedToken: string | null = null;
 
-async function resolveVaultSecret(
-  supabase: SupabaseClient,
-  name: string,
-): Promise<string | null> {
+async function resolveVaultSecret(supabase: SupabaseClient, name: string): Promise<string | null> {
   const { data, error } = await supabase
     .schema("vault")
     .from("decrypted_secrets")
