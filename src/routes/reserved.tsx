@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,9 +14,24 @@ export const Route = createFileRoute("/reserved")({
       { title: "Meet the Puppies — White Wolf Shepherds" },
       {
         name: "description",
-        content: "Book your private Meet the Puppies call after placement approval.",
+        content: "Book your private Meet the Puppies call after your placement application is approved.",
       },
+      { property: "og:title", content: "Meet the Puppies — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "Book your private Meet the Puppies call after your placement application is approved.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/reserved` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Meet the Puppies — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Book your private Meet the Puppies call after your placement application is approved.",
+      },
+      { name: "robots", content: "noindex,follow" },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/reserved` }],
   }),
 });
 
