@@ -28736,6 +28736,54 @@ export type Database = {
           },
         ]
       }
+      wws_analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          form_id: string | null
+          id: string
+          lead_id: string | null
+          metadata: Json
+          page_path: string | null
+          referrer: string | null
+          session_id: string | null
+          step: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          form_id?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json
+          page_path?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          step?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          form_id?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json
+          page_path?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          step?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
       wws_appointments: {
         Row: {
           calendar_type: string
