@@ -7,6 +7,10 @@ import Footer from "@/components/Footer";
 import LitterPhotoStrip from "@/components/LitterPhotoStrip";
 import MeetTheParents from "@/components/MeetTheParents";
 import { useCurrentLitter, useParents, formatLongDate, ageFrom } from "@/hooks/useParents";
+import SmartImage from "@/components/SmartImage";
+import TrustStrip from "@/components/TrustStrip";
+import PriceBlock from "@/components/PriceBlock";
+import { PRICING, SITE_URL, formatUSD } from "@/lib/site";
 
 type Puppy = {
   id: string;
@@ -31,7 +35,85 @@ type Puppy = {
 
 export const Route = createFileRoute("/puppies/$slug")({
   component: PuppyProfilePage,
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from(T.puppies)
+      .select("name,sex,status,personality_bio,image_url,price")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    return { seo: (data as SeoPuppy | null) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const url = `${SITE_URL}/puppies/${params.slug}`;
+    const p = loaderData?.seo;
+    if (!p) {
+      return {
+        meta: [
+          { title: "Puppy Unavailable — White Wolf Shepherds" },
+          { name: "robots", content: "noindex" },
+        ],
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+    const title = `${p.name} — White German Shepherd Puppy | White Wolf Shepherds`;
+    const description =
+      p.personality_bio?.slice(0, 155) ??
+      `Meet ${p.name}, a health-tested white German Shepherd puppy. ${formatUSD(
+        p.price ?? PRICING.price,
+      )} all-in with a ${formatUSD(PRICING.deposit)} refundable deposit.`;
+    const image = p.image_url ? `${SITE_URL}${p.image_url}` : null;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: p.name,
+            description,
+            ...(image ? { image } : {}),
+            brand: { "@type": "Brand", name: "White Wolf Shepherds" },
+            offers: {
+              "@type": "Offer",
+              price: p.price ?? PRICING.price,
+              priceCurrency: PRICING.currency,
+              url,
+              availability:
+                p.status === "available"
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/SoldOut",
+            },
+          }),
+        },
+      ],
+    };
+  },
 });
+
+type SeoPuppy = {
+  name: string;
+  sex: string | null;
+  status: string | null;
+  personality_bio: string | null;
+  image_url: string | null;
+  price: number | null;
+};
 
 function MetaItem({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
@@ -149,7 +231,7 @@ function PuppyProfilePage() {
   const videoEmbed = puppy.video_url ? getVideoEmbed(puppy.video_url) : null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
       <div className="pt-24 pb-20">
@@ -170,9 +252,13 @@ function PuppyProfilePage() {
               {/* Primary photo */}
               {puppy.image_url ? (
                 <div className="overflow-hidden rounded-2xl">
-                  <img
+                  <SmartImage
                     src={puppy.image_url}
-                    alt={puppy.name}
+                    alt={`${puppy.name}, a white German Shepherd puppy${
+                      puppy.collar_color ? ` wearing a ${puppy.collar_color} collar` : ""
+                    }`}
+                    priority
+                    sizes="(min-width: 1024px) 600px, 92vw"
                     className={`aspect-[4/5] w-full object-cover object-center ${isReserved ? "grayscale" : ""}`}
                   />
                 </div>
@@ -191,11 +277,11 @@ function PuppyProfilePage() {
                 <div className="mt-4 grid grid-cols-2 gap-4">
                   {puppy.gallery_urls.slice(0, 6).map((url, i) => (
                     <div key={i} className="overflow-hidden rounded-xl">
-                      <img
+                      <SmartImage
                         src={url}
                         alt={`${puppy.name} photo ${i + 1}`}
+                        sizes="(min-width: 1024px) 290px, 45vw"
                         className="aspect-[4/5] w-full object-cover object-center"
-                        loading="lazy"
                       />
                     </div>
                   ))}
@@ -237,15 +323,8 @@ function PuppyProfilePage() {
                 </span>
               </div>
 
-              {/* Price */}
-              <div className="mt-6">
-                <span className="font-display text-3xl font-bold text-foreground">
-                  ${puppy.price?.toLocaleString()}
-                </span>
-                <span className="ml-2 text-sm text-muted-foreground">
-                  all-in &middot; $500 reservation applies to purchase
-                </span>
-              </div>
+              {/* Price + deposit terms */}
+              <PriceBlock price={puppy.price} className="mt-6" />
 
               {/* Vitals / metadata */}
               <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-border bg-card/60 p-5">
@@ -306,10 +385,19 @@ function PuppyProfilePage() {
                     >
                       Reserve {puppy.name} &mdash; $500 Reservation Fee
                     </a>
+                    <Link
+                      to="/get-started"
+                      search={{ step: "puppy" }}
+                      className="mt-3 block text-center text-sm font-semibold text-accent hover:underline"
+                    >
+                      Prefer to apply first? Start the 2-minute application &rarr;
+                    </Link>
                     <p className="mt-3 text-center text-xs text-muted-foreground">
-                      Non-refundable &middot; Applied toward purchase price &middot; Secures your
-                      pick position
+                      {PRICING.depositTerms}
                     </p>
+                    <div className="mt-5">
+                      <TrustStrip />
+                    </div>
                   </div>
                 )}
                 {isPending && (
@@ -367,11 +455,11 @@ function PuppyProfilePage() {
                     className="group overflow-hidden rounded-2xl bg-card shadow-card transition-all hover:shadow-wolf"
                   >
                     {sib.image_url ? (
-                      <img
+                      <SmartImage
                         src={sib.image_url}
-                        alt={sib.name}
-                        className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
+                        alt={`${sib.name}, a white German Shepherd puppy`}
+                        sizes="(min-width: 1024px) 340px, 45vw"
+                        className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
                       />
                     ) : (
                       <div className="flex aspect-[4/5] w-full items-center justify-center bg-muted">
@@ -419,6 +507,24 @@ function PuppyProfilePage() {
           />
         </div>
       </div>
+
+      {isAvailable && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 shadow-wolf lg:hidden">
+          <div className="min-w-0">
+            <p className="truncate font-display text-sm font-bold text-foreground">{puppy.name}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatUSD(puppy.price ?? PRICING.price)} · {formatUSD(PRICING.deposit)} deposit
+            </p>
+          </div>
+          <Link
+            to="/get-started"
+            search={{ step: "home", puppy: slug }}
+            className="shrink-0 rounded-lg bg-accent px-5 py-3 text-xs font-bold uppercase tracking-wider text-accent-foreground"
+          >
+            Reserve
+          </Link>
+        </div>
+      )}
 
       <Footer />
     </div>
