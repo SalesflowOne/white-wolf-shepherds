@@ -8,11 +8,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     tanstackStart(),
-    nitro({
-      output: {
-        dir: "./dist",
-      },
-    }),
+    nitro(),
     react(),
     tailwindcss(),
     viteTsConfigPaths(),
