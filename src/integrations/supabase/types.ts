@@ -28810,6 +28810,48 @@ export type Database = {
           },
         ]
       }
+      wws_testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          photo_url: string | null
+          published: boolean
+          puppy_name: string | null
+          quote: string
+          rating: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          photo_url?: string | null
+          published?: boolean
+          puppy_name?: string | null
+          quote: string
+          rating?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          photo_url?: string | null
+          published?: boolean
+          puppy_name?: string | null
+          quote?: string
+          rating?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       ao_playbook_version_meta: {

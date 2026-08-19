@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import { approvePlacement, denyAndRefund } from "@/lib/wws-admin";
+import TestimonialsAdminTab from "@/components/admin/TestimonialsAdminTab";
 
 export const Route = createFileRoute("/portal/admin")({
   component: AdminPage,
@@ -117,6 +118,7 @@ type AdminTab =
   | "alumni"
   | "messages"
   | "updates"
+  | "testimonials"
   | "referrals";
 
 function AdminPage() {
@@ -170,6 +172,7 @@ function AdminPage() {
     "alumni",
     "messages",
     "updates",
+    "testimonials",
     "referrals",
   ];
   const tabLabels: Record<AdminTab, string> = {
@@ -180,6 +183,7 @@ function AdminPage() {
     alumni: "Pack Family",
     messages: "Messages",
     updates: "Updates",
+    testimonials: "Testimonials",
     referrals: "Referrals",
   };
 
@@ -254,6 +258,7 @@ function AdminPage() {
           {tab === "alumni" && <AlumniAdminTab />}
           {tab === "messages" && <AdminMessagesTab />}
           {tab === "updates" && <UpdatesAdminTab />}
+          {tab === "testimonials" && <TestimonialsAdminTab />}
           {tab === "referrals" && <ReferralsAdminTab />}
         </main>
       </div>

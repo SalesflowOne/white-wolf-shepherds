@@ -34,12 +34,12 @@ export default function MobileStickyBar() {
       <Link to="/portal" className="text-sm font-medium text-primary-foreground/80">
         My Portal
       </Link>
-      <span className="text-xs text-primary-foreground/60">{count} / 9 left</span>
+      <span className="text-xs text-primary-foreground/60">{count} available now</span>
       <Link
-        to="/apply"
+        to="/get-started"
         className="rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground transition-all hover:brightness-110"
       >
-        Meet the Puppies
+        Get Started
       </Link>
     </div>
   );

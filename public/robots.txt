@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /portal
+Disallow: /admin
+Disallow: /reset-password
+Disallow: /approved
+
+Sitemap: https://stellar-shepherd-sanctuary.lovable.app/sitemap.xml

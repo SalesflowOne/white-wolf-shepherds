@@ -82,7 +82,7 @@ function HealthGuaranteePage() {
           {/* CTA */}
           <div className="text-center">
             <Link
-              to="/apply"
+              to="/get-started"
               className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter
