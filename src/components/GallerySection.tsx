@@ -3,25 +3,41 @@ import galleryYard from "@/assets/gallery-yard.jpg";
 import galleryHouses from "@/assets/gallery-houses.jpg";
 
 const images = [
+  {
+    src: "/dogs/mia/mia-golden-hour-01.webp",
+    alt: "Mia, our white German Shepherd dam, in warm golden-hour light",
+    span: "lg:col-span-2 lg:row-span-2",
+  },
   { src: galleryYard, alt: "White shepherd mother with her pack in the yard" },
   {
-    src: "/parents/haki-golden-main.webp",
-    alt: "Haki, our white German Shepherd sire, posing in a park at golden hour",
+    src: "/dogs/haki/haki-golden-hour-03.webp",
+    alt: "Haki, our white German Shepherd sire, at golden hour",
   },
   {
-    src: "/parents/mia-profile.webp",
-    alt: "Mia, our white German Shepherd dam, posing in warm golden-hour light",
+    src: "/puppies/litter/litter-sunny-garden-02.webp",
+    alt: "Spring 2026 litter playing in the sunny garden",
   },
   { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together" },
   {
-    src: "/parents/haki-golden-happy.webp",
-    alt: "Haki relaxing on the grass in warm golden-hour light",
+    src: "/dogs/haki/haki-hero-front.webp",
+    alt: "Haki standing square, facing the camera",
+    span: "lg:row-span-2",
   },
   {
-    src: "/parents/mia.jpg",
-    alt: "Mia, our white German Shepherd dam",
+    src: "/puppies/litter/litter-garden-group-04.webp",
+    alt: "White shepherd puppies exploring the garden together",
+    span: "lg:col-span-2",
+  },
+  {
+    src: "/dogs/mia/mia-pro-pose-03.webp",
+    alt: "Mia posing for a studio-style portrait",
   },
   { src: galleryHouses, alt: "White shepherds resting by their dog houses" },
+  {
+    src: "/puppies/litter/litter-park-group-05.webp",
+    alt: "The litter out on their first park adventure",
+    span: "lg:col-span-2",
+  },
 ];
 
 export default function GallerySection() {
@@ -33,15 +49,19 @@ export default function GallerySection() {
           <h2 className="mt-3 font-display text-4xl font-bold text-foreground lg:text-5xl">
             Life with White Wolves
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Everyday moments from our home — sunlit mornings with Haki and Mia, puppy piles, and
+            first adventures in the yard.
+          </p>
         </div>
 
-        <div className="mt-16 grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {images.map((img, i) => (
-            <div key={i} className="overflow-hidden rounded-xl">
+            <div key={i} className={`overflow-hidden rounded-xl ${img.span ?? ""}`}>
               <img
                 src={img.src}
                 alt={img.alt}
-                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                className="h-full w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                 loading="lazy"
               />
             </div>
@@ -51,3 +71,4 @@ export default function GallerySection() {
     </section>
   );
 }
+
