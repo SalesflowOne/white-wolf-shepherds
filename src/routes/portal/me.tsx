@@ -737,7 +737,7 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
     <div className="space-y-10">
       <div className="overflow-hidden rounded-3xl bg-card shadow-wolf">
         {puppy.image_url ? (
-          <img src={puppy.image_url} alt={puppy.name} className="h-72 w-full object-cover" />
+          <img src={puppy.image_url} alt={puppy.name} className="h-72 w-full object-cover" loading="lazy" decoding="async" />
         ) : (
           <div className="flex h-72 items-center justify-center bg-muted">
             <span className="font-display text-8xl font-bold text-muted-foreground/20">
@@ -861,8 +861,7 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
                   <img
                     src={u.image_urls[0]}
                     alt=""
-                    className="h-20 w-20 shrink-0 rounded-xl object-cover"
-                  />
+                    className="h-20 w-20 shrink-0 rounded-xl object-cover" loading="lazy" decoding="async" />
                 )}
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -1118,7 +1117,7 @@ function LitterTab({ lead }: { lead: Lead }) {
               }`}
             >
               {p.image_url ? (
-                <img src={p.image_url} alt={p.name} className="h-48 w-full object-cover" />
+                <img src={p.image_url} alt={p.name} className="h-48 w-full object-cover" loading="lazy" decoding="async" />
               ) : (
                 <div className="flex h-48 items-center justify-center bg-muted">
                   <span className="font-display text-5xl font-bold text-muted-foreground/20">
@@ -1421,7 +1420,7 @@ function UpdatesTab({ lead }: { lead: Lead }) {
               {u.image_urls && u.image_urls.length > 0 && (
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {u.image_urls.map((url, i) => (
-                    <img key={i} src={url} alt="" className="h-48 w-full rounded-xl object-cover" />
+                    <img key={i} src={url} alt="" className="h-48 w-full rounded-xl object-cover" loading="lazy" decoding="async" />
                   ))}
                 </div>
               )}
@@ -1587,7 +1586,7 @@ function PackTab({ lead }: { lead: Lead }) {
               {p.image_urls && p.image_urls.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   {p.image_urls.map((url, i) => (
-                    <img key={i} src={url} alt="" className="h-40 w-full rounded-lg object-cover" />
+                    <img key={i} src={url} alt="" className="h-40 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
                   ))}
                 </div>
               )}
