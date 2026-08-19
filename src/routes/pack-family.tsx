@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,15 +12,25 @@ export const Route = createFileRoute("/pack-family")({
       { title: "Pack Family — White Wolf Shepherds" },
       {
         name: "description",
-        content:
-          "Meet the parent dogs behind White Wolf Shepherds — Haki and Mia, our health-tested foundation sire and dam.",
+        content: "Meet Haki and Mia, the health-tested foundation sire and dam behind every White Wolf Shepherds litter.",
       },
       { property: "og:title", content: "Pack Family — White Wolf Shepherds" },
       {
         property: "og:description",
-        content: "Meet Haki and Mia, the parent dogs behind every White Wolf Shepherds litter.",
+        content: "Meet Haki and Mia, the health-tested foundation sire and dam behind every White Wolf Shepherds litter.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/pack-family` },
+      { property: "og:image", content: `${SITE_URL}/dogs/haki/haki-golden-hour-05.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/dogs/haki/haki-golden-hour-05.webp` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Pack Family — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Meet Haki and Mia, the health-tested foundation sire and dam behind every White Wolf Shepherds litter.",
       },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/pack-family` }],
   }),
 });
 

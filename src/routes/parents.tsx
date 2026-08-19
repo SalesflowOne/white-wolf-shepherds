@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MeetTheParents from "@/components/MeetTheParents";
@@ -11,18 +12,25 @@ export const Route = createFileRoute("/parents")({
       { title: "Meet the Parents — White Wolf Shepherds" },
       {
         name: "description",
-        content:
-          "Meet the health-tested, AKC-registered White German Shepherd parents behind every White Wolf Shepherds litter.",
+        content: "Meet the health-tested, AKC-registered White German Shepherd parents behind every White Wolf Shepherds litter.",
       },
       { property: "og:title", content: "Meet the Parents — White Wolf Shepherds" },
       {
         property: "og:description",
-        content:
-          "Health-tested, AKC-registered White German Shepherd parents — the foundation of every puppy we place.",
+        content: "Meet the health-tested, AKC-registered White German Shepherd parents behind every White Wolf Shepherds litter.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/parents` },
+      { property: "og:image", content: `${SITE_URL}/dogs/mia/mia-pro-pose-01.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/dogs/mia/mia-pro-pose-01.webp` },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Meet the Parents — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Meet the health-tested, AKC-registered White German Shepherd parents behind every White Wolf Shepherds litter.",
+      },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/parents` }],
   }),
 });
 

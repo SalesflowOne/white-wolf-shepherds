@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -8,7 +9,28 @@ export const Route = createFileRoute("/thank-you")({
     name: (search.name as string) || "there",
   }),
   head: () => ({
-    meta: [{ title: "Thank You — White Wolf Shepherds" }],
+    meta: [
+      { title: "Thank You — White Wolf Shepherds" },
+      {
+        name: "description",
+        content: "Thanks for reaching out to White Wolf Shepherds. We reply within one business day with your next steps.",
+      },
+      { property: "og:title", content: "Thank You — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "Thanks for reaching out to White Wolf Shepherds. We reply within one business day with your next steps.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/thank-you` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Thank You — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Thanks for reaching out to White Wolf Shepherds. We reply within one business day with your next steps.",
+      },
+      { name: "robots", content: "noindex,follow" },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/thank-you` }],
   }),
 });
 

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { persistFunnelState, startLead } from "@/lib/wws-funnel";
@@ -22,13 +23,28 @@ export const Route = createFileRoute("/apply")({
   },
   head: () => ({
     meta: [
-      { title: "Meet the Puppies — White Wolf Shepherds" },
+      { title: "Apply to Adopt — White Wolf Shepherds" },
       {
         name: "description",
-        content:
-          "Start your adoption journey: share your contact info, book a Family Fit Call, and reserve your spot for our White German Shepherd litter.",
+        content: "Start your adoption journey: share your contact info, book a Family Fit Call, and reserve your spot for our White German Shepherd litter.",
+      },
+      { property: "og:title", content: "Apply to Adopt — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "Start your adoption journey: share your contact info, book a Family Fit Call, and reserve your spot for our White German Shepherd litter.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/apply` },
+      { property: "og:image", content: `${SITE_URL}/puppies/litter/litter-park-group-05.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/puppies/litter/litter-park-group-05.webp` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Apply to Adopt — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Start your adoption journey: share your contact info, book a Family Fit Call, and reserve your spot for our White German Shepherd litter.",
       },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/apply` }],
   }),
 });
 
