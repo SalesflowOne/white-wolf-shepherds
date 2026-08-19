@@ -35,12 +35,6 @@ export const Route = createFileRoute("/puppies/$slug")({
   component: PuppyProfilePage,
 });
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "TBD";
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-}
-
 function MetaItem({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
