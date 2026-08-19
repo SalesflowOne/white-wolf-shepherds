@@ -523,8 +523,7 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           )}
           {isReserved && (
             <Link
-              to="/get-started"
-              search={{ waitlist: "true" }}
+              to="/waitlist"
               className="block w-full rounded-xl bg-muted py-3 text-center text-sm font-bold uppercase tracking-wider text-muted-foreground transition-all hover:bg-muted/80"
             >
               Join Waitlist

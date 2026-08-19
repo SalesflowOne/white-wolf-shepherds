@@ -127,7 +127,7 @@ function PackFamilyPage() {
 
                   <div className="mt-6">
                     <Link
-                      to="/get-started"
+                      to="/apply"
                       search={{ parent: p.name }}
                       className="inline-block rounded-xl bg-accent px-6 py-3 text-xs font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
                     >
