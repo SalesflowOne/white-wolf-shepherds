@@ -5,6 +5,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { persistFunnelState, startLead } from "@/lib/wws-funnel";
 import { Field } from "@/components/forms/Field";
+import { trackEvent, trackOnce } from "@/lib/analytics";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -93,6 +94,10 @@ function ApplyPage() {
     if (ref) sessionStorage.setItem("wwreferral", ref);
   }, [ref]);
 
+  useEffect(() => {
+    trackOnce("apply_view", "form_view", { form: "apply", metadata: { waitlist: isWaitlist } });
+  }, [isWaitlist]);
+
   function fieldError(name: ApplyField, next: ApplyValues) {
     const parsed = applySchema.safeParse(next);
     if (parsed.success) return undefined;
@@ -101,6 +106,7 @@ function ApplyPage() {
 
   const setField = (name: ApplyField) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const next = { ...values, [name]: e.target.value };
+    trackOnce("apply_start", "form_start", { form: "apply" });
     setValues(next);
     if (touched[name]) setErrors((prev) => ({ ...prev, [name]: fieldError(name, next) }));
   };
@@ -129,6 +135,7 @@ function ApplyPage() {
         city: true,
         state: true,
       });
+      trackEvent("form_error", { form: "apply", metadata: { fields: Object.keys(next) } });
       const firstKey = Object.keys(next)[0];
       if (firstKey) document.getElementById(`apply-${firstKey}`)?.focus();
       return;
@@ -147,6 +154,12 @@ function ApplyPage() {
         state: parsed.data.state,
         referralCode,
         waitlist: isWaitlist,
+      });
+
+      trackEvent("generate_lead", {
+        form: "apply",
+        leadId: result.leadId,
+        metadata: { waitlist: isWaitlist, state: parsed.data.state },
       });
 
       const name = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
@@ -171,6 +184,7 @@ function ApplyPage() {
       sessionStorage.removeItem("wwreferral");
       navigate({ to: "/portal/onboarding" });
     } catch (err) {
+      trackEvent("form_error", { form: "apply", metadata: { reason: "server" } });
       setFormError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setBusy(false);

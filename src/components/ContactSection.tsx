@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/forms/Field";
+import { trackEvent, trackOnce } from "@/lib/analytics";
 
 const waitlistSchema = z.object({
   first_name: z.string().trim().min(1, "Please enter your first name").max(50, "Max 50 characters"),
@@ -45,6 +46,10 @@ export default function ContactSection() {
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
 
+  useEffect(() => {
+    trackOnce("waitlist_view", "form_view", { form: "waitlist_home" });
+  }, []);
+
   function fieldError(name: FieldName, values: FormValues): string | undefined {
     const parsed = waitlistSchema.safeParse(values);
     if (parsed.success) return undefined;
@@ -56,6 +61,7 @@ export default function ContactSection() {
   ) => {
     const name = e.target.name as FieldName;
     const next = { ...form, [name]: e.target.value } as FormValues;
+    trackOnce("waitlist_start", "form_start", { form: "waitlist_home" });
     setForm(next);
     // Only clear/refresh an error once the user has already been told about it.
     if (touched[name]) setErrors((prev) => ({ ...prev, [name]: fieldError(name, next) }));
@@ -89,6 +95,10 @@ export default function ContactSection() {
       });
       const firstKey = Object.keys(next)[0];
       if (firstKey) document.getElementById(`waitlist-${firstKey}`)?.focus();
+      trackEvent("form_error", {
+        form: "waitlist_home",
+        metadata: { fields: Object.keys(next) },
+      });
       toast.error("Please fix the highlighted fields");
       return;
     }
@@ -103,10 +113,15 @@ export default function ContactSection() {
     });
     setSubmitting(false);
     if (error) {
+      trackEvent("form_error", { form: "waitlist_home", metadata: { reason: "server" } });
       toast.error("We couldn't save your spot. Please try again in a moment.");
       return;
     }
     setSuccess(true);
+    trackEvent("generate_lead", {
+      form: "waitlist_home",
+      metadata: { preferred_sex: parsed.data.preferred_sex },
+    });
     toast.success("You're on the waitlist! We'll be in touch.");
     setForm(EMPTY);
     setErrors({});
