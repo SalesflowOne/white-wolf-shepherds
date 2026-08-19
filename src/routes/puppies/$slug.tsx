@@ -148,8 +148,16 @@ function PuppyProfilePage() {
   const sexColor = puppy.sex === "male" ? "bg-blue-100 text-blue-700" : "bg-rose-100 text-rose-700";
   const sexLabel = puppy.sex === "male" ? "Male" : "Female";
 
+  // Dates fall back to the litter record so profiles never show gaps
+  const dobValue = puppy.dob ?? litter?.born_date ?? null;
+  const readyValue = puppy.ready_date ?? litter?.ready_date ?? null;
+  const bornLabel = formatLongDate(dobValue);
+  const ageLabel = ageFrom(dobValue);
+  const readyLabel = formatLongDate(readyValue);
+
   // Parse video embed URL
   const videoEmbed = puppy.video_url ? getVideoEmbed(puppy.video_url) : null;
+
 
   return (
     <div className="min-h-screen">
