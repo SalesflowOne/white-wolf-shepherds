@@ -133,7 +133,7 @@ function FAQPage() {
           <div className="mt-12 text-center">
             <p className="text-muted-foreground">Still have questions?</p>
             <Link
-              to="/apply"
+              to="/get-started"
               className="mt-4 inline-block rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter

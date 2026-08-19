@@ -110,7 +110,7 @@ function ReservedPage() {
             ) : (
               <p className="text-center text-muted-foreground">
                 Please{" "}
-                <Link to="/apply" className="text-accent underline">
+                <Link to="/get-started" className="text-accent underline">
                   start your application
                 </Link>{" "}
                 first.
