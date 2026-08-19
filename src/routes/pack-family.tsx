@@ -94,7 +94,7 @@ function PackFamilyPage() {
                       src={p.image_url ?? (p.sex === "male" ? demoSire : demoDam)}
                       alt={`${p.name}, White Wolf Shepherds parent dog`}
                       loading="lazy"
-                      className="h-72 w-full object-cover"
+                      className="aspect-[4/5] w-full object-cover object-center"
                     />
                     {!p.image_url && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40">
