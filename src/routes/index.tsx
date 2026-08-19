@@ -54,12 +54,14 @@ function Index() {
   return (
     <div className="min-h-screen pb-16 md:pb-0">
       <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <PuppiesSection />
-      <GallerySection />
-      <TestimonialsSection />
-      <ContactSection />
+      <main id="main">
+        <HeroSection />
+        <AboutSection />
+        <PuppiesSection />
+        <GallerySection />
+        <TestimonialsSection />
+        <ContactSection />
+      </main>
       <Footer />
       <MobileStickyBar />
     </div>
