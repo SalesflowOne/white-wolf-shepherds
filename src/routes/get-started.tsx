@@ -9,6 +9,7 @@ import StatusBadge from "@/components/StatusBadge";
 import { supabase, T } from "@/integrations/supabase/client";
 import { PRICING, SITE_URL, formatUSD } from "@/lib/site";
 import { persistFunnelState, startLead, submitApplicationDetails } from "@/lib/wws-funnel";
+import { trackEvent, trackOnce } from "@/lib/analytics";
 
 const STEPS = ["puppy", "home", "contact", "done"] as const;
 type Step = (typeof STEPS)[number];
@@ -114,6 +115,10 @@ function GetStartedPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    trackOnce("get_started_view", "form_view", { form: "get_started", step: "puppy" });
+  }, []);
+
   // Restore answers on mount (survives refresh / back-forward).
   useEffect(() => {
     try {
@@ -160,11 +165,13 @@ function GetStartedPage() {
   const availableCount = puppies.filter((p) => p.status === "available").length;
 
   function set<K extends keyof Answers>(key: K, value: Answers[K]) {
+    trackOnce("get_started_start", "form_start", { form: "get_started" });
     setAnswers((prev) => ({ ...prev, [key]: value }));
   }
 
   function goto(next: Step) {
     setErrors([]);
+    if (next !== "done") trackEvent("form_step", { form: "get_started", step: next });
     navigate({
       to: "/get-started",
       search: { step: next, puppy: answers.puppy || undefined },
@@ -241,8 +248,14 @@ function GetStartedPage() {
         /* contact captured — details can be completed in the portal */
       }
 
+      trackEvent("generate_lead", {
+        form: "get_started",
+        leadId: lead.leadId,
+        metadata: { puppy: selected?.name ?? null, state: answers.state.trim() },
+      });
       goto("done");
     } catch (err) {
+      trackEvent("form_error", { form: "get_started", metadata: { reason: "server" } });
       setErrors([err instanceof Error ? err.message : "Something went wrong. Please try again."]);
     } finally {
       setBusy(false);
