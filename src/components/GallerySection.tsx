@@ -26,8 +26,8 @@ const images = [
     span: "lg:row-span-2",
   },
   {
-    src: "/puppies/litter/litter-garden-group-04.webp",
-    alt: "White shepherd puppies exploring the garden together",
+    src: "/puppies/gallery/blue/blue-collar-02.webp",
+    alt: "White shepherd puppy standing in the grass by the water at golden hour",
     span: "lg:col-span-2",
   },
   {
