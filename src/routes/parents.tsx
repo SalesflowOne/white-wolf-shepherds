@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import SmartImage from "@/components/SmartImage";
 import { SITE_URL } from "@/lib/site";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -82,10 +83,10 @@ function ParentsPage() {
                 <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {gallery.slice(0, 6).map((url, i) => (
                     <div key={url + i} className="overflow-hidden rounded-2xl bg-muted shadow-card">
-                      <img
+                      <SmartImage
                         src={url}
                         alt={`${p.name}, White German Shepherd — photo ${i + 1}`}
-                        loading="lazy"
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                         className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                       />
                     </div>

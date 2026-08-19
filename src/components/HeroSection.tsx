@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SmartImage from "@/components/SmartImage";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
 import TrustStrip from "@/components/TrustStrip";
@@ -43,14 +44,12 @@ export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background image */}
-      <img
+      <SmartImage
         src="/dogs/haki/haki-golden-hour-05.webp"
-        fetchPriority="high"
-        decoding="sync"
+        priority
+        sizes="100vw"
         alt="Haki, our white German Shepherd sire, in a sunlit park at golden hour"
         className="absolute inset-0 h-full w-full object-cover"
-        width={1920}
-        height={1080}
       />
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/65 to-primary/95" />

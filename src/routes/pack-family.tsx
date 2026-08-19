@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import SmartImage from "@/components/SmartImage";
 import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
@@ -99,10 +100,10 @@ function PackFamilyPage() {
               {parents.map((p) => (
                 <article key={p.id} className="rounded-2xl bg-card p-8 shadow-card">
                   <div className="relative overflow-hidden rounded-xl bg-muted">
-                    <img
-                      src={p.image_url ?? undefined}
+                    <SmartImage
+                      src={p.image_url ?? ""}
                       alt={`${p.name}, White Wolf Shepherds parent dog`}
-                      loading="lazy"
+                      sizes="(min-width: 1024px) 45vw, 100vw"
                       className="aspect-[4/5] w-full object-cover object-center"
                     />
                   </div>

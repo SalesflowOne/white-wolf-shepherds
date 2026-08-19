@@ -1,4 +1,4 @@
-import aboutImg from "@/assets/about-breeder.jpg";
+import SmartImage from "@/components/SmartImage";
 
 export default function AboutSection() {
   const stats = [
@@ -15,13 +15,11 @@ export default function AboutSection() {
           {/* Image */}
           <div className="relative">
             <div className="overflow-hidden rounded-2xl shadow-wolf">
-              <img
-                src={aboutImg}
+              <SmartImage
+                src="/about/about-breeder.webp"
                 alt="Breeder with white German Shepherd puppy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="h-[500px] w-full object-cover"
-                loading="lazy"
-                width={800}
-                height={1000}
               />
             </div>
             <div className="absolute -bottom-6 -right-6 -z-10 h-full w-full rounded-2xl bg-accent/10" />
