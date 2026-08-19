@@ -8,7 +8,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     tanstackStart(),
-    nitro({ output: { dir: "dist" } }),
+    // Do not set nitro({ output: { dir } }) — Vercel needs default .vercel/output.
+    nitro(),
     react(),
     tailwindcss(),
     viteTsConfigPaths(),
