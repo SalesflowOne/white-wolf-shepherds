@@ -45,7 +45,6 @@ const images = [
   },
 ];
 
-
 export default function GallerySection() {
   return (
     <section id="gallery" className="bg-gradient-frost py-24 lg:py-32">
@@ -77,4 +76,3 @@ export default function GallerySection() {
     </section>
   );
 }
-
