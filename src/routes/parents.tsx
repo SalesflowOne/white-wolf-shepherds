@@ -73,10 +73,7 @@ function ParentsPage() {
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {gallery.slice(0, 6).map((url, i) => (
-                    <div
-                      key={url + i}
-                      className="overflow-hidden rounded-2xl bg-muted shadow-card"
-                    >
+                    <div key={url + i} className="overflow-hidden rounded-2xl bg-muted shadow-card">
                       <img
                         src={url}
                         alt={`${p.name}, White German Shepherd — photo ${i + 1}`}

@@ -207,7 +207,9 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
       <div className="p-6">
         <h4 className="font-display text-2xl font-bold text-card-foreground">{puppy.name}</h4>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          {puppy.sex && <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>}
+          {puppy.sex && (
+            <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>
+          )}
           <CollarBadge color={puppy.collar_color} />
         </div>
         {puppy.slug ? (
