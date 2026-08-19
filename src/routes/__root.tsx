@@ -29,27 +29,43 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "While Wold Shepherds" },
+      { title: "White Wolf Shepherds — White German Shepherd Puppies" },
       {
         name: "description",
         content:
-          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
       },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "While Wold Shepherds" },
+      { name: "author", content: "White Wolf Shepherds" },
+      { property: "og:title", content: "White Wolf Shepherds — White German Shepherd Puppies" },
+      { property: "og:site_name", content: "White Wolf Shepherds" },
       {
         property: "og:description",
         content:
-          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "While Wold Shepherds" },
+      { name: "twitter:card", content: "summary_large_image" },
+      
+      { name: "twitter:title", content: "White Wolf Shepherds — White German Shepherd Puppies" },
       {
         name: "twitter:description",
         content:
-          "A premium website for White Wolf Shepherds showcasing their white German Shepherd bloodlines.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "White Wolf Shepherds",
+          description:
+            "Breeder of health-tested white German Shepherd puppies, family-raised for select homes.",
+          url: "https://stellar-shepherd-sanctuary.lovable.app",
+          image: "https://stellar-shepherd-sanctuary.lovable.app/dogs/haki/haki-golden-hour-05.webp",
+          priceRange: "$$",
+        }),
       },
     ],
     links: [
