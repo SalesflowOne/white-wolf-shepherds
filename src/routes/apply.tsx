@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { persistFunnelState, startLead } from "@/lib/wws-funnel";
+import { Field } from "@/components/forms/Field";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
