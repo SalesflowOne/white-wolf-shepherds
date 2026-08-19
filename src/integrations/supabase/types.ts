@@ -2440,6 +2440,68 @@ export type Database = {
           },
         ]
       }
+      ao_chat_attachments: {
+        Row: {
+          bucket: string | null
+          byte_size: number
+          created_at: string
+          extracted_at: string | null
+          extracted_kind: string | null
+          extracted_text: string | null
+          filename: string | null
+          id: string
+          message_id: string | null
+          mime: string
+          org_id: string
+          storage_path: string | null
+          thread_id: string | null
+          url: string
+          user_id: string | null
+        }
+        Insert: {
+          bucket?: string | null
+          byte_size?: number
+          created_at?: string
+          extracted_at?: string | null
+          extracted_kind?: string | null
+          extracted_text?: string | null
+          filename?: string | null
+          id?: string
+          message_id?: string | null
+          mime?: string
+          org_id: string
+          storage_path?: string | null
+          thread_id?: string | null
+          url: string
+          user_id?: string | null
+        }
+        Update: {
+          bucket?: string | null
+          byte_size?: number
+          created_at?: string
+          extracted_at?: string | null
+          extracted_kind?: string | null
+          extracted_text?: string | null
+          filename?: string | null
+          id?: string
+          message_id?: string | null
+          mime?: string
+          org_id?: string
+          storage_path?: string | null
+          thread_id?: string | null
+          url?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ao_chat_attachments_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "ao_orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ao_chat_folders: {
         Row: {
           color: string | null
@@ -15296,6 +15358,421 @@ export type Database = {
             columns: ["resolved_enrollment_id"]
             isOneToOne: false
             referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_breaks: {
+        Row: {
+          break_type: string
+          created_at: string
+          ended_at: string | null
+          id: string
+          is_paid: boolean
+          owner_id: string
+          started_at: string
+          time_entry_id: string
+          updated_at: string
+        }
+        Insert: {
+          break_type?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          is_paid?: boolean
+          owner_id?: string
+          started_at?: string
+          time_entry_id: string
+          updated_at?: string
+        }
+        Update: {
+          break_type?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          is_paid?: boolean
+          owner_id?: string
+          started_at?: string
+          time_entry_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_breaks_time_entry_id_fkey"
+            columns: ["time_entry_id"]
+            isOneToOne: false
+            referencedRelation: "ct_time_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_jobs: {
+        Row: {
+          address: string | null
+          code: string | null
+          color: string
+          created_at: string
+          geofence_radius_m: number
+          hourly_rate: number | null
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          notes: string | null
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          code?: string | null
+          color?: string
+          created_at?: string
+          geofence_radius_m?: number
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          notes?: string | null
+          owner_id?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          code?: string | null
+          color?: string
+          created_at?: string
+          geofence_radius_m?: number
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ct_scheduling_settings: {
+        Row: {
+          allow_open_shift_claiming: boolean
+          allow_shift_notes: boolean
+          allow_shift_swaps: boolean
+          auto_publish: boolean
+          created_at: string
+          default_shift_duration_hours: number
+          enforce_rest_between_shifts: boolean
+          id: string
+          lock_schedule_days_ahead: number
+          max_shifts_per_day: number
+          max_weekly_hours: number
+          min_rest_hours: number
+          notify_before_shift_minutes: number
+          open_shift_requires_approval: boolean
+          owner_id: string
+          prevent_double_booking: boolean
+          publish_notification_enabled: boolean
+          require_qualifications_match: boolean
+          shift_swap_requires_approval: boolean
+          updated_at: string
+          week_starts_on: number
+        }
+        Insert: {
+          allow_open_shift_claiming?: boolean
+          allow_shift_notes?: boolean
+          allow_shift_swaps?: boolean
+          auto_publish?: boolean
+          created_at?: string
+          default_shift_duration_hours?: number
+          enforce_rest_between_shifts?: boolean
+          id?: string
+          lock_schedule_days_ahead?: number
+          max_shifts_per_day?: number
+          max_weekly_hours?: number
+          min_rest_hours?: number
+          notify_before_shift_minutes?: number
+          open_shift_requires_approval?: boolean
+          owner_id?: string
+          prevent_double_booking?: boolean
+          publish_notification_enabled?: boolean
+          require_qualifications_match?: boolean
+          shift_swap_requires_approval?: boolean
+          updated_at?: string
+          week_starts_on?: number
+        }
+        Update: {
+          allow_open_shift_claiming?: boolean
+          allow_shift_notes?: boolean
+          allow_shift_swaps?: boolean
+          auto_publish?: boolean
+          created_at?: string
+          default_shift_duration_hours?: number
+          enforce_rest_between_shifts?: boolean
+          id?: string
+          lock_schedule_days_ahead?: number
+          max_shifts_per_day?: number
+          max_weekly_hours?: number
+          min_rest_hours?: number
+          notify_before_shift_minutes?: number
+          open_shift_requires_approval?: boolean
+          owner_id?: string
+          prevent_double_booking?: boolean
+          publish_notification_enabled?: boolean
+          require_qualifications_match?: boolean
+          shift_swap_requires_approval?: boolean
+          updated_at?: string
+          week_starts_on?: number
+        }
+        Relationships: []
+      }
+      ct_shifts: {
+        Row: {
+          assigned_user_id: string | null
+          assignee_name: string | null
+          break_minutes: number
+          created_at: string
+          ends_at: string
+          id: string
+          is_open_shift: boolean
+          job_id: string | null
+          notes: string | null
+          owner_id: string
+          required_qualifications: string[]
+          starts_at: string
+          status: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_user_id?: string | null
+          assignee_name?: string | null
+          break_minutes?: number
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_open_shift?: boolean
+          job_id?: string | null
+          notes?: string | null
+          owner_id?: string
+          required_qualifications?: string[]
+          starts_at: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_user_id?: string | null
+          assignee_name?: string | null
+          break_minutes?: number
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_open_shift?: boolean
+          job_id?: string | null
+          notes?: string | null
+          owner_id?: string
+          required_qualifications?: string[]
+          starts_at?: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_shifts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "ct_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_time_clock_settings: {
+        Row: {
+          allow_manual_entries: boolean
+          attach_photo_on_clock_in: boolean
+          auto_break_after_hours: number
+          auto_break_enabled: boolean
+          auto_break_minutes: number
+          auto_clock_out_after_hours: number
+          auto_clock_out_enabled: boolean
+          block_clock_in_outside_geofence: boolean
+          clock_in_reminder_minutes: number
+          clock_out_reminder_minutes: number
+          created_at: string
+          daily_overtime_after_hours: number
+          default_geofence_radius_m: number
+          double_time_after_hours: number
+          geofence_enforced: boolean
+          gps_tracking_enabled: boolean
+          id: string
+          kiosk_mode_enabled: boolean
+          limit_daily_hours: boolean
+          manual_entries_need_approval: boolean
+          max_daily_hours: number
+          offline_mode_enabled: boolean
+          overtime_enabled: boolean
+          owner_id: string
+          paid_breaks: boolean
+          require_job_selection: boolean
+          require_note_on_clock_out: boolean
+          rounding_interval_minutes: number
+          rounding_mode: string
+          timezone: string
+          updated_at: string
+          weekly_overtime_after_hours: number
+        }
+        Insert: {
+          allow_manual_entries?: boolean
+          attach_photo_on_clock_in?: boolean
+          auto_break_after_hours?: number
+          auto_break_enabled?: boolean
+          auto_break_minutes?: number
+          auto_clock_out_after_hours?: number
+          auto_clock_out_enabled?: boolean
+          block_clock_in_outside_geofence?: boolean
+          clock_in_reminder_minutes?: number
+          clock_out_reminder_minutes?: number
+          created_at?: string
+          daily_overtime_after_hours?: number
+          default_geofence_radius_m?: number
+          double_time_after_hours?: number
+          geofence_enforced?: boolean
+          gps_tracking_enabled?: boolean
+          id?: string
+          kiosk_mode_enabled?: boolean
+          limit_daily_hours?: boolean
+          manual_entries_need_approval?: boolean
+          max_daily_hours?: number
+          offline_mode_enabled?: boolean
+          overtime_enabled?: boolean
+          owner_id?: string
+          paid_breaks?: boolean
+          require_job_selection?: boolean
+          require_note_on_clock_out?: boolean
+          rounding_interval_minutes?: number
+          rounding_mode?: string
+          timezone?: string
+          updated_at?: string
+          weekly_overtime_after_hours?: number
+        }
+        Update: {
+          allow_manual_entries?: boolean
+          attach_photo_on_clock_in?: boolean
+          auto_break_after_hours?: number
+          auto_break_enabled?: boolean
+          auto_break_minutes?: number
+          auto_clock_out_after_hours?: number
+          auto_clock_out_enabled?: boolean
+          block_clock_in_outside_geofence?: boolean
+          clock_in_reminder_minutes?: number
+          clock_out_reminder_minutes?: number
+          created_at?: string
+          daily_overtime_after_hours?: number
+          default_geofence_radius_m?: number
+          double_time_after_hours?: number
+          geofence_enforced?: boolean
+          gps_tracking_enabled?: boolean
+          id?: string
+          kiosk_mode_enabled?: boolean
+          limit_daily_hours?: boolean
+          manual_entries_need_approval?: boolean
+          max_daily_hours?: number
+          offline_mode_enabled?: boolean
+          overtime_enabled?: boolean
+          owner_id?: string
+          paid_breaks?: boolean
+          require_job_selection?: boolean
+          require_note_on_clock_out?: boolean
+          rounding_interval_minutes?: number
+          rounding_mode?: string
+          timezone?: string
+          updated_at?: string
+          weekly_overtime_after_hours?: number
+        }
+        Relationships: []
+      }
+      ct_time_entries: {
+        Row: {
+          approval_status: string
+          auto_clocked_out: boolean
+          clock_in_at: string
+          clock_in_lat: number | null
+          clock_in_lng: number | null
+          clock_out_at: string | null
+          clock_out_lat: number | null
+          clock_out_lng: number | null
+          created_at: string
+          id: string
+          is_manual: boolean
+          job_id: string | null
+          note: string | null
+          outside_geofence: boolean
+          owner_id: string
+          shift_id: string | null
+          updated_at: string
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          approval_status?: string
+          auto_clocked_out?: boolean
+          clock_in_at?: string
+          clock_in_lat?: number | null
+          clock_in_lng?: number | null
+          clock_out_at?: string | null
+          clock_out_lat?: number | null
+          clock_out_lng?: number | null
+          created_at?: string
+          id?: string
+          is_manual?: boolean
+          job_id?: string | null
+          note?: string | null
+          outside_geofence?: boolean
+          owner_id?: string
+          shift_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          approval_status?: string
+          auto_clocked_out?: boolean
+          clock_in_at?: string
+          clock_in_lat?: number | null
+          clock_in_lng?: number | null
+          clock_out_at?: string | null
+          clock_out_lat?: number | null
+          clock_out_lng?: number | null
+          created_at?: string
+          id?: string
+          is_manual?: boolean
+          job_id?: string | null
+          note?: string | null
+          outside_geofence?: boolean
+          owner_id?: string
+          shift_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_time_entries_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "ct_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ct_time_entries_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "ct_shifts"
             referencedColumns: ["id"]
           },
         ]
