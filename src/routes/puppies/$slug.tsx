@@ -41,12 +41,28 @@ function formatDate(dateStr: string | null): string {
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
+function MetaItem({ label, value }: { label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 text-sm font-medium capitalize text-foreground">{value}</dd>
+    </div>
+  );
+}
+
 function PuppyProfilePage() {
   const { slug } = Route.useParams();
   const [puppy, setPuppy] = useState<Puppy | null>(null);
   const [siblings, setSiblings] = useState<Puppy[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const litter = useCurrentLitter();
+  const { dam, sire } = useParents();
+
+
 
   useEffect(() => {
     async function fetchPuppy() {
