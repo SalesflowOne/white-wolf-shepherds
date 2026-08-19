@@ -24611,6 +24611,7 @@ export type Database = {
           entity_type: string | null
           id: string
           metadata: Json
+          organization_id: string | null
         }
         Insert: {
           action: string
@@ -24621,6 +24622,7 @@ export type Database = {
           entity_type?: string | null
           id?: string
           metadata?: Json
+          organization_id?: string | null
         }
         Update: {
           action?: string
@@ -24631,6 +24633,7 @@ export type Database = {
           entity_type?: string | null
           id?: string
           metadata?: Json
+          organization_id?: string | null
         }
         Relationships: [
           {
@@ -24653,33 +24656,36 @@ export type Database = {
         Row: {
           clerk_org_id: string
           created_at: string
-          event_type: Database["public"]["Enums"]["so_analytics_event_type"]
+          event_type: string
           id: string
           ip_address: string | null
           metadata: Json
           offer_id: string | null
+          organization_id: string | null
           referrer: string | null
           user_agent: string | null
         }
         Insert: {
           clerk_org_id: string
           created_at?: string
-          event_type: Database["public"]["Enums"]["so_analytics_event_type"]
+          event_type: string
           id?: string
           ip_address?: string | null
           metadata?: Json
           offer_id?: string | null
+          organization_id?: string | null
           referrer?: string | null
           user_agent?: string | null
         }
         Update: {
           clerk_org_id?: string
           created_at?: string
-          event_type?: Database["public"]["Enums"]["so_analytics_event_type"]
+          event_type?: string
           id?: string
           ip_address?: string | null
           metadata?: Json
           offer_id?: string | null
+          organization_id?: string | null
           referrer?: string | null
           user_agent?: string | null
         }
@@ -24710,6 +24716,7 @@ export type Database = {
           key_prefix: string
           last_used_at: string | null
           name: string
+          organization_id: string | null
           revoked_at: string | null
         }
         Insert: {
@@ -24721,6 +24728,7 @@ export type Database = {
           key_prefix: string
           last_used_at?: string | null
           name: string
+          organization_id?: string | null
           revoked_at?: string | null
         }
         Update: {
@@ -24732,6 +24740,7 @@ export type Database = {
           key_prefix?: string
           last_used_at?: string | null
           name?: string
+          organization_id?: string | null
           revoked_at?: string | null
         }
         Relationships: [
@@ -24751,26 +24760,170 @@ export type Database = {
           },
         ]
       }
+      so_appointments: {
+        Row: {
+          appointment_type: string
+          created_at: string
+          id: string
+          lead_id: string | null
+          offer_id: string | null
+          organization_id: string
+          provider: string
+          raw_payload: Json
+          scheduled_at: string | null
+          status: string
+        }
+        Insert: {
+          appointment_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          offer_id?: string | null
+          organization_id: string
+          provider?: string
+          raw_payload?: Json
+          scheduled_at?: string | null
+          status?: string
+        }
+        Update: {
+          appointment_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          offer_id?: string | null
+          organization_id?: string
+          provider?: string
+          raw_payload?: Json
+          scheduled_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "so_appointments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "so_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "so_appointments_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "so_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      so_idempotency_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          organization_id: string
+          response: Json | null
+          scope: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          organization_id: string
+          response?: Json | null
+          scope: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          organization_id?: string
+          response?: Json | null
+          scope?: string
+        }
+        Relationships: []
+      }
+      so_leads: {
+        Row: {
+          campaign: string | null
+          created_at: string
+          email: string | null
+          external_contact_id: string | null
+          first_name: string | null
+          id: string
+          journey_stage: string
+          last_name: string | null
+          organization_id: string
+          phone: string | null
+          property_address: string | null
+          property_city: string | null
+          property_postal_code: string | null
+          property_state: string | null
+          source: string | null
+          updated_at: string
+        }
+        Insert: {
+          campaign?: string | null
+          created_at?: string
+          email?: string | null
+          external_contact_id?: string | null
+          first_name?: string | null
+          id?: string
+          journey_stage?: string
+          last_name?: string | null
+          organization_id: string
+          phone?: string | null
+          property_address?: string | null
+          property_city?: string | null
+          property_postal_code?: string | null
+          property_state?: string | null
+          source?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campaign?: string | null
+          created_at?: string
+          email?: string | null
+          external_contact_id?: string | null
+          first_name?: string | null
+          id?: string
+          journey_stage?: string
+          last_name?: string | null
+          organization_id?: string
+          phone?: string | null
+          property_address?: string | null
+          property_city?: string | null
+          property_postal_code?: string | null
+          property_state?: string | null
+          source?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       so_offer_revisions: {
         Row: {
+          change_summary: string | null
           created_at: string
           created_by: string | null
           id: string
           offer_id: string
+          revision_number: number
           snapshot: Json
         }
         Insert: {
+          change_summary?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
           offer_id: string
+          revision_number?: number
           snapshot: Json
         }
         Update: {
+          change_summary?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
           offer_id?: string
+          revision_number?: number
           snapshot?: Json
         }
         Relationships: [
@@ -24792,78 +24945,114 @@ export type Database = {
       }
       so_offers: {
         Row: {
+          accepted_at: string | null
+          calculation_inputs: Json
+          calculation_provider: string | null
+          calculation_results: Json | null
+          calculation_status: string
           clerk_org_id: string
           created_at: string
           created_by: string
+          created_by_user: string | null
+          declined_at: string | null
           expires_at: string | null
           first_viewed_at: string | null
           id: string
           last_viewed_at: string | null
           offer_data: Json
+          offer_type: string
+          offer_version: number
+          organization_id: string | null
           property_address: string | null
           property_city: string | null
           property_state: string | null
           property_type: string | null
           property_zip: string | null
+          public_content: Json | null
           public_slug: string
           seller_email: string | null
           seller_name: string | null
           seller_phone: string | null
           sent_at: string | null
-          status: Database["public"]["Enums"]["so_offer_status"]
+          status: string
           template_id: string | null
           title: string
           updated_at: string
+          updated_by_user: string | null
           view_count: number
         }
         Insert: {
+          accepted_at?: string | null
+          calculation_inputs?: Json
+          calculation_provider?: string | null
+          calculation_results?: Json | null
+          calculation_status?: string
           clerk_org_id: string
           created_at?: string
           created_by: string
+          created_by_user?: string | null
+          declined_at?: string | null
           expires_at?: string | null
           first_viewed_at?: string | null
           id?: string
           last_viewed_at?: string | null
           offer_data?: Json
+          offer_type?: string
+          offer_version?: number
+          organization_id?: string | null
           property_address?: string | null
           property_city?: string | null
           property_state?: string | null
           property_type?: string | null
           property_zip?: string | null
+          public_content?: Json | null
           public_slug: string
           seller_email?: string | null
           seller_name?: string | null
           seller_phone?: string | null
           sent_at?: string | null
-          status?: Database["public"]["Enums"]["so_offer_status"]
+          status?: string
           template_id?: string | null
           title: string
           updated_at?: string
+          updated_by_user?: string | null
           view_count?: number
         }
         Update: {
+          accepted_at?: string | null
+          calculation_inputs?: Json
+          calculation_provider?: string | null
+          calculation_results?: Json | null
+          calculation_status?: string
           clerk_org_id?: string
           created_at?: string
           created_by?: string
+          created_by_user?: string | null
+          declined_at?: string | null
           expires_at?: string | null
           first_viewed_at?: string | null
           id?: string
           last_viewed_at?: string | null
           offer_data?: Json
+          offer_type?: string
+          offer_version?: number
+          organization_id?: string | null
           property_address?: string | null
           property_city?: string | null
           property_state?: string | null
           property_type?: string | null
           property_zip?: string | null
+          public_content?: Json | null
           public_slug?: string
           seller_email?: string | null
           seller_name?: string | null
           seller_phone?: string | null
           sent_at?: string | null
-          status?: Database["public"]["Enums"]["so_offer_status"]
+          status?: string
           template_id?: string | null
           title?: string
           updated_at?: string
+          updated_by_user?: string | null
           view_count?: number
         }
         Relationships: [
@@ -24898,9 +25087,12 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          default_timezone: string | null
           footer_text: string | null
           logo_url: string | null
           name: string
+          organization_id: string | null
+          secondary_color: string | null
           slug: string | null
           updated_at: string
           website: string | null
@@ -24912,9 +25104,12 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          default_timezone?: string | null
           footer_text?: string | null
           logo_url?: string | null
           name: string
+          organization_id?: string | null
+          secondary_color?: string | null
           slug?: string | null
           updated_at?: string
           website?: string | null
@@ -24926,9 +25121,12 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          default_timezone?: string | null
           footer_text?: string | null
           logo_url?: string | null
           name?: string
+          organization_id?: string | null
+          secondary_color?: string | null
           slug?: string | null
           updated_at?: string
           website?: string | null
@@ -24943,6 +25141,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -24951,6 +25150,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -24959,12 +25159,67 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
+      }
+      so_public_links: {
+        Row: {
+          access_mode: string
+          created_at: string
+          expires_at: string | null
+          first_viewed_at: string | null
+          id: string
+          is_active: boolean
+          last_viewed_at: string | null
+          offer_id: string
+          organization_id: string
+          password_hash: string | null
+          slug: string
+          view_count: number
+        }
+        Insert: {
+          access_mode?: string
+          created_at?: string
+          expires_at?: string | null
+          first_viewed_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_viewed_at?: string | null
+          offer_id: string
+          organization_id: string
+          password_hash?: string | null
+          slug: string
+          view_count?: number
+        }
+        Update: {
+          access_mode?: string
+          created_at?: string
+          expires_at?: string | null
+          first_viewed_at?: string | null
+          id?: string
+          is_active?: boolean
+          last_viewed_at?: string | null
+          offer_id?: string
+          organization_id?: string
+          password_hash?: string | null
+          slug?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "so_public_links_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "so_offers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       so_templates: {
         Row: {
           body: Json
+          calculation_config: Json
           clerk_org_id: string
           created_at: string
           created_by: string | null
@@ -24972,10 +25227,15 @@ export type Database = {
           id: string
           is_default: boolean
           name: string
+          offer_type: string
+          organization_id: string | null
+          status: string
+          template_key: string | null
           updated_at: string
         }
         Insert: {
           body?: Json
+          calculation_config?: Json
           clerk_org_id: string
           created_at?: string
           created_by?: string | null
@@ -24983,10 +25243,15 @@ export type Database = {
           id?: string
           is_default?: boolean
           name: string
+          offer_type?: string
+          organization_id?: string | null
+          status?: string
+          template_key?: string | null
           updated_at?: string
         }
         Update: {
           body?: Json
+          calculation_config?: Json
           clerk_org_id?: string
           created_at?: string
           created_by?: string | null
@@ -24994,6 +25259,10 @@ export type Database = {
           id?: string
           is_default?: boolean
           name?: string
+          offer_type?: string
+          organization_id?: string | null
+          status?: string
+          template_key?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -25117,6 +25386,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      so_workspace_links: {
+        Row: {
+          created_at: string
+          organization_id: string
+          settings: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          organization_id: string
+          settings?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          organization_id?: string
+          settings?: Json
+          updated_at?: string
+        }
+        Relationships: []
       }
       sp_agencies: {
         Row: {
