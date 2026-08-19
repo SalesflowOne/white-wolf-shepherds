@@ -45,7 +45,7 @@ function LitterPage() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [availableCount, setAvailableCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const { litter } = useCurrentLitter();
+  const litter = useCurrentLitter();
   const minPrice = puppies.reduce<number | null>(
     (min, p) => (p.price != null && (min === null || p.price < min) ? p.price : min),
     null,
