@@ -252,6 +252,11 @@ function LitterPage() {
         </div>
       </section>
 
+      {/* SECTION 3b — Litter Profile / Album */}
+      <LitterAlbum maxPuppyShots={6} />
+
+
+
       {/* SECTION 4 — Parents Summary */}
       <section className="bg-gradient-frost py-20 lg:py-28">
         <div className="mx-auto max-w-5xl px-6">
