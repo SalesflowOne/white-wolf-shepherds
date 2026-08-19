@@ -1388,7 +1388,7 @@ function AlumniAdminTab() {
                 {p.image_urls && p.image_urls.length > 0 && (
                   <div className="mt-3 grid grid-cols-4 gap-2">
                     {p.image_urls.map((u, i) => (
-                      <img key={i} src={u} alt="" className="h-24 w-full rounded-lg object-cover" />
+                      <img key={i} src={u} alt="" className="h-24 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
                     ))}
                   </div>
                 )}
@@ -1432,8 +1432,7 @@ function AlumniAdminTab() {
                       <img
                         src={p.profile_photo_url}
                         alt=""
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
+                        className="h-10 w-10 rounded-full object-cover" loading="lazy" decoding="async" />
                     ) : (
                       "—"
                     )}
@@ -1794,8 +1793,7 @@ function DogsAdminTab() {
                           <img
                             src={d.image_url}
                             alt={d.name}
-                            className="h-9 w-9 rounded-full object-cover"
-                          />
+                            className="h-9 w-9 rounded-full object-cover" loading="lazy" decoding="async" />
                         ) : (
                           <div className="h-9 w-9 rounded-full bg-muted" />
                         )}
@@ -2113,7 +2111,7 @@ function DogFormModal({
             </label>
             <div className="flex items-center gap-3">
               {imageUrl ? (
-                <img src={imageUrl} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                <img src={imageUrl} alt="" className="h-16 w-16 rounded-lg object-cover" loading="lazy" decoding="async" />
               ) : (
                 <div className="h-16 w-16 rounded-lg bg-muted" />
               )}
@@ -2170,7 +2168,7 @@ function DogFormModal({
                         isProfile ? "border-accent ring-2 ring-accent/40" : "border-border"
                       }`}
                     >
-                      <img src={u} alt="" className="h-24 w-full object-cover" />
+                      <img src={u} alt="" className="h-24 w-full object-cover" loading="lazy" decoding="async" />
                       <div className="flex items-center justify-between gap-1 p-1">
                         <button
                           type="button"
