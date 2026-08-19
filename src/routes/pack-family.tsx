@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase, T } from "@/integrations/supabase/client";
-import demoSire from "@/assets/demo-sire.jpg";
-import demoDam from "@/assets/demo-dam.jpg";
 
 export const Route = createFileRoute("/pack-family")({
   component: PackFamilyPage,
@@ -91,18 +89,11 @@ function PackFamilyPage() {
                 <article key={p.id} className="rounded-2xl bg-card p-8 shadow-card">
                   <div className="relative overflow-hidden rounded-xl bg-muted">
                     <img
-                      src={p.image_url ?? (p.sex === "male" ? demoSire : demoDam)}
+                      src={p.image_url ?? undefined}
                       alt={`${p.name}, White Wolf Shepherds parent dog`}
                       loading="lazy"
                       className="aspect-[4/5] w-full object-cover object-center"
                     />
-                    {!p.image_url && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                        <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
-                          Real image coming soon
-                        </span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="mt-6 flex items-center gap-3">

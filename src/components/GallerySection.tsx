@@ -1,23 +1,25 @@
-import galleryPile from "@/assets/gallery-pile.jpg";
-import galleryYard from "@/assets/gallery-yard.jpg";
-import galleryHouses from "@/assets/gallery-houses.jpg";
-
 const images = [
   {
     src: "/dogs/mia/mia-golden-hour-01.webp",
     alt: "Mia, our white German Shepherd dam, in warm golden-hour light",
     span: "lg:col-span-2 lg:row-span-2",
   },
-  { src: galleryYard, alt: "White shepherd mother with her pack in the yard" },
+  {
+    src: "/puppies/litter/litter-sunny-garden-02.webp",
+    alt: "Spring 2026 litter playing in the sunny garden",
+  },
   {
     src: "/dogs/haki/haki-golden-hour-03.webp",
     alt: "Haki, our white German Shepherd sire, at golden hour",
   },
   {
-    src: "/puppies/litter/litter-sunny-garden-02.webp",
-    alt: "Spring 2026 litter playing in the sunny garden",
+    src: "/dogs/mia/mia-pro-pose-03.webp",
+    alt: "Mia posing for a studio-style portrait",
   },
-  { src: galleryPile, alt: "Litter of white shepherd puppies cuddled together" },
+  {
+    src: "/dogs/haki/haki-indoor-pose-04.webp",
+    alt: "Haki relaxing indoors",
+  },
   {
     src: "/dogs/haki/haki-hero-front.webp",
     alt: "Haki standing square, facing the camera",
@@ -29,10 +31,13 @@ const images = [
     span: "lg:col-span-2",
   },
   {
-    src: "/dogs/mia/mia-pro-pose-03.webp",
-    alt: "Mia posing for a studio-style portrait",
+    src: "/dogs/mia/mia-golden-hour-06.webp",
+    alt: "Mia out on an evening walk",
   },
-  { src: galleryHouses, alt: "White shepherds resting by their dog houses" },
+  {
+    src: "/dogs/haki/haki-front-2.webp",
+    alt: "Close portrait of Haki",
+  },
   {
     src: "/puppies/litter/litter-park-group-05.webp",
     alt: "The litter out on their first park adventure",
@@ -71,4 +76,3 @@ export default function GallerySection() {
     </section>
   );
 }
-
