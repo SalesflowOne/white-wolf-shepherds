@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import CollarBadge from "@/components/CollarBadge";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -523,6 +524,11 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
             {sexLabel}
           </span>
         </div>
+        {puppy.collar_color && (
+          <div className="mt-2">
+            <CollarBadge color={puppy.collar_color} />
+          </div>
+        )}
 
         {/* Temperament tags */}
         {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
