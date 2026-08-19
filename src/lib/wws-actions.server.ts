@@ -1,11 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import {
-  contactInput,
-  detailsInput,
-  leadIdInput,
-  profileRoleInput,
-} from "./wws-actions.schemas";
+import { contactInput, detailsInput, leadIdInput, profileRoleInput } from "./wws-actions.schemas";
 
 function adminClient(): SupabaseClient {
   const serverUrl =
@@ -59,7 +54,11 @@ async function ensureUserAndProfile(
     .insert({ id: userId, role: "applicant", lead_id: leadId, updated_at: now });
 }
 
-async function attributeReferral(admin: SupabaseClient, leadId: string, referralCode?: string | null) {
+async function attributeReferral(
+  admin: SupabaseClient,
+  leadId: string,
+  referralCode?: string | null,
+) {
   if (!referralCode) return;
   const { data: referrer } = await admin
     .from("wws_leads")

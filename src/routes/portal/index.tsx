@@ -137,7 +137,9 @@ function PortalLoginPage() {
                 placeholder="you@example.com"
               />
 
-              <label className="mt-5 mb-2 block text-sm font-medium text-foreground">Password</label>
+              <label className="mt-5 mb-2 block text-sm font-medium text-foreground">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
@@ -180,4 +182,3 @@ function PortalLoginPage() {
     </div>
   );
 }
-

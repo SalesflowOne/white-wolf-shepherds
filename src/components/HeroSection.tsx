@@ -96,8 +96,8 @@ export default function HeroSection() {
 
           <p className="mt-2 max-w-xl text-xs leading-relaxed text-primary-foreground/55">
             Start with your contact info and a short Family Fit Call, then complete your
-            application, place a $500 deposit (refundable if not approved), and meet the
-            puppies on a private video call after approval.
+            application, place a $500 deposit (refundable if not approved), and meet the puppies on
+            a private video call after approval.
           </p>
 
           <a
