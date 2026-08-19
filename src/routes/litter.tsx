@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import LitterAlbum from "@/components/LitterAlbum";
+
 
 type Puppy = {
   id: string;
