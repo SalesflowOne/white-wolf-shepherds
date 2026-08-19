@@ -775,9 +775,7 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
             <FactItem label="Pick order">
               {puppy.priority_order ? `#${puppy.priority_order}` : "—"}
             </FactItem>
-            <FactItem label="Reservation">
-              {puppy.deposit_paid_at ? "Paid ✓" : "Pending"}
-            </FactItem>
+            <FactItem label="Reservation">{puppy.deposit_paid_at ? "Paid ✓" : "Pending"}</FactItem>
           </dl>
 
           {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
@@ -836,7 +834,6 @@ function MyPuppyTab({ lead }: { lead: Lead }) {
           )}
         </div>
       </div>
-
 
       {/* Pickup countdown */}
       <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6 text-center">
