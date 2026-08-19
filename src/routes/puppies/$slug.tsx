@@ -388,38 +388,14 @@ function PuppyProfilePage() {
             </section>
           )}
 
-          {/* Meet the Parents teaser */}
-          <section className="mt-20">
-            <h2 className="font-display text-2xl font-bold text-foreground">Meet the Parents</h2>
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl bg-card p-6 shadow-card">
-                <div className="flex h-32 items-center justify-center rounded-xl bg-muted">
-                  <span className="font-display text-3xl text-muted-foreground/30">Dam</span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">Dam</h3>
-                <p className="mt-1 text-sm text-accent">
-                  OFA Health Tested &middot; AKC Registered
-                </p>
-              </div>
-              <div className="rounded-2xl bg-card p-6 shadow-card">
-                <div className="flex h-32 items-center justify-center rounded-xl bg-muted">
-                  <span className="font-display text-3xl text-muted-foreground/30">Sire</span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">Sire</h3>
-                <p className="mt-1 text-sm text-accent">
-                  OFA Health Tested &middot; AKC Registered
-                </p>
-              </div>
-            </div>
-            <div className="mt-6">
-              <Link
-                to="/parents"
-                className="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-              >
-                View Parent Profiles &rarr;
-              </Link>
-            </div>
-          </section>
+          {/* Meet the Parents — pulled live from the parent profiles */}
+          <MeetTheParents
+            className="mt-20"
+            eyebrow="Behind This Litter"
+            title="Meet the Parents"
+            subtitle={`${puppy.name} comes from health-tested, AKC-registered White Shepherd parents — structure, temperament, and coat you can trace.`}
+          />
+
         </div>
       </div>
 
