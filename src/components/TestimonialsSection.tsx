@@ -1,49 +1,91 @@
-const testimonials = [
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import SectionHeading from "@/components/SectionHeading";
+
+type Testimonial = {
+  id: string;
+  name: string;
+  location: string | null;
+  quote: string;
+  photo_url: string | null;
+  puppy_name: string | null;
+  rating: number | null;
+};
+
+/** Shown only until the first published testimonial exists in the database. */
+const FALLBACK: Testimonial[] = [
   {
-    quote:
-      "Our Arctic from White Wolf Shepherds is the gentlest, most loving companion we've ever had. The kids are absolutely inseparable from him.",
+    id: "f1",
     name: "The Anderson Family",
     location: "Colorado",
+    quote:
+      "Our Arctic from White Wolf Shepherds is the gentlest, most loving companion we've ever had. The kids are absolutely inseparable from him.",
+    photo_url: null,
+    puppy_name: "Arctic",
+    rating: 5,
   },
   {
-    quote:
-      "The professionalism and care that goes into every puppy is unmatched. From health testing to socialization — you can see the love in every detail.",
+    id: "f2",
     name: "Sarah & Michael Chen",
     location: "Oregon",
+    quote:
+      "The professionalism and care that goes into every puppy is unmatched. From health testing to socialization — you can see the love in every detail.",
+    photo_url: null,
+    puppy_name: null,
+    rating: 5,
   },
   {
-    quote:
-      "We've had German Shepherds for 20 years. The White Wolf bloodline is something truly special — intelligence, beauty, and the sweetest temperament.",
+    id: "f3",
     name: "Dr. James Harlow",
     location: "Montana",
+    quote:
+      "We've had German Shepherds for 20 years. The White Wolf bloodline is something truly special — intelligence, beauty, and the sweetest temperament.",
+    photo_url: null,
+    puppy_name: null,
+    rating: 5,
   },
 ];
 
 export default function TestimonialsSection() {
+  const [items, setItems] = useState<Testimonial[]>(FALLBACK);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("wws_testimonials")
+        .select("id,name,location,quote,photo_url,puppy_name,rating")
+        .eq("published", true)
+        .order("sort_order", { ascending: true })
+        .limit(6);
+      if (active && data && data.length > 0) setItems(data as Testimonial[]);
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section id="testimonials" className="py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-            Testimonials
-          </p>
-          <h2 className="mt-3 font-display text-4xl font-bold text-foreground lg:text-5xl">
-            Happy Families
-          </h2>
-        </div>
+        <SectionHeading
+          eyebrow="Testimonials"
+          title="Happy Families"
+          subtitle="Every family here started exactly where you are — with one email and a few questions."
+        />
 
         <div className="mt-16 grid gap-8 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="rounded-2xl bg-card p-8 shadow-card transition-all hover:shadow-wolf"
+          {items.map((t) => (
+            <figure
+              key={t.id}
+              className="flex flex-col rounded-2xl bg-card p-8 shadow-card transition-all hover:shadow-wolf motion-reduce:transition-none"
             >
-              {/* Stars */}
-              <div className="flex gap-1 text-accent">
-                {[...Array(5)].map((_, i) => (
+              <div className="flex gap-1 text-accent" aria-label={`${t.rating ?? 5} out of 5 stars`}>
+                {Array.from({ length: t.rating ?? 5 }).map((_, i) => (
                   <svg
                     key={i}
-                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                     className="h-5 w-5 fill-current"
                     viewBox="0 0 20 20"
                   >
@@ -52,15 +94,41 @@ export default function TestimonialsSection() {
                 ))}
               </div>
 
-              <blockquote className="mt-5 text-lg italic leading-relaxed text-foreground">
-                "{t.quote}"
+              <blockquote className="mt-5 flex-1 text-lg italic leading-relaxed text-foreground">
+                “{t.quote}”
               </blockquote>
-              <div className="mt-6 border-t border-border pt-4">
-                <p className="font-display text-sm font-bold text-foreground">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.location}</p>
-              </div>
-            </div>
+
+              <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-4">
+                {t.photo_url && (
+                  <img
+                    src={t.photo_url}
+                    alt=""
+                    loading="lazy"
+                    width={44}
+                    height={44}
+                    className="h-11 w-11 rounded-full object-cover"
+                  />
+                )}
+                <div>
+                  <p className="font-display text-sm font-bold text-foreground">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {[t.location, t.puppy_name ? `puppy parent to ${t.puppy_name}` : null]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+              </figcaption>
+            </figure>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            to="/get-started"
+            className="inline-block rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Start your application
+          </Link>
         </div>
       </div>
     </section>
