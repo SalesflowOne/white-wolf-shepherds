@@ -18,7 +18,7 @@ const MANIFEST = "src/lib/image-manifest.json";
 const WIDTHS = [400, 800, 1200];
 const QUALITY = 72;
 
-const isVariant = (f) => /-(\d+)\.webp$/.test(f);
+const isVariant = (f) => new RegExp(`-(${WIDTHS.join("|")})\\.webp$`).test(f);
 
 async function walk(dir) {
   const out = [];
