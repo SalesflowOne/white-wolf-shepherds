@@ -417,14 +417,14 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           <img
             src={puppy.image_url}
             alt={puppy.name}
-            className={`h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+            className={`aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
               isReserved ? "grayscale" : ""
             }`}
             loading="lazy"
           />
         ) : (
           <div
-            className={`flex h-64 items-center justify-center bg-muted ${
+            className={`flex aspect-[4/5] w-full items-center justify-center bg-muted ${
               isReserved ? "grayscale" : ""
             }`}
           >

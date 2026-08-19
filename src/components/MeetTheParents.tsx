@@ -17,10 +17,10 @@ function ParentCard({ parent }: { parent: ParentDog }) {
           src={parent.image_url}
           alt={`${parent.name}, White Wolf Shepherds ${role.toLowerCase()}`}
           loading="lazy"
-          className="h-64 w-full object-cover object-center"
+          className="aspect-[4/5] w-full object-cover object-center"
         />
       ) : (
-        <div className="flex h-64 items-center justify-center bg-muted">
+        <div className="flex aspect-[4/5] w-full items-center justify-center bg-muted">
           <span className="font-display text-5xl font-bold text-muted-foreground/25">
             {parent.name[0]}
           </span>
@@ -61,7 +61,7 @@ function ParentCard({ parent }: { parent: ParentDog }) {
                 src={url}
                 alt={`${parent.name} photo ${i + 1}`}
                 loading="lazy"
-                className="h-16 w-full rounded-lg object-cover"
+                className="aspect-[4/5] w-full rounded-lg object-cover object-center"
               />
             ))}
           </div>

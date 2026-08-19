@@ -178,12 +178,12 @@ function PuppyProfilePage() {
                   <img
                     src={puppy.image_url}
                     alt={puppy.name}
-                    className={`h-[400px] w-full object-cover lg:h-[500px] ${isReserved ? "grayscale" : ""}`}
+                    className={`aspect-[4/5] w-full object-cover object-center ${isReserved ? "grayscale" : ""}`}
                   />
                 </div>
               ) : (
                 <div
-                  className={`flex h-[400px] items-center justify-center rounded-2xl bg-muted lg:h-[500px] ${isReserved ? "grayscale" : ""}`}
+                  className={`flex aspect-[4/5] w-full items-center justify-center rounded-2xl bg-muted ${isReserved ? "grayscale" : ""}`}
                 >
                   <span className="font-display text-8xl font-bold text-muted-foreground/20">
                     {puppy.name[0]}
@@ -199,7 +199,7 @@ function PuppyProfilePage() {
                       <img
                         src={url}
                         alt={`${puppy.name} photo ${i + 1}`}
-                        className="h-40 w-full object-cover"
+                        className="aspect-[4/5] w-full object-cover object-center"
                         loading="lazy"
                       />
                     </div>
@@ -377,11 +377,11 @@ function PuppyProfilePage() {
                       <img
                         src={sib.image_url}
                         alt={sib.name}
-                        className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-48 items-center justify-center bg-muted">
+                      <div className="flex aspect-[4/5] w-full items-center justify-center bg-muted">
                         <span className="font-display text-4xl font-bold text-muted-foreground/20">
                           {sib.name[0]}
                         </span>
