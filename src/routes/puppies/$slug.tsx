@@ -218,22 +218,8 @@ function PuppyProfilePage() {
                   {sexLabel}
                 </span>
                 <CollarBadge color={puppy.collar_color} />
-                {puppy.dob && (
-                  <span className="text-sm text-muted-foreground">
-                    Born {formatDate(puppy.dob)}
-                  </span>
-                )}
-                {puppy.ready_date && (
-                  <span className="text-sm text-muted-foreground">
-                    &middot; Ready {formatDate(puppy.ready_date)}
-                  </span>
-                )}
-              </div>
-
-              {/* Tier badge */}
-              <div className="mt-4">
                 <span
-                  className={`inline-flex rounded-full px-4 py-1.5 text-sm font-semibold ${tierColor}`}
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tierColor}`}
                 >
                   {tierLabel}
                 </span>
@@ -244,7 +230,29 @@ function PuppyProfilePage() {
                 <span className="font-display text-3xl font-bold text-foreground">
                   ${puppy.price?.toLocaleString()}
                 </span>
+                <span className="ml-2 text-sm text-muted-foreground">
+                  all-in &middot; $500 reservation applies to purchase
+                </span>
               </div>
+
+              {/* Vitals / metadata */}
+              <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-border bg-card/60 p-5">
+                <MetaItem label="Date of Birth" value={bornLabel} />
+                <MetaItem label="Age Today" value={ageLabel} />
+                <MetaItem label="Go-Home Date" value={readyLabel} />
+                <MetaItem label="Litter" value={litter?.name ?? null} />
+                <MetaItem label="Collar" value={puppy.collar_color} />
+                <MetaItem label="Sex" value={sexLabel} />
+                <MetaItem label="Dam" value={dam?.name ?? null} />
+                <MetaItem label="Sire" value={sire?.name ?? null} />
+              </dl>
+
+              <p className="mt-3 text-xs text-muted-foreground">
+                Every puppy goes home vet-checked, dewormed, age-appropriately vaccinated,
+                microchipped, and AKC-registerable — with a written health guarantee and lifetime
+                breeder support.
+              </p>
+
 
               {/* Temperament tags */}
               {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
