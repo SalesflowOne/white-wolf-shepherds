@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
         rel: "preload",
         as: "image",
         href: "/dogs/haki/haki-golden-hour-05.webp",
-        fetchpriority: "high",
+        fetchPriority: "high",
       },
     ],
   }),

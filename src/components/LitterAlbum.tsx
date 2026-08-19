@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SmartImage from "@/components/SmartImage";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
 
@@ -69,10 +70,10 @@ export default function LitterAlbum({ maxPuppyShots = 6 }: { maxPuppyShots?: num
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {groupPhotos.map((url, i) => (
               <div key={url} className="overflow-hidden rounded-2xl shadow-card">
-                <img
+                <SmartImage
                   src={url}
                   alt={`${litter?.name ?? "Litter"} group photo ${i + 1}`}
-                  loading="lazy"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   className="aspect-[3/4] w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                 />
               </div>
@@ -93,10 +94,10 @@ export default function LitterAlbum({ maxPuppyShots = 6 }: { maxPuppyShots?: num
                   params={{ slug: p.slug }}
                   className="group overflow-hidden rounded-xl shadow-card"
                 >
-                  <img
+                  <SmartImage
                     src={p.image_url!}
                     alt={`${p.name}${p.collar_color ? ` — ${p.collar_color} collar` : ""}`}
-                    loading="lazy"
+                    sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw"
                     className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="bg-card px-2 py-2 text-center text-xs font-semibold text-card-foreground">
