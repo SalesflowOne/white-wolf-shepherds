@@ -35,7 +35,7 @@ export const Route = createFileRoute("/litter")({
       {
         name: "description",
         content:
-          "Meet our Spring 2026 White German Shepherd litter. 9 puppies, health-tested parents, starting at $2,500. Reserve your pick today.",
+          "Meet our Spring 2026 White German Shepherd litter. 9 puppies, health-tested parents, starting at $2,000. Reserve your pick today.",
       },
     ],
   }),
