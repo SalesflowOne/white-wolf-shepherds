@@ -1,4 +1,12 @@
 {
+  "/about/about-breeder.webp": {
+    "w": 1200,
+    "h": 1600,
+    "v": [
+      400,
+      800
+    ]
+  },
   "/dogs/haki/haki-front-1.webp": {
     "w": 1200,
     "h": 2595,
