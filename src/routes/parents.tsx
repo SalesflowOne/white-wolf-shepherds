@@ -30,8 +30,8 @@ function ParentsPage() {
             Meet the Parents
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every exceptional puppy starts with exceptional parents. Meet Mia and Haki, the heart
-            of our White Wolf Shepherds family.
+            Every exceptional puppy starts with exceptional parents. Meet Mia and Haki, the heart of
+            our White Wolf Shepherds family.
           </p>
         </div>
       </div>
@@ -65,8 +65,8 @@ function ParentsPage() {
               <p className="mt-4 text-muted-foreground">
                 Mia is graceful, affectionate, and attentive, with a sweet personality and elegant
                 presence. She is playful, loving, and highly observant, with a calm demeanor that
-                makes her easy to adore. Mia combines beauty, intelligence, and warmth, making her
-                a wonderful dam and a true favorite of the pack.
+                makes her easy to adore. Mia combines beauty, intelligence, and warmth, making her a
+                wonderful dam and a true favorite of the pack.
               </p>
             </div>
 

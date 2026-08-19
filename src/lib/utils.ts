@@ -13,9 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 export function parseDateOnly(value: string | null | undefined): Date | null {
   if (!value) return null;
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
-  const d = m
-    ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
-    : new Date(value);
+  const d = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(value);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 

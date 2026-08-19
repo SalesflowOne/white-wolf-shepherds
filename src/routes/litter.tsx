@@ -264,24 +264,26 @@ function LitterPage() {
           </div>
 
           <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {((parents.length > 0
-              ? parents.map((p) => ({
-                  key: p.id,
-                  role: p.sex === "male" ? "Sire" : "Dam",
-                  name: p.name,
-                  image: p.image_url,
-                  bio: p.personality_bio,
-                }))
-              : [
-                  { key: "dam", role: "Dam", name: null, image: null, bio: null },
-                  { key: "sire", role: "Sire", name: null, image: null, bio: null },
-                ]) as Array<{
-              key: string;
-              role: string;
-              name: string | null;
-              image: string | null;
-              bio: string | null;
-            }>).map((p) => (
+            {(
+              (parents.length > 0
+                ? parents.map((p) => ({
+                    key: p.id,
+                    role: p.sex === "male" ? "Sire" : "Dam",
+                    name: p.name,
+                    image: p.image_url,
+                    bio: p.personality_bio,
+                  }))
+                : [
+                    { key: "dam", role: "Dam", name: null, image: null, bio: null },
+                    { key: "sire", role: "Sire", name: null, image: null, bio: null },
+                  ]) as Array<{
+                key: string;
+                role: string;
+                name: string | null;
+                image: string | null;
+                bio: string | null;
+              }>
+            ).map((p) => (
               <div key={p.key} className="rounded-2xl bg-card p-8 shadow-card">
                 {p.image ? (
                   <img
