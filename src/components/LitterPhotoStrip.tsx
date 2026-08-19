@@ -29,7 +29,7 @@ export default function LitterPhotoStrip({ puppyName }: { puppyName: string }) {
               src={url}
               alt={`${puppyName}'s litter, group photo ${i + 1}`}
               loading="lazy"
-              className="h-28 w-full object-cover"
+              className="aspect-[3/4] w-full object-cover object-center"
             />
           </div>
         ))}
