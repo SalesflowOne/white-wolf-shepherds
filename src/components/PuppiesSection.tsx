@@ -179,13 +179,13 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           <img
             src={puppy.image_url}
             alt={puppy.name}
-            className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
             width={800}
             height={800}
           />
         ) : (
-          <div className="flex h-72 w-full items-center justify-center bg-muted">
+          <div className="flex aspect-[4/5] w-full items-center justify-center bg-muted">
             <span className="font-display text-3xl text-muted-foreground/30">{puppy.name}</span>
           </div>
         )}
@@ -207,7 +207,9 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
       <div className="p-6">
         <h4 className="font-display text-2xl font-bold text-card-foreground">{puppy.name}</h4>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          {puppy.sex && <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>}
+          {puppy.sex && (
+            <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>
+          )}
           <CollarBadge color={puppy.collar_color} />
         </div>
         {puppy.slug ? (

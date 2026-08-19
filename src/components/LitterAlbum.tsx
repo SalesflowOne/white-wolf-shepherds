@@ -73,7 +73,7 @@ export default function LitterAlbum({ maxPuppyShots = 6 }: { maxPuppyShots?: num
                   src={url}
                   alt={`${litter?.name ?? "Litter"} group photo ${i + 1}`}
                   loading="lazy"
-                  className="h-72 w-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="aspect-[3/4] w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                 />
               </div>
             ))}
@@ -97,7 +97,7 @@ export default function LitterAlbum({ maxPuppyShots = 6 }: { maxPuppyShots?: num
                     src={p.image_url!}
                     alt={`${p.name}${p.collar_color ? ` — ${p.collar_color} collar` : ""}`}
                     loading="lazy"
-                    className="h-36 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="bg-card px-2 py-2 text-center text-xs font-semibold text-card-foreground">
                     {p.name}

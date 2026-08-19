@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterAlbum from "@/components/LitterAlbum";
 import MeetTheParents from "@/components/MeetTheParents";
-
+import { useCurrentLitter, formatLongDate } from "@/hooks/useParents";
 
 type Puppy = {
   id: string;
@@ -45,6 +45,11 @@ function LitterPage() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [availableCount, setAvailableCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const litter = useCurrentLitter();
+  const minPrice = puppies.reduce<number | null>(
+    (min, p) => (p.price != null && (min === null || p.price < min) ? p.price : min),
+    null,
+  );
 
   useEffect(() => {
     localStorage.setItem("visited_litter", "true");
@@ -93,7 +98,13 @@ function LitterPage() {
             Spring 2026 White German Shepherd Litter
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-primary-foreground/70">
-            Born March 2026 &middot; Ready May 2026 &middot; Starting at $2,500
+            {[
+              litter?.born_date ? `Born ${formatLongDate(litter.born_date)}` : null,
+              litter?.ready_date ? `Ready ${formatLongDate(litter.ready_date)}` : null,
+              minPrice != null ? `Starting at $${minPrice.toLocaleString()}` : null,
+            ]
+              .filter(Boolean)
+              .join(" \u00b7 ")}
           </p>
 
           {/* Live scarcity counter */}
@@ -138,7 +149,9 @@ function LitterPage() {
             {/* Companion */}
             <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
               <h3 className="font-display text-xl font-bold text-foreground">Pet Companion</h3>
-              <div className="mt-4 font-display text-4xl font-bold text-foreground">$2,500</div>
+              <div className="mt-4 font-display text-4xl font-bold text-foreground">
+                ${(minPrice ?? 2000).toLocaleString()}
+              </div>
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
@@ -248,8 +261,6 @@ function LitterPage() {
       {/* SECTION 3b — Litter Profile / Album */}
       <LitterAlbum maxPuppyShots={6} />
 
-
-
       {/* SECTION 4 — Parents Summary */}
       <section className="bg-gradient-frost py-20 lg:py-28">
         <div className="mx-auto max-w-5xl px-6">
@@ -260,7 +271,6 @@ function LitterPage() {
           />
         </div>
       </section>
-
 
       {/* SECTION 5 — Trust Bullets */}
       <section className="py-16">
@@ -417,14 +427,14 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           <img
             src={puppy.image_url}
             alt={puppy.name}
-            className={`h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+            className={`aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
               isReserved ? "grayscale" : ""
             }`}
             loading="lazy"
           />
         ) : (
           <div
-            className={`flex h-64 items-center justify-center bg-muted ${
+            className={`flex aspect-[4/5] w-full items-center justify-center bg-muted ${
               isReserved ? "grayscale" : ""
             }`}
           >
