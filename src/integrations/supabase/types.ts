@@ -15457,6 +15457,41 @@ export type Database = {
         }
         Relationships: []
       }
+      ct_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string
+          id: string
+          one_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id: string
+          one_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          one_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ct_scheduling_settings: {
         Row: {
           allow_open_shift_claiming: boolean
