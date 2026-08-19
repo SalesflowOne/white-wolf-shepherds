@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -9,9 +10,25 @@ export const Route = createFileRoute("/health-guarantee")({
       { title: "Health Guarantee — White Wolf Shepherds" },
       {
         name: "description",
-        content: "Our comprehensive health guarantee for White German Shepherd puppies.",
+        content: "Our written 1-year genetic health guarantee: vet exam, vaccinations, deworming and microchip included with every puppy.",
+      },
+      { property: "og:title", content: "Health Guarantee — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "Our written 1-year genetic health guarantee: vet exam, vaccinations, deworming and microchip included with every puppy.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/health-guarantee` },
+      { property: "og:image", content: `${SITE_URL}/dogs/haki/haki-golden-hour-05.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/dogs/haki/haki-golden-hour-05.webp` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Health Guarantee — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Our written 1-year genetic health guarantee: vet exam, vaccinations, deworming and microchip included with every puppy.",
       },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/health-guarantee` }],
   }),
 });
 

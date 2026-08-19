@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,10 +11,25 @@ export const Route = createFileRoute("/faq")({
       { title: "FAQ — White Wolf Shepherds" },
       {
         name: "description",
-        content:
-          "Frequently asked questions about our White German Shepherd puppies, reservation process, and health guarantee.",
+        content: "Answers about our White German Shepherd puppies, pricing, deposits, reservation process, health testing and travel options.",
+      },
+      { property: "og:title", content: "FAQ — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "Answers about our White German Shepherd puppies, pricing, deposits, reservation process, health testing and travel options.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/faq` },
+      { property: "og:image", content: `${SITE_URL}/puppies/litter/litter-park-group-05.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/puppies/litter/litter-park-group-05.webp` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "FAQ — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "Answers about our White German Shepherd puppies, pricing, deposits, reservation process, health testing and travel options.",
       },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/faq` }],
   }),
 });
 
