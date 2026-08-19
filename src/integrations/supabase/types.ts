@@ -8986,6 +8986,50 @@ export type Database = {
           },
         ]
       }
+      ao_revenue_orchestrator_config: {
+        Row: {
+          contact_sla_hours: number
+          conversion_rates: Json
+          created_at: string
+          employee_mappings: Json
+          enabled: boolean
+          id: string
+          org_id: string
+          thresholds: Json
+          updated_at: string
+        }
+        Insert: {
+          contact_sla_hours?: number
+          conversion_rates?: Json
+          created_at?: string
+          employee_mappings?: Json
+          enabled?: boolean
+          id?: string
+          org_id: string
+          thresholds?: Json
+          updated_at?: string
+        }
+        Update: {
+          contact_sla_hours?: number
+          conversion_rates?: Json
+          created_at?: string
+          employee_mappings?: Json
+          enabled?: boolean
+          id?: string
+          org_id?: string
+          thresholds?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ao_revenue_orchestrator_config_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "ao_orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ao_roadmap_boards: {
         Row: {
           active: boolean
