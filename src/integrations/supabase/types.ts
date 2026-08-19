@@ -15365,6 +15365,7 @@ export type Database = {
       ct_breaks: {
         Row: {
           break_type: string
+          company_id: string | null
           created_at: string
           ended_at: string | null
           id: string
@@ -15376,6 +15377,7 @@ export type Database = {
         }
         Insert: {
           break_type?: string
+          company_id?: string | null
           created_at?: string
           ended_at?: string | null
           id?: string
@@ -15387,6 +15389,7 @@ export type Database = {
         }
         Update: {
           break_type?: string
+          company_id?: string | null
           created_at?: string
           ended_at?: string | null
           id?: string
@@ -15398,10 +15401,192 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "ct_breaks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ct_breaks_time_entry_id_fkey"
             columns: ["time_entry_id"]
             isOneToOne: false
             referencedRelation: "ct_time_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_companies: {
+        Row: {
+          address: string | null
+          company_code: string | null
+          created_at: string
+          currency: string
+          date_format: string
+          id: string
+          language: string
+          length_unit: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          time_format: string
+          timezone: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_code?: string | null
+          created_at?: string
+          currency?: string
+          date_format?: string
+          id?: string
+          language?: string
+          length_unit?: string
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          time_format?: string
+          timezone?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_code?: string | null
+          created_at?: string
+          currency?: string
+          date_format?: string
+          id?: string
+          language?: string
+          length_unit?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          time_format?: string
+          timezone?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      ct_company_members: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string | null
+          employee_code: string | null
+          employee_name: string
+          hourly_rate: number | null
+          id: string
+          invited_at: string | null
+          is_active: boolean
+          job_title: string | null
+          joined_at: string | null
+          team: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email?: string | null
+          employee_code?: string | null
+          employee_name: string
+          hourly_rate?: number | null
+          id?: string
+          invited_at?: string | null
+          is_active?: boolean
+          job_title?: string | null
+          joined_at?: string | null
+          team?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          employee_code?: string | null
+          employee_name?: string
+          hourly_rate?: number | null
+          id?: string
+          invited_at?: string | null
+          is_active?: boolean
+          job_title?: string | null
+          joined_at?: string | null
+          team?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_company_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          company_id: string
+          created_at: string
+          created_by: string | null
+          email: string
+          employee_name: string | null
+          expires_at: string
+          hourly_rate: number | null
+          id: string
+          job_title: string | null
+          role: Database["public"]["Enums"]["ct_role"]
+          status: Database["public"]["Enums"]["ct_invite_status"]
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          employee_name?: string | null
+          expires_at?: string
+          hourly_rate?: number | null
+          id?: string
+          job_title?: string | null
+          role?: Database["public"]["Enums"]["ct_role"]
+          status?: Database["public"]["Enums"]["ct_invite_status"]
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          employee_name?: string | null
+          expires_at?: string
+          hourly_rate?: number | null
+          id?: string
+          job_title?: string | null
+          role?: Database["public"]["Enums"]["ct_role"]
+          status?: Database["public"]["Enums"]["ct_invite_status"]
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_invites_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
             referencedColumns: ["id"]
           },
         ]
@@ -15411,6 +15596,7 @@ export type Database = {
           address: string | null
           code: string | null
           color: string
+          company_id: string | null
           created_at: string
           geofence_radius_m: number
           hourly_rate: number | null
@@ -15427,6 +15613,7 @@ export type Database = {
           address?: string | null
           code?: string | null
           color?: string
+          company_id?: string | null
           created_at?: string
           geofence_radius_m?: number
           hourly_rate?: number | null
@@ -15443,6 +15630,7 @@ export type Database = {
           address?: string | null
           code?: string | null
           color?: string
+          company_id?: string | null
           created_at?: string
           geofence_radius_m?: number
           hourly_rate?: number | null
@@ -15455,7 +15643,15 @@ export type Database = {
           owner_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ct_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ct_profiles: {
         Row: {
@@ -15498,6 +15694,7 @@ export type Database = {
           allow_shift_notes: boolean
           allow_shift_swaps: boolean
           auto_publish: boolean
+          company_id: string | null
           created_at: string
           default_shift_duration_hours: number
           enforce_rest_between_shifts: boolean
@@ -15521,6 +15718,7 @@ export type Database = {
           allow_shift_notes?: boolean
           allow_shift_swaps?: boolean
           auto_publish?: boolean
+          company_id?: string | null
           created_at?: string
           default_shift_duration_hours?: number
           enforce_rest_between_shifts?: boolean
@@ -15544,6 +15742,7 @@ export type Database = {
           allow_shift_notes?: boolean
           allow_shift_swaps?: boolean
           auto_publish?: boolean
+          company_id?: string | null
           created_at?: string
           default_shift_duration_hours?: number
           enforce_rest_between_shifts?: boolean
@@ -15562,13 +15761,22 @@ export type Database = {
           updated_at?: string
           week_starts_on?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ct_scheduling_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ct_shifts: {
         Row: {
           assigned_user_id: string | null
           assignee_name: string | null
           break_minutes: number
+          company_id: string | null
           created_at: string
           ends_at: string
           id: string
@@ -15586,6 +15794,7 @@ export type Database = {
           assigned_user_id?: string | null
           assignee_name?: string | null
           break_minutes?: number
+          company_id?: string | null
           created_at?: string
           ends_at: string
           id?: string
@@ -15603,6 +15812,7 @@ export type Database = {
           assigned_user_id?: string | null
           assignee_name?: string | null
           break_minutes?: number
+          company_id?: string | null
           created_at?: string
           ends_at?: string
           id?: string
@@ -15617,6 +15827,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ct_shifts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ct_shifts_job_id_fkey"
             columns: ["job_id"]
@@ -15638,6 +15855,7 @@ export type Database = {
           block_clock_in_outside_geofence: boolean
           clock_in_reminder_minutes: number
           clock_out_reminder_minutes: number
+          company_id: string | null
           created_at: string
           daily_overtime_after_hours: number
           default_geofence_radius_m: number
@@ -15672,6 +15890,7 @@ export type Database = {
           block_clock_in_outside_geofence?: boolean
           clock_in_reminder_minutes?: number
           clock_out_reminder_minutes?: number
+          company_id?: string | null
           created_at?: string
           daily_overtime_after_hours?: number
           default_geofence_radius_m?: number
@@ -15706,6 +15925,7 @@ export type Database = {
           block_clock_in_outside_geofence?: boolean
           clock_in_reminder_minutes?: number
           clock_out_reminder_minutes?: number
+          company_id?: string | null
           created_at?: string
           daily_overtime_after_hours?: number
           default_geofence_radius_m?: number
@@ -15729,7 +15949,15 @@ export type Database = {
           updated_at?: string
           weekly_overtime_after_hours?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ct_time_clock_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ct_time_entries: {
         Row: {
@@ -15741,6 +15969,7 @@ export type Database = {
           clock_out_at: string | null
           clock_out_lat: number | null
           clock_out_lng: number | null
+          company_id: string | null
           created_at: string
           id: string
           is_manual: boolean
@@ -15762,6 +15991,7 @@ export type Database = {
           clock_out_at?: string | null
           clock_out_lat?: number | null
           clock_out_lng?: number | null
+          company_id?: string | null
           created_at?: string
           id?: string
           is_manual?: boolean
@@ -15783,6 +16013,7 @@ export type Database = {
           clock_out_at?: string | null
           clock_out_lat?: number | null
           clock_out_lng?: number | null
+          company_id?: string | null
           created_at?: string
           id?: string
           is_manual?: boolean
@@ -15797,6 +16028,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "ct_time_entries_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ct_time_entries_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
@@ -15808,6 +16046,38 @@ export type Database = {
             columns: ["shift_id"]
             isOneToOne: false
             referencedRelation: "ct_shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ct_user_roles: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["ct_role"]
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["ct_role"]
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ct_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_user_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
             referencedColumns: ["id"]
           },
         ]
@@ -30580,6 +30850,26 @@ export type Database = {
         }
         Returns: string
       }
+      ct_can_manage: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      ct_has_role: {
+        Args: {
+          _company_id: string
+          _role: Database["public"]["Enums"]["ct_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      ct_is_admin: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      ct_is_member: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
       current_app_user_id: { Args: never; Returns: string }
       current_organization_id: { Args: never; Returns: string }
       current_user_has_role: {
@@ -32010,6 +32300,8 @@ export type Database = {
         | "program_space"
         | "staff_channel"
         | "announcement"
+      ct_invite_status: "pending" | "accepted" | "revoked" | "expired"
+      ct_role: "admin" | "manager" | "employee"
       cta_destination_type:
         | "direct_enrollment_flow"
         | "shared_admissions_flow"
@@ -32524,6 +32816,8 @@ export const Constants = {
         "staff_channel",
         "announcement",
       ],
+      ct_invite_status: ["pending", "accepted", "revoked", "expired"],
+      ct_role: ["admin", "manager", "employee"],
       cta_destination_type: [
         "direct_enrollment_flow",
         "shared_admissions_flow",
