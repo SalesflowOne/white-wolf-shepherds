@@ -262,73 +262,14 @@ function LitterPage() {
       {/* SECTION 4 — Parents Summary */}
       <section className="bg-gradient-frost py-20 lg:py-28">
         <div className="mx-auto max-w-5xl px-6">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              The Parents
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-bold text-foreground lg:text-4xl">
-              Champion Bloodlines
-            </h2>
-          </div>
-
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {(
-              (parents.length > 0
-                ? parents.map((p) => ({
-                    key: p.id,
-                    role: p.sex === "male" ? "Sire" : "Dam",
-                    name: p.name,
-                    image: p.image_url,
-                    bio: p.personality_bio,
-                  }))
-                : [
-                    { key: "dam", role: "Dam", name: null, image: null, bio: null },
-                    { key: "sire", role: "Sire", name: null, image: null, bio: null },
-                  ]) as Array<{
-                key: string;
-                role: string;
-                name: string | null;
-                image: string | null;
-                bio: string | null;
-              }>
-            ).map((p) => (
-              <div key={p.key} className="rounded-2xl bg-card p-8 shadow-card">
-                {p.image ? (
-                  <img
-                    src={p.image}
-                    alt={`${p.name ?? p.role}, White Wolf Shepherds ${p.role.toLowerCase()}`}
-                    loading="lazy"
-                    className="h-48 w-full rounded-xl object-cover"
-                  />
-                ) : (
-                  <div className="flex h-48 items-center justify-center rounded-xl bg-muted">
-                    <span className="font-display text-4xl text-muted-foreground/30">{p.role}</span>
-                  </div>
-                )}
-                <h3 className="mt-6 font-display text-2xl font-bold text-foreground">
-                  {p.role} &mdash; {p.name ?? "Name TBD"}
-                </h3>
-                <p className="mt-2 text-sm font-medium text-accent">
-                  OFA Health Tested &middot; AKC Registered
-                </p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {p.bio ??
-                    "Health certifications, temperament details, and lineage information coming soon."}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              to="/parents"
-              className="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-            >
-              View Full Parent Profiles &rarr;
-            </Link>
-          </div>
+          <MeetTheParents
+            eyebrow="The Parents"
+            title="Champion Bloodlines"
+            subtitle="This litter is the direct product of two health-tested, AKC-registered White Shepherds — proven structure, stable nerves, and that signature snow-white coat."
+          />
         </div>
       </section>
+
 
       {/* SECTION 5 — Trust Bullets */}
       <section className="py-16">
