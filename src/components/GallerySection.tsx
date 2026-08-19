@@ -1,3 +1,5 @@
+import SmartImage from "@/components/SmartImage";
+
 const images = [
   {
     src: "/dogs/mia/mia-golden-hour-01.webp",
