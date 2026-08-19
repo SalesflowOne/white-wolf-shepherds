@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import LitterAlbum from "@/components/LitterAlbum";
+
 
 type Puppy = {
   id: string;
@@ -251,6 +253,11 @@ function LitterPage() {
           )}
         </div>
       </section>
+
+      {/* SECTION 3b — Litter Profile / Album */}
+      <LitterAlbum maxPuppyShots={6} />
+
+
 
       {/* SECTION 4 — Parents Summary */}
       <section className="bg-gradient-frost py-20 lg:py-28">

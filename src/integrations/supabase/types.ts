@@ -28413,6 +28413,7 @@ export type Database = {
           dam_name: string | null
           description: string | null
           expected_count: number | null
+          gallery_urls: string[] | null
           id: string
           name: string
           priority_order: number
@@ -28429,6 +28430,7 @@ export type Database = {
           dam_name?: string | null
           description?: string | null
           expected_count?: number | null
+          gallery_urls?: string[] | null
           id?: string
           name: string
           priority_order?: number
@@ -28445,6 +28447,7 @@ export type Database = {
           dam_name?: string | null
           description?: string | null
           expected_count?: number | null
+          gallery_urls?: string[] | null
           id?: string
           name?: string
           priority_order?: number
