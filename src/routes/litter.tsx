@@ -5,6 +5,7 @@ import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterAlbum from "@/components/LitterAlbum";
+import MeetTheParents from "@/components/MeetTheParents";
 
 
 type Puppy = {
@@ -43,7 +44,6 @@ export const Route = createFileRoute("/litter")({
 function LitterPage() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [availableCount, setAvailableCount] = useState<number>(0);
-  const [parents, setParents] = useState<Puppy[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,15 +64,6 @@ function LitterPage() {
     }
 
     fetchPuppies();
-
-    (async () => {
-      const { data } = await supabase
-        .from(T.puppies)
-        .select("*")
-        .eq("status", "parent")
-        .order("sex", { ascending: false });
-      if (data) setParents(data as Puppy[]);
-    })();
 
     // Subscribe to realtime changes on puppies table
     const channel = supabase
