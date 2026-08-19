@@ -189,13 +189,6 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
             <span className="font-display text-3xl text-muted-foreground/30">{puppy.name}</span>
           </div>
         )}
-        {!puppy.image_url && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <span className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg">
-              Real image coming soon
-            </span>
-          </div>
-        )}
         <span
           className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
             isAvailable ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
