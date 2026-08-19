@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SmartImage from "@/components/SmartImage";
 import { supabase, T } from "@/integrations/supabase/client";
 
 /** Group litter photos shown on an individual puppy profile. */
@@ -25,10 +26,10 @@ export default function LitterPhotoStrip({ puppyName }: { puppyName: string }) {
       <div className="mt-3 grid grid-cols-3 gap-3">
         {urls.slice(0, 6).map((url, i) => (
           <div key={url} className="overflow-hidden rounded-xl">
-            <img
+            <SmartImage
               src={url}
               alt={`${puppyName}'s litter, group photo ${i + 1}`}
-              loading="lazy"
+              sizes="(min-width: 640px) 200px, 30vw"
               className="aspect-[3/4] w-full object-cover object-center"
             />
           </div>
