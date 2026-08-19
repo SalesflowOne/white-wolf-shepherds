@@ -1,580 +1,92 @@
 {
-"/dogs/haki/haki-front-1.webp": {
-"h": 2595,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-front-2.webp": {
-"h": 900,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-front-3.webp": {
-"h": 2595,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-04.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-05.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-06.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-07.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-08.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-09.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-golden-hour-10.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-hero-front.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-04.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-05.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-06.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-07.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-08.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-09.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-indoor-pose-10.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-side-1.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-side-2.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-sniffing-1.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/haki/haki-standing-1.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-04.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-05.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-06.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-07.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-golden-hour-08.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-04.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-05.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-06.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/dogs/mia/mia-pro-pose-07.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/parents/haki-golden-happy.webp": {
-"h": 500,
-"v": [],
-"w": 400
-},
-"/parents/haki-golden-main.webp": {
-"h": 500,
-"v": [],
-"w": 400
-},
-"/puppies/gallery/black/black-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/blue/blue-collar-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/blue/blue-collar-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/blue/blue-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/lime-green/lime-green-collar-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/lime-green/lime-green-collar-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/lime-green/lime-green-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/orange/orange-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/pink/pink-collar-01.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/pink/pink-collar-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/pink/pink-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/purple/purple-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/red/red-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/teal/teal-collar-02.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/teal/teal-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/gallery/yellow-gold/yellow-gold-collar-03.webp": {
-"h": 1500,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/litter/litter-garden-group-04.webp": {
-"h": 1600,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/litter/litter-park-group-05.webp": {
-"h": 1600,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/litter/litter-sunny-garden-02.webp": {
-"h": 1600,
-"v": [
-400,
-800
-],
-"w": 1200
-},
-"/puppies/profiles/black.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/blue.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/lime-green.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/orange.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/pink.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/purple.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/red.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/teal.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-},
-"/puppies/profiles/yellow-gold.webp": {
-"h": 1402,
-"v": [
-400,
-800
-],
-"w": 1122
-}
+  "/dogs/haki/haki-hero-front.webp": {
+    "w": 1200,
+    "h": 1500,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/parents/haki-golden-happy.webp": {
+    "w": 400,
+    "h": 500,
+    "v": []
+  },
+  "/parents/haki-golden-main.webp": {
+    "w": 400,
+    "h": 500,
+    "v": []
+  },
+  "/puppies/profiles/black.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/blue.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/lime-green.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/orange.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/pink.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/purple.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/red.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/teal.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  },
+  "/puppies/profiles/yellow-gold.webp": {
+    "w": 1122,
+    "h": 1402,
+    "v": [
+      400,
+      800
+    ]
+  }
 }
