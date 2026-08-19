@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterAlbum from "@/components/LitterAlbum";
 import MeetTheParents from "@/components/MeetTheParents";
+import { useCurrentLitter, formatLongDate } from "@/hooks/useParents";
 
 
 type Puppy = {
@@ -45,6 +46,11 @@ function LitterPage() {
   const [puppies, setPuppies] = useState<Puppy[]>([]);
   const [availableCount, setAvailableCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const { litter } = useCurrentLitter();
+  const minPrice = puppies.reduce<number | null>(
+    (min, p) => (p.price != null && (min === null || p.price < min) ? p.price : min),
+    null,
+  );
 
   useEffect(() => {
     localStorage.setItem("visited_litter", "true");
@@ -93,7 +99,13 @@ function LitterPage() {
             Spring 2026 White German Shepherd Litter
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-primary-foreground/70">
-            Born March 2026 &middot; Ready May 2026 &middot; Starting at $2,500
+            {[
+              litter?.born_date ? `Born ${formatLongDate(litter.born_date)}` : null,
+              litter?.ready_date ? `Ready ${formatLongDate(litter.ready_date)}` : null,
+              minPrice != null ? `Starting at $${minPrice.toLocaleString()}` : null,
+            ]
+              .filter(Boolean)
+              .join(" \u00b7 ")}
           </p>
 
           {/* Live scarcity counter */}
