@@ -135,8 +135,14 @@ function LitterPage() {
               <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
             </span>
             <span className="text-sm font-semibold">
-              {loading ? "Loading..." : `${availableCount} of ${puppies.length} puppies available for reservation`}
+              {loading
+                ? "Loading..."
+                : `${availableCount} of ${puppies.length} puppies available for reservation`}
             </span>
+          </div>
+
+          <div className="mt-8">
+            <TrustStrip tone="dark" withLink={false} />
           </div>
 
           <div className="mt-10">
