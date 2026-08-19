@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
-import heroImg from "@/assets/hero-dogs.jpg";
 
 export default function HeroSection() {
   const [warm, setWarm] = useState(false);
@@ -43,8 +42,8 @@ export default function HeroSection() {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background image */}
       <img
-        src={heroImg}
-        alt="White German Shepherd family running through a sunlit meadow"
+        src="/dogs/haki/haki-golden-hour-05.webp"
+        alt="Haki, our white German Shepherd sire, in a sunlit park at golden hour"
         className="absolute inset-0 h-full w-full object-cover"
         width={1920}
         height={1080}
