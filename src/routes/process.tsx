@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -9,10 +10,25 @@ export const Route = createFileRoute("/process")({
       { title: "Our Process — White Wolf Shepherds" },
       {
         name: "description",
-        content:
-          "How we raise our White German Shepherd puppies using Puppy Culture and ENS protocol.",
+        content: "How we raise our White German Shepherd puppies with Puppy Culture and ENS protocols, from whelping box to your home.",
+      },
+      { property: "og:title", content: "Our Process — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content: "How we raise our White German Shepherd puppies with Puppy Culture and ENS protocols, from whelping box to your home.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/process` },
+      { property: "og:image", content: `${SITE_URL}/puppies/litter/litter-sunny-garden-02.webp` },
+      { name: "twitter:image", content: `${SITE_URL}/puppies/litter/litter-sunny-garden-02.webp` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Our Process — White Wolf Shepherds" },
+      {
+        name: "twitter:description",
+        content: "How we raise our White German Shepherd puppies with Puppy Culture and ENS protocols, from whelping box to your home.",
       },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/process` }],
   }),
 });
 
