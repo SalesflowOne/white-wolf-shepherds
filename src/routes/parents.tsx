@@ -81,7 +81,7 @@ function ParentsPage() {
                         src={url}
                         alt={`${p.name}, White German Shepherd — photo ${i + 1}`}
                         loading="lazy"
-                        className="h-72 w-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                        className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                       />
                     </div>
                   ))}
