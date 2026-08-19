@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import { approvePlacement, denyAndRefund } from "@/lib/wws-admin";
 import TestimonialsAdminTab from "@/components/admin/TestimonialsAdminTab";
+import ConversionsAdminTab from "@/components/admin/ConversionsAdminTab";
 
 export const Route = createFileRoute("/portal/admin")({
   component: AdminPage,
@@ -119,6 +120,7 @@ type AdminTab =
   | "messages"
   | "updates"
   | "testimonials"
+  | "conversions"
   | "referrals";
 
 function AdminPage() {
@@ -173,6 +175,7 @@ function AdminPage() {
     "messages",
     "updates",
     "testimonials",
+    "conversions",
     "referrals",
   ];
   const tabLabels: Record<AdminTab, string> = {
@@ -184,6 +187,7 @@ function AdminPage() {
     messages: "Messages",
     updates: "Updates",
     testimonials: "Testimonials",
+    conversions: "Conversions",
     referrals: "Referrals",
   };
 
@@ -259,6 +263,7 @@ function AdminPage() {
           {tab === "messages" && <AdminMessagesTab />}
           {tab === "updates" && <UpdatesAdminTab />}
           {tab === "testimonials" && <TestimonialsAdminTab />}
+          {tab === "conversions" && <ConversionsAdminTab />}
           {tab === "referrals" && <ReferralsAdminTab />}
         </main>
       </div>
