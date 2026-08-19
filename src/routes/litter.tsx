@@ -120,7 +120,7 @@ function LitterPage() {
 
           <div className="mt-10">
             <Link
-              to="/apply"
+              to="/get-started"
               className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter
@@ -385,7 +385,7 @@ function LitterPage() {
           </p>
           <div className="mt-10">
             <Link
-              to="/apply"
+              to="/get-started"
               className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter &mdash; Takes 3 Minutes
@@ -523,7 +523,7 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           )}
           {isReserved && (
             <Link
-              to="/apply"
+              to="/get-started"
               search={{ waitlist: "true" }}
               className="block w-full rounded-xl bg-muted py-3 text-center text-sm font-bold uppercase tracking-wider text-muted-foreground transition-all hover:bg-muted/80"
             >
