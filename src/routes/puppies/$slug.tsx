@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterPhotoStrip from "@/components/LitterPhotoStrip";
 import MeetTheParents from "@/components/MeetTheParents";
-import { useCurrentLitter, formatLongDate, ageFrom } from "@/hooks/useParents";
+import { useCurrentLitter, useParents, formatLongDate, ageFrom } from "@/hooks/useParents";
 
 
 
