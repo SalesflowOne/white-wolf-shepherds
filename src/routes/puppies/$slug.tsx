@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import CollarBadge from "@/components/CollarBadge";
 import { useEffect, useState } from "react";
 import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -208,6 +209,7 @@ function PuppyProfilePage() {
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${sexColor}`}>
                   {sexLabel}
                 </span>
+                <CollarBadge color={puppy.collar_color} />
                 {puppy.dob && (
                   <span className="text-sm text-muted-foreground">
                     Born {formatDate(puppy.dob)}
