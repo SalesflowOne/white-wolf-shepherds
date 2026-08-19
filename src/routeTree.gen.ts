@@ -18,6 +18,7 @@ import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as PackFamilyRouteImport } from './routes/pack-family'
 import { Route as LitterRouteImport } from './routes/litter'
 import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
+import { Route as GetStartedRouteImport } from './routes/get-started'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -73,6 +74,11 @@ const LitterRoute = LitterRouteImport.update({
 const HealthGuaranteeRoute = HealthGuaranteeRouteImport.update({
   id: '/health-guarantee',
   path: '/health-guarantee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GetStartedRoute = GetStartedRouteImport.update({
+  id: '/get-started',
+  path: '/get-started',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ApplyRoute: typeof ApplyRoute
   FaqRoute: typeof FaqRoute
+  GetStartedRoute: typeof GetStartedRoute
   HealthGuaranteeRoute: typeof HealthGuaranteeRoute
   LitterRoute: typeof LitterRoute
   PackFamilyRoute: typeof PackFamilyRoute
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/health-guarantee'
       fullPath: '/health-guarantee'
       preLoaderRoute: typeof HealthGuaranteeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-started': {
+      id: '/get-started'
+      path: '/get-started'
+      fullPath: '/get-started'
+      preLoaderRoute: typeof GetStartedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -440,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ApplyRoute: ApplyRoute,
   FaqRoute: FaqRoute,
+  GetStartedRoute: GetStartedRoute,
   HealthGuaranteeRoute: HealthGuaranteeRoute,
   LitterRoute: LitterRoute,
   PackFamilyRoute: PackFamilyRoute,
