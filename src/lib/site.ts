@@ -49,4 +49,5 @@ export const PUBLIC_ROUTES = [
   "/health-guarantee",
   "/faq",
   "/waitlist",
+  "/apply",
 ] as const;
