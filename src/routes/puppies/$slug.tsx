@@ -8,8 +8,6 @@ import LitterPhotoStrip from "@/components/LitterPhotoStrip";
 import MeetTheParents from "@/components/MeetTheParents";
 import { useCurrentLitter, useParents, formatLongDate, ageFrom } from "@/hooks/useParents";
 
-
-
 type Puppy = {
   id: string;
   name: string;
@@ -55,8 +53,6 @@ function PuppyProfilePage() {
   const [notFound, setNotFound] = useState(false);
   const litter = useCurrentLitter();
   const { dam, sire } = useParents();
-
-
 
   useEffect(() => {
     async function fetchPuppy() {
@@ -152,7 +148,6 @@ function PuppyProfilePage() {
   // Parse video embed URL
   const videoEmbed = puppy.video_url ? getVideoEmbed(puppy.video_url) : null;
 
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -208,7 +203,6 @@ function PuppyProfilePage() {
               )}
 
               <LitterPhotoStrip puppyName={puppy.name} />
-
 
               {/* Video */}
               {videoEmbed && (
@@ -270,7 +264,6 @@ function PuppyProfilePage() {
                 microchipped, and AKC-registerable — with a written health guarantee and lifetime
                 breeder support.
               </p>
-
 
               {/* Temperament tags */}
               {puppy.temperament_tags && puppy.temperament_tags.length > 0 && (
@@ -424,7 +417,6 @@ function PuppyProfilePage() {
             title="Meet the Parents"
             subtitle={`${puppy.name} comes from health-tested, AKC-registered White Shepherd parents — structure, temperament, and coat you can trace.`}
           />
-
         </div>
       </div>
 

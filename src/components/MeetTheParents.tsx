@@ -102,9 +102,7 @@ export default function MeetTheParents({
               {title}
             </h2>
           )}
-          {subtitle && (
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{subtitle}</p>
-          )}
+          {subtitle && <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">{subtitle}</p>}
         </div>
       )}
 

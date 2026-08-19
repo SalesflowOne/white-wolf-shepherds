@@ -8,7 +8,6 @@ import LitterAlbum from "@/components/LitterAlbum";
 import MeetTheParents from "@/components/MeetTheParents";
 import { useCurrentLitter, formatLongDate } from "@/hooks/useParents";
 
-
 type Puppy = {
   id: string;
   name: string;
@@ -150,7 +149,9 @@ function LitterPage() {
             {/* Companion */}
             <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
               <h3 className="font-display text-xl font-bold text-foreground">Pet Companion</h3>
-              <div className="mt-4 font-display text-4xl font-bold text-foreground">$2,500</div>
+              <div className="mt-4 font-display text-4xl font-bold text-foreground">
+                ${(minPrice ?? 2000).toLocaleString()}
+              </div>
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
@@ -260,8 +261,6 @@ function LitterPage() {
       {/* SECTION 3b — Litter Profile / Album */}
       <LitterAlbum maxPuppyShots={6} />
 
-
-
       {/* SECTION 4 — Parents Summary */}
       <section className="bg-gradient-frost py-20 lg:py-28">
         <div className="mx-auto max-w-5xl px-6">
@@ -272,7 +271,6 @@ function LitterPage() {
           />
         </div>
       </section>
-
 
       {/* SECTION 5 — Trust Bullets */}
       <section className="py-16">
