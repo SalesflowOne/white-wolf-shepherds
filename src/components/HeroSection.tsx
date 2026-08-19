@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
+import TrustStrip from "@/components/TrustStrip";
 
 export default function HeroSection() {
   const [warm, setWarm] = useState(false);
@@ -43,6 +45,8 @@ export default function HeroSection() {
       {/* Background image */}
       <img
         src="/dogs/haki/haki-golden-hour-05.webp"
+        fetchPriority="high"
+        decoding="sync"
         alt="Haki, our white German Shepherd sire, in a sunlit park at golden hour"
         className="absolute inset-0 h-full w-full object-cover"
         width={1920}
@@ -80,31 +84,27 @@ export default function HeroSection() {
           className="mt-12 flex flex-col items-center gap-4 transition-opacity duration-300"
           style={{ opacity: mounted ? 1 : 0 }}
         >
-          <a
-            href="/apply"
-            className="rounded-lg bg-accent px-10 py-5 text-sm font-bold uppercase tracking-[0.18em] text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+          <Link
+            to="/get-started"
+            className="rounded-lg bg-accent px-10 py-5 text-sm font-bold uppercase tracking-[0.18em] text-accent-foreground shadow-wolf transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ice"
           >
-            Meet the Puppies
-          </a>
-          <a
-            href="/apply"
+            Let's Get Started
+          </Link>
+          <Link
+            to="/litter"
             className="text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground/80 underline-offset-4 transition-colors hover:text-primary-foreground hover:underline"
           >
-            Start Your Application
-          </a>
+            Meet the puppies first
+          </Link>
 
           <p className="mt-2 max-w-xl text-xs leading-relaxed text-primary-foreground/55">
-            Start with your contact info and a short Family Fit Call, then complete your
-            application, place a $500 deposit (refundable if not approved), and meet the puppies on
-            a private video call after approval.
+            Three steps, about two minutes: pick your puppy, tell us about your home, send your
+            details. $2,000 all-in · $500 deposit, fully refundable if your family isn't approved.
           </p>
 
-          <a
-            href="/litter"
-            className="text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground/45 transition-colors hover:text-primary-foreground/70"
-          >
-            or view the current litter →
-          </a>
+          <div className="mt-4">
+            <TrustStrip tone="dark" withLink={false} />
+          </div>
         </div>
       </div>
 
