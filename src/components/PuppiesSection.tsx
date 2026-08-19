@@ -2,7 +2,7 @@ import { formatDateOnly } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
-import CollarBadge from "@/components/CollarBadge";
+import PuppyCard from "@/components/PuppyCard";
 
 type Litter = {
   id: string;
@@ -29,6 +29,7 @@ type Puppy = {
   collar_color: string | null;
   litter_id: string | null;
   priority_order: number | null;
+  price: number | null;
 };
 
 export default function PuppiesSection() {
@@ -46,7 +47,7 @@ export default function PuppiesSection() {
           .order("priority_order", { ascending: false }),
         supabase
           .from(T.puppies)
-          .select("id, name, slug, sex, status, image_url, collar_color, litter_id, priority_order")
+          .select("id, name, slug, sex, status, image_url, collar_color, litter_id, priority_order, price")
           .neq("status", "parent")
           .order("priority_order", { ascending: true }),
       ]);
@@ -162,66 +163,10 @@ function LitterBlock({ litter, puppies }: { litter: Litter; puppies: Puppy[] }) 
       ) : (
         <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {puppies.map((p) => (
-            <PuppyCard key={p.id} puppy={p} />
+            <PuppyCard key={p.id} puppy={p} sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw" />
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function PuppyCard({ puppy }: { puppy: Puppy }) {
-  const isAvailable = puppy.status === "available";
-  return (
-    <div className="group overflow-hidden rounded-2xl bg-card shadow-card transition-all hover:shadow-wolf">
-      <div className="relative overflow-hidden">
-        {puppy.image_url ? (
-          <img
-            src={puppy.image_url}
-            alt={puppy.name}
-            className="aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-            width={800}
-            height={800}
-          />
-        ) : (
-          <div className="flex aspect-[4/5] w-full items-center justify-center bg-muted">
-            <span className="font-display text-3xl text-muted-foreground/30">{puppy.name}</span>
-          </div>
-        )}
-        <span
-          className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-            isAvailable ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {puppy.status ?? "—"}
-        </span>
-      </div>
-      <div className="p-6">
-        <h4 className="font-display text-2xl font-bold text-card-foreground">{puppy.name}</h4>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          {puppy.sex && (
-            <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>
-          )}
-          <CollarBadge color={puppy.collar_color} />
-        </div>
-        {puppy.slug ? (
-          <Link
-            to="/puppies/$slug"
-            params={{ slug: puppy.slug }}
-            className="mt-5 inline-block w-full rounded-xl bg-primary py-3 text-center text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:brightness-110"
-          >
-            View {puppy.name}
-          </Link>
-        ) : (
-          <Link
-            to="/apply"
-            className="mt-5 inline-block w-full rounded-xl bg-primary py-3 text-center text-sm font-bold uppercase tracking-wider text-primary-foreground transition-all hover:brightness-110"
-          >
-            Inquire About {puppy.name}
-          </Link>
-        )}
-      </div>
     </div>
   );
 }

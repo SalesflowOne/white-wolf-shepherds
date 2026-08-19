@@ -6,6 +6,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LitterAlbum from "@/components/LitterAlbum";
 import MeetTheParents from "@/components/MeetTheParents";
+import SmartImage from "@/components/SmartImage";
+import TrustStrip from "@/components/TrustStrip";
+import { SITE_URL } from "@/lib/site";
 import { useCurrentLitter, formatLongDate } from "@/hooks/useParents";
 
 type Puppy = {
@@ -35,9 +38,27 @@ export const Route = createFileRoute("/litter")({
       {
         name: "description",
         content:
-          "Meet our Spring 2026 White German Shepherd litter. 9 puppies, health-tested parents, starting at $2,000. Reserve your pick today.",
+          "Meet our Spring 2026 White German Shepherd litter. Health-tested parents, $2,000 all-in, $500 refundable deposit. Reserve your pick today.",
       },
+      { property: "og:title", content: "Spring 2026 Litter — White Wolf Shepherds" },
+      {
+        property: "og:description",
+        content:
+          "Nine white German Shepherd puppies from health-tested parents. $2,000 all-in with a $500 refundable deposit.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/litter` },
+      {
+        property: "og:image",
+        content: `${SITE_URL}/puppies/litter/litter-sunny-garden-02.webp`,
+      },
+      {
+        name: "twitter:image",
+        content: `${SITE_URL}/puppies/litter/litter-sunny-garden-02.webp`,
+      },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/litter` }],
   }),
 });
 
@@ -114,13 +135,19 @@ function LitterPage() {
               <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
             </span>
             <span className="text-sm font-semibold">
-              {loading ? "Loading..." : `${availableCount} of 9 puppies available for reservation`}
+              {loading
+                ? "Loading..."
+                : `${availableCount} of ${puppies.length} puppies available for reservation`}
             </span>
+          </div>
+
+          <div className="mt-8">
+            <TrustStrip tone="dark" withLink={false} />
           </div>
 
           <div className="mt-10">
             <Link
-              to="/apply"
+              to="/get-started"
               className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter
@@ -385,7 +412,7 @@ function LitterPage() {
           </p>
           <div className="mt-10">
             <Link
-              to="/apply"
+              to="/get-started"
               className="rounded-xl bg-accent px-8 py-4 text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
             >
               Apply for This Litter &mdash; Takes 3 Minutes
@@ -424,13 +451,15 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
       {/* Photo */}
       <div className="relative overflow-hidden">
         {puppy.image_url ? (
-          <img
+          <SmartImage
             src={puppy.image_url}
-            alt={puppy.name}
-            className={`aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
+            alt={`${puppy.name}, a white German Shepherd puppy${
+              puppy.collar_color ? ` wearing a ${puppy.collar_color} collar` : ""
+            }`}
+            sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+            className={`aspect-[4/5] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none ${
               isReserved ? "grayscale" : ""
             }`}
-            loading="lazy"
           />
         ) : (
           <div
@@ -523,8 +552,7 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
           )}
           {isReserved && (
             <Link
-              to="/apply"
-              search={{ waitlist: "true" }}
+              to="/waitlist"
               className="block w-full rounded-xl bg-muted py-3 text-center text-sm font-bold uppercase tracking-wider text-muted-foreground transition-all hover:bg-muted/80"
             >
               Join Waitlist

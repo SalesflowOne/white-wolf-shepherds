@@ -40,10 +40,10 @@ export default function Navbar() {
             My Portal
           </Link>
           <Link
-            to="/apply"
+            to="/get-started"
             className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
           >
-            Begin Application
+            Let's Get Started
           </Link>
         </div>
 
@@ -91,11 +91,11 @@ export default function Navbar() {
             My Portal
           </Link>
           <Link
-            to="/apply"
+            to="/get-started"
             onClick={() => setOpen(false)}
             className="mt-2 block rounded-lg bg-accent px-5 py-2.5 text-center text-sm font-semibold text-accent-foreground"
           >
-            Begin Application
+            Let's Get Started
           </Link>
         </div>
       )}

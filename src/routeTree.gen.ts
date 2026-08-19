@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReservedRouteImport } from './routes/reserved'
 import { Route as ProcessRouteImport } from './routes/process'
@@ -18,6 +19,7 @@ import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as PackFamilyRouteImport } from './routes/pack-family'
 import { Route as LitterRouteImport } from './routes/litter'
 import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
+import { Route as GetStartedRouteImport } from './routes/get-started'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -38,6 +40,11 @@ const WaitlistRoute = WaitlistRouteImport.update({
 const ThankYouRoute = ThankYouRouteImport.update({
   id: '/thank-you',
   path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -73,6 +80,11 @@ const LitterRoute = LitterRouteImport.update({
 const HealthGuaranteeRoute = HealthGuaranteeRouteImport.update({
   id: '/health-guarantee',
   path: '/health-guarantee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GetStartedRoute = GetStartedRouteImport.update({
+  id: '/get-started',
+  path: '/get-started',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -136,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -143,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -158,6 +172,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -165,6 +180,7 @@ export interface FileRoutesByTo {
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -181,6 +197,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apply': typeof ApplyRoute
   '/faq': typeof FaqRoute
+  '/get-started': typeof GetStartedRoute
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
@@ -188,6 +205,7 @@ export interface FileRoutesById {
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
@@ -205,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -212,6 +231,7 @@ export interface FileRouteTypes {
     | '/process'
     | '/reserved'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -227,6 +247,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -234,6 +255,7 @@ export interface FileRouteTypes {
     | '/process'
     | '/reserved'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -249,6 +271,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apply'
     | '/faq'
+    | '/get-started'
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
@@ -256,6 +279,7 @@ export interface FileRouteTypes {
     | '/process'
     | '/reserved'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
@@ -272,6 +296,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ApplyRoute: typeof ApplyRoute
   FaqRoute: typeof FaqRoute
+  GetStartedRoute: typeof GetStartedRoute
   HealthGuaranteeRoute: typeof HealthGuaranteeRoute
   LitterRoute: typeof LitterRoute
   PackFamilyRoute: typeof PackFamilyRoute
@@ -279,6 +304,7 @@ export interface RootRouteChildren {
   ProcessRoute: typeof ProcessRoute
   ReservedRoute: typeof ReservedRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
@@ -304,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/thank-you'
       fullPath: '/thank-you'
       preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -353,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/health-guarantee'
       fullPath: '/health-guarantee'
       preLoaderRoute: typeof HealthGuaranteeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-started': {
+      id: '/get-started'
+      path: '/get-started'
+      fullPath: '/get-started'
+      preLoaderRoute: typeof GetStartedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -440,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ApplyRoute: ApplyRoute,
   FaqRoute: FaqRoute,
+  GetStartedRoute: GetStartedRoute,
   HealthGuaranteeRoute: HealthGuaranteeRoute,
   LitterRoute: LitterRoute,
   PackFamilyRoute: PackFamilyRoute,
@@ -447,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProcessRoute: ProcessRoute,
   ReservedRoute: ReservedRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
