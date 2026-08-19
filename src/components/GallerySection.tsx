@@ -63,11 +63,11 @@ export default function GallerySection() {
         <div className="mt-16 grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {images.map((img, i) => (
             <div key={i} className={`overflow-hidden rounded-xl ${img.span ?? ""}`}>
-              <img
+              <SmartImage
                 src={img.src}
                 alt={img.alt}
+                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                 className="h-full w-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                loading="lazy"
               />
             </div>
           ))}

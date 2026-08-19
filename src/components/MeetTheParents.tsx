@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import SmartImage from "@/components/SmartImage";
 import { useParents, formatLongDate, ageFrom, type ParentDog } from "@/hooks/useParents";
 
 function roleOf(p: ParentDog) {
@@ -13,10 +14,10 @@ function ParentCard({ parent }: { parent: ParentDog }) {
   return (
     <div className="overflow-hidden rounded-2xl bg-card shadow-card transition-shadow hover:shadow-wolf">
       {parent.image_url ? (
-        <img
+        <SmartImage
           src={parent.image_url}
           alt={`${parent.name}, White Wolf Shepherds ${role.toLowerCase()}`}
-          loading="lazy"
+          sizes="(min-width: 1024px) 45vw, 100vw"
           className="aspect-[4/5] w-full object-cover object-center"
         />
       ) : (
@@ -56,11 +57,11 @@ function ParentCard({ parent }: { parent: ParentDog }) {
         {parent.gallery_urls && parent.gallery_urls.length > 1 && (
           <div className="mt-4 grid grid-cols-4 gap-2">
             {parent.gallery_urls.slice(0, 4).map((url, i) => (
-              <img
+              <SmartImage
                 key={url + i}
                 src={url}
                 alt={`${parent.name} photo ${i + 1}`}
-                loading="lazy"
+                sizes="(min-width: 1024px) 15vw, 30vw"
                 className="aspect-[4/5] w-full rounded-lg object-cover object-center"
               />
             ))}
