@@ -2,6 +2,7 @@ import { formatDateOnly } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
+import CollarBadge from "@/components/CollarBadge";
 
 type Litter = {
   id: string;
@@ -25,6 +26,7 @@ type Puppy = {
   sex: string | null;
   status: string | null;
   image_url: string | null;
+  collar_color: string | null;
   litter_id: string | null;
   priority_order: number | null;
 };
@@ -44,7 +46,7 @@ export default function PuppiesSection() {
           .order("priority_order", { ascending: false }),
         supabase
           .from(T.puppies)
-          .select("id, name, slug, sex, status, image_url, litter_id, priority_order")
+          .select("id, name, slug, sex, status, image_url, collar_color, litter_id, priority_order")
           .neq("status", "parent")
           .order("priority_order", { ascending: true }),
       ]);
@@ -204,7 +206,10 @@ function PuppyCard({ puppy }: { puppy: Puppy }) {
       </div>
       <div className="p-6">
         <h4 className="font-display text-2xl font-bold text-card-foreground">{puppy.name}</h4>
-        {puppy.sex && <p className="mt-2 text-sm capitalize text-muted-foreground">{puppy.sex}</p>}
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {puppy.sex && <span className="text-sm capitalize text-muted-foreground">{puppy.sex}</span>}
+          <CollarBadge color={puppy.collar_color} />
+        </div>
         {puppy.slug ? (
           <Link
             to="/puppies/$slug"
