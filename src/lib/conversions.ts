@@ -5,13 +5,15 @@
  * No-ops when gtag, the Ads ID, or a conversion label is missing.
  */
 
+import { GOOGLE_ADS_ID } from "@/lib/analytics";
+
 export type ConversionName =
   | "deposit_paid"
   | "application_submitted"
   | "waitlist_signup"
   | "contact_click";
 
-const ADS_ID = (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() ?? "";
+const ADS_ID = GOOGLE_ADS_ID;
 
 const LABELS: Record<ConversionName, string> = {
   deposit_paid: (import.meta.env.VITE_GADS_LABEL_DEPOSIT as string | undefined)?.trim() ?? "",

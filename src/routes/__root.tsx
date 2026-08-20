@@ -7,7 +7,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { googleAdsHeadScripts, initAnalytics, trackPageView } from "@/lib/analytics";
+import { GOOGLE_ADS_ID, initAnalytics, trackPageView } from "@/lib/analytics";
 import { handleContactLinkClick } from "@/lib/contact-tracking";
 
 import appCss from "../styles.css?url";
@@ -64,7 +64,6 @@ export const Route = createRootRoute({
       },
     ],
     scripts: [
-      ...googleAdsHeadScripts(),
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -108,6 +107,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* Google tag (gtag.js) — must be in initial HTML for Google Ads verification */}
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');
+            `.trim(),
+          }}
+        />
         <HeadContent />
       </head>
       <body>
