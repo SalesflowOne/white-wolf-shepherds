@@ -6,7 +6,7 @@ function roleOf(p: ParentDog) {
   return p.sex === "male" ? "Sire" : p.sex === "female" ? "Dam" : "Parent";
 }
 
-function ParentCard({ parent }: { parent: ParentDog }) {
+function ParentCardBody({ parent }: { parent: ParentDog }) {
   const role = roleOf(parent);
   const born = formatLongDate(parent.dob);
   const age = ageFrom(parent.dob);
