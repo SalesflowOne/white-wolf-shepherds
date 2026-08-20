@@ -37,7 +37,7 @@ function ParentCardBody({ parent }: { parent: ParentDog }) {
         </div>
 
         <p className="mt-2 text-sm font-medium text-accent">
-          OFA Health Tested &middot; AKC Registered
+          Health Tested &middot; AKC Registered
         </p>
 
         {(born || age) && (

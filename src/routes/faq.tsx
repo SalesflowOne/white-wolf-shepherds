@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "What health testing have the parents had?",
-    a: "Both parents are OFA certified for hips, elbows, and cardiac health. A full genetic panel has been completed. Visit our Parents page for detailed health test results.",
+    a: "Both parents are health tested for hips, elbows, and cardiac health. A full genetic panel has been completed. Visit our Parents page for detailed health test results.",
   },
   {
     q: "Do you ship puppies?",
