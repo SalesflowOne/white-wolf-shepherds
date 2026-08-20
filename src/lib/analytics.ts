@@ -41,38 +41,11 @@ const measurementId = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_A
   | string
   | undefined;
 
-/** Google Ads global site tag ID (e.g. AW-18361383450). */
+/** Google Ads global site tag ID — override via VITE_GOOGLE_ADS_ID at build time. */
 export const GOOGLE_ADS_ID =
-  (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() ?? "";
+  (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() || "AW-18361383450";
 
 let gtagLoaded = false;
-
-type HeadScript = {
-  src?: string;
-  async?: boolean;
-  children?: string;
-  type?: string;
-};
-
-/** Google tag (gtag.js) snippets for the document `<head>`. */
-export function googleAdsHeadScripts(): HeadScript[] {
-  if (!GOOGLE_ADS_ID) return [];
-
-  return [
-    {
-      src: `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
-      async: true,
-    },
-    {
-      children: `
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GOOGLE_ADS_ID}');
-      `.trim(),
-    },
-  ];
-}
 
 /** Loads gtag.js once and configures GA4 + Google Ads when IDs are set. */
 export function initAnalytics() {
