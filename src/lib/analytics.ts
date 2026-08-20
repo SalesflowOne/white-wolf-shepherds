@@ -41,26 +41,73 @@ const measurementId = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_A
   | string
   | undefined;
 
-let gaLoaded = false;
+/** Google Ads global site tag ID (e.g. AW-18361383450). */
+export const GOOGLE_ADS_ID =
+  (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() ?? "";
 
-/** Loads gtag.js once. Safe to call on every mount; no-op without a measurement ID. */
+let gtagLoaded = false;
+
+type HeadScript = {
+  src?: string;
+  async?: boolean;
+  children?: string;
+  type?: string;
+};
+
+/** Google tag (gtag.js) snippets for the document `<head>`. */
+export function googleAdsHeadScripts(): HeadScript[] {
+  if (!GOOGLE_ADS_ID) return [];
+
+  return [
+    {
+      src: `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
+      async: true,
+    },
+    {
+      children: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');
+      `.trim(),
+    },
+  ];
+}
+
+/** Loads gtag.js once and configures GA4 + Google Ads when IDs are set. */
 export function initAnalytics() {
   if (typeof window === "undefined") return;
   captureAttribution();
-  if (!measurementId || gaLoaded) return;
-  gaLoaded = true;
 
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(s);
+  const primaryId = measurementId ?? GOOGLE_ADS_ID;
+  if (!primaryId && !window.gtag) return;
 
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer!.push(args);
-  };
-  window.gtag("js", new Date());
-  window.gtag("config", measurementId, { send_page_view: true });
+  if (!window.gtag && primaryId && !gtagLoaded) {
+    gtagLoaded = true;
+
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${primaryId}`;
+    document.head.appendChild(s);
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag(...args: unknown[]) {
+      window.dataLayer!.push(args);
+    };
+    window.gtag("js", new Date());
+  } else if (window.gtag) {
+    gtagLoaded = true;
+  }
+
+  if (!window.gtag) return;
+
+  if (measurementId) {
+    window.gtag("config", measurementId, { send_page_view: true });
+  }
+
+  if (GOOGLE_ADS_ID && !document.querySelector(`script[src*="id=${GOOGLE_ADS_ID}"]`)) {
+    window.gtag("config", GOOGLE_ADS_ID);
+  }
 }
 
 /** Sends a SPA page_view to GA4 after client-side navigation. */

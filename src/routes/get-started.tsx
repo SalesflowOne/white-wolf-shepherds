@@ -10,6 +10,7 @@ import { supabase, T } from "@/integrations/supabase/client";
 import { PRICING, SITE_URL, formatUSD } from "@/lib/site";
 import { persistFunnelState, startLead, submitApplicationDetails } from "@/lib/wws-funnel";
 import { trackEvent, trackOnce } from "@/lib/analytics";
+import { trackConversion } from "@/lib/conversions";
 
 const STEPS = ["puppy", "home", "contact", "done"] as const;
 type Step = (typeof STEPS)[number];
@@ -130,8 +131,12 @@ function GetStartedPage() {
   }, []);
 
   useEffect(() => {
-    if (puppyParam) setAnswers((prev) => ({ ...prev, puppy: puppyParam }));
-  }, [puppyParam]);
+    if (!puppyParam) return;
+    setAnswers((prev) => {
+      const match = puppies.find((p) => p.id === puppyParam || p.slug === puppyParam);
+      return { ...prev, puppy: match?.slug ?? match?.id ?? puppyParam };
+    });
+  }, [puppyParam, puppies]);
 
   useEffect(() => {
     try {
@@ -159,7 +164,8 @@ function GetStartedPage() {
   }, []);
 
   const selected = useMemo(
-    () => puppies.find((p) => p.slug === answers.puppy) ?? null,
+    () =>
+      puppies.find((p) => p.slug === answers.puppy || p.id === answers.puppy) ?? null,
     [puppies, answers.puppy],
   );
   const availableCount = puppies.filter((p) => p.status === "available").length;
@@ -253,6 +259,7 @@ function GetStartedPage() {
         leadId: lead.leadId,
         metadata: { puppy: selected?.name ?? null, state: answers.state.trim() },
       });
+      trackConversion("application_submitted", lead.leadId);
       goto("done");
     } catch (err) {
       trackEvent("form_error", { form: "get_started", metadata: { reason: "server" } });
@@ -312,7 +319,7 @@ function GetStartedPage() {
                 puppies={puppies}
                 loading={loadingPuppies}
                 value={answers.puppy}
-                onSelect={(slug) => set("puppy", slug)}
+                onSelect={(puppyId) => set("puppy", puppyId)}
                 onNext={() => goto("home")}
               />
             )}
@@ -398,7 +405,7 @@ function StepPuppy({
   puppies: PuppyRow[];
   loading: boolean;
   value: string;
-  onSelect: (slug: string) => void;
+  onSelect: (puppyId: string) => void;
   onNext: () => void;
 }) {
   return (
@@ -427,13 +434,13 @@ function StepPuppy({
       ) : (
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {puppies.map((p) => {
-            const active = value === p.slug;
+            const active = value === p.id || value === p.slug;
             const disabled = p.status !== "available";
             return (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => onSelect(p.slug ?? "")}
+                onClick={() => onSelect(p.id)}
                 aria-pressed={active}
                 className={`overflow-hidden rounded-xl border-2 text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none ${
                   active ? "border-accent shadow-wolf" : "border-border hover:border-accent/50"
