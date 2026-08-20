@@ -15,7 +15,6 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReservedRouteImport } from './routes/reserved'
 import { Route as ProcessRouteImport } from './routes/process'
-import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as PackFamilyRouteImport } from './routes/pack-family'
 import { Route as LitterRouteImport } from './routes/litter'
 import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
@@ -25,6 +24,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalIndexRouteImport } from './routes/portal/index'
+import { Route as ParentsIndexRouteImport } from './routes/parents/index'
 import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
 import { Route as PortalOnboardingRouteImport } from './routes/portal/onboarding'
 import { Route as PortalMeRouteImport } from './routes/portal/me'
@@ -60,11 +60,6 @@ const ReservedRoute = ReservedRouteImport.update({
 const ProcessRoute = ProcessRouteImport.update({
   id: '/process',
   path: '/process',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ParentsRoute = ParentsRouteImport.update({
-  id: '/parents',
-  path: '/parents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PackFamilyRoute = PackFamilyRouteImport.update({
@@ -112,6 +107,11 @@ const PortalIndexRoute = PortalIndexRouteImport.update({
   path: '/portal/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParentsIndexRoute = ParentsIndexRouteImport.update({
+  id: '/parents/',
+  path: '/parents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
   id: '/puppies/$slug',
   path: '/puppies/$slug',
@@ -152,7 +152,6 @@ export interface FileRoutesByFullPath {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -165,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
 export interface FileRoutesByTo {
@@ -176,7 +176,6 @@ export interface FileRoutesByTo {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -189,6 +188,7 @@ export interface FileRoutesByTo {
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents': typeof ParentsIndexRoute
   '/portal': typeof PortalIndexRoute
 }
 export interface FileRoutesById {
@@ -201,7 +201,6 @@ export interface FileRoutesById {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -214,6 +213,7 @@ export interface FileRoutesById {
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
 export interface FileRouteTypes {
@@ -227,7 +227,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -240,6 +239,7 @@ export interface FileRouteTypes {
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents/'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,7 +251,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -264,6 +263,7 @@ export interface FileRouteTypes {
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents'
     | '/portal'
   id:
     | '__root__'
@@ -275,7 +275,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -288,6 +287,7 @@ export interface FileRouteTypes {
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents/'
     | '/portal/'
   fileRoutesById: FileRoutesById
 }
@@ -300,7 +300,6 @@ export interface RootRouteChildren {
   HealthGuaranteeRoute: typeof HealthGuaranteeRoute
   LitterRoute: typeof LitterRoute
   PackFamilyRoute: typeof PackFamilyRoute
-  ParentsRoute: typeof ParentsRoute
   ProcessRoute: typeof ProcessRoute
   ReservedRoute: typeof ReservedRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -313,6 +312,7 @@ export interface RootRouteChildren {
   PortalMeRoute: typeof PortalMeRoute
   PortalOnboardingRoute: typeof PortalOnboardingRoute
   PuppiesSlugRoute: typeof PuppiesSlugRoute
+  ParentsIndexRoute: typeof ParentsIndexRoute
   PortalIndexRoute: typeof PortalIndexRoute
 }
 
@@ -358,13 +358,6 @@ declare module '@tanstack/react-router' {
       path: '/process'
       fullPath: '/process'
       preLoaderRoute: typeof ProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/parents': {
-      id: '/parents'
-      path: '/parents'
-      fullPath: '/parents'
-      preLoaderRoute: typeof ParentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pack-family': {
@@ -430,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/parents/': {
+      id: '/parents/'
+      path: '/parents'
+      fullPath: '/parents/'
+      preLoaderRoute: typeof ParentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/puppies/$slug': {
       id: '/puppies/$slug'
       path: '/puppies/$slug'
@@ -484,7 +484,6 @@ const rootRouteChildren: RootRouteChildren = {
   HealthGuaranteeRoute: HealthGuaranteeRoute,
   LitterRoute: LitterRoute,
   PackFamilyRoute: PackFamilyRoute,
-  ParentsRoute: ParentsRoute,
   ProcessRoute: ProcessRoute,
   ReservedRoute: ReservedRoute,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -497,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortalMeRoute: PortalMeRoute,
   PortalOnboardingRoute: PortalOnboardingRoute,
   PuppiesSlugRoute: PuppiesSlugRoute,
+  ParentsIndexRoute: ParentsIndexRoute,
   PortalIndexRoute: PortalIndexRoute,
 }
 export const routeTree = rootRouteImport
