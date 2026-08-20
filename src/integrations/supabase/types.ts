@@ -15653,6 +15653,56 @@ export type Database = {
           },
         ]
       }
+      ct_notifications: {
+        Row: {
+          actor_id: string | null
+          body: string | null
+          company_id: string
+          created_at: string
+          entity_id: string | null
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string | null
+          company_id: string
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string | null
+          company_id?: string
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ct_profiles: {
         Row: {
           avatar_url: string | null
@@ -15962,6 +16012,8 @@ export type Database = {
       ct_time_entries: {
         Row: {
           approval_status: string
+          approved_at: string | null
+          approved_by: string | null
           auto_clocked_out: boolean
           clock_in_at: string
           clock_in_lat: number | null
@@ -15984,6 +16036,8 @@ export type Database = {
         }
         Insert: {
           approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           auto_clocked_out?: boolean
           clock_in_at?: string
           clock_in_lat?: number | null
@@ -16006,6 +16060,8 @@ export type Database = {
         }
         Update: {
           approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           auto_clocked_out?: boolean
           clock_in_at?: string
           clock_in_lat?: number | null
@@ -30917,6 +30973,31 @@ export type Database = {
       ct_is_member: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
+      }
+      ct_notify_managers: {
+        Args: {
+          _actor_id: string
+          _body: string
+          _company_id: string
+          _entity_id: string
+          _link: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
+      }
+      ct_notify_user: {
+        Args: {
+          _actor_id: string
+          _body: string
+          _company_id: string
+          _entity_id: string
+          _link: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
+        Returns: undefined
       }
       current_app_user_id: { Args: never; Returns: string }
       current_organization_id: { Args: never; Returns: string }
