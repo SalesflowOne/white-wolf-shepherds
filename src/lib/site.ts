@@ -5,6 +5,13 @@
 
 export const SITE_URL = "https://stellar-shepherd-sanctuary.lovable.app";
 
+/** Public contact — used in footer and contact_click conversion tracking. */
+export const CONTACT = {
+  phone: "", // TODO(owner): breeder phone, e.g. "+15551234567"
+  phoneDisplay: "", // TODO(owner): display format, e.g. "(555) 123-4567"
+  email: "", // TODO(owner): breeder email, e.g. "hello@whitewolfshepherds.com"
+} as const;
+
 export const PRICING = {
   price: 2000,
   deposit: 500,

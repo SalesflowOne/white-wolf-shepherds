@@ -47,7 +47,7 @@ export default function PuppiesSection() {
           .order("priority_order", { ascending: false }),
         supabase
           .from(T.puppies)
-          .select("id, name, slug, sex, status, image_url, collar_color, litter_id, priority_order, price")
+          .select("id, name, slug, sex, status, image_url, collar_color, litter_id, priority_order, price, dob, tier, personality_bio")
           .neq("status", "parent")
           .order("priority_order", { ascending: true }),
       ]);

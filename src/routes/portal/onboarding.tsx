@@ -18,6 +18,7 @@ import {
   saveApplicationDraft,
   submitApplicationDetails,
 } from "@/lib/wws-funnel";
+import { confirmAndTrackDeposit } from "@/lib/deposit-tracking";
 
 const RESERVATION_LINK = import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK as string | undefined;
 const TOTAL_STEPS = 3;
@@ -73,6 +74,9 @@ function OnboardingPage() {
         const draft = lead.application_draft as Partial<ApplicationFormValues> | null;
         if (draft) setAppValues((prev) => ({ ...prev, ...draft }));
         setStep(stepFromStage(lead.stage));
+        if (lead.deposit_status === "paid") {
+          void confirmAndTrackDeposit();
+        }
       } catch {
         setStep(1);
       }

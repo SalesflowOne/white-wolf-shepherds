@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { initAnalytics, trackPageView } from "@/lib/analytics";
+import { handleContactLinkClick } from "@/lib/contact-tracking";
 
 import appCss from "../styles.css?url";
 
@@ -132,6 +133,11 @@ function RootComponent() {
   useEffect(() => {
     trackPageView(pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    document.addEventListener("click", handleContactLinkClick);
+    return () => document.removeEventListener("click", handleContactLinkClick);
+  }, []);
 
   return <Outlet />;
 }

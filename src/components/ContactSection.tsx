@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/forms/Field";
 import { trackEvent, trackOnce } from "@/lib/analytics";
+import { emailHash, trackConversion } from "@/lib/conversions";
 
 const waitlistSchema = z.object({
   first_name: z.string().trim().min(1, "Please enter your first name").max(50, "Max 50 characters"),
@@ -103,14 +104,18 @@ export default function ContactSection() {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("puppy_waitlist").insert({
-      first_name: parsed.data.first_name,
-      last_name: parsed.data.last_name,
-      email: parsed.data.email,
-      phone: parsed.data.phone || null,
-      preferred_sex: parsed.data.preferred_sex,
-      message: parsed.data.message || null,
-    });
+    const { data: inserted, error } = await supabase
+      .from("puppy_waitlist")
+      .insert({
+        first_name: parsed.data.first_name,
+        last_name: parsed.data.last_name,
+        email: parsed.data.email,
+        phone: parsed.data.phone || null,
+        preferred_sex: parsed.data.preferred_sex,
+        message: parsed.data.message || null,
+      })
+      .select("id")
+      .single();
     setSubmitting(false);
     if (error) {
       trackEvent("form_error", { form: "waitlist_home", metadata: { reason: "server" } });
@@ -118,6 +123,9 @@ export default function ContactSection() {
       return;
     }
     setSuccess(true);
+    const signupId =
+      inserted?.id ?? (await emailHash(parsed.data.email));
+    trackConversion("waitlist_signup", signupId);
     trackEvent("generate_lead", {
       form: "waitlist_home",
       metadata: { preferred_sex: parsed.data.preferred_sex },
@@ -147,7 +155,7 @@ export default function ContactSection() {
         {success ? (
           <div className="mt-12 rounded-2xl bg-card p-10 text-center shadow-wolf">
             <h3 className="font-display text-2xl font-bold text-foreground">
-              You're on the list 🐾
+              You&apos;re on the list
             </h3>
             <p className="mt-3 text-muted-foreground">
               Thank you for joining the White Wolf Shepherd waitlist. We'll reach out personally
