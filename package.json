@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "stripe:setup-wws": "node scripts/setup-stripe-wws.mjs",
-    "images:optimize": "node scripts/optimize-images.mjs"
+    "images:optimize": "node scripts/optimize-images.mjs",
+    "postbuild": "node scripts/mirror-dist.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
