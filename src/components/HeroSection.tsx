@@ -3,6 +3,8 @@ import SmartImage from "@/components/SmartImage";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
 import TrustStrip from "@/components/TrustStrip";
+import heroPackDesktop from "@/assets/hero-pack-desktop.png.asset.json";
+
 
 export default function HeroSection() {
   const [warm, setWarm] = useState(false);
