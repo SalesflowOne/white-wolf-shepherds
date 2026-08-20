@@ -3,6 +3,8 @@ import SmartImage from "@/components/SmartImage";
 import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
 import TrustStrip from "@/components/TrustStrip";
+import heroPackDesktop from "@/assets/hero-pack-desktop.png.asset.json";
+
 
 export default function HeroSection() {
   const [warm, setWarm] = useState(false);
@@ -43,14 +45,23 @@ export default function HeroSection() {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      {/* Background image */}
+      {/* Background image — mobile */}
       <SmartImage
         src="/dogs/haki/haki-golden-hour-05.webp"
         priority
         sizes="100vw"
         alt="Haki, our white German Shepherd sire, in a sunlit park at golden hour"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover md:hidden"
       />
+      {/* Background image — tablet & desktop */}
+      <img
+        src={heroPackDesktop.url}
+        alt="Our white German Shepherd pack running through a golden meadow"
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 hidden h-full w-full object-cover md:block"
+      />
+
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/65 to-primary/95" />
 
