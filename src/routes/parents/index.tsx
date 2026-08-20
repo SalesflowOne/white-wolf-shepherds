@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import MeetTheParents from "@/components/MeetTheParents";
 import { useParents } from "@/hooks/useParents";
 
-export const Route = createFileRoute("/parents")({
+export const Route = createFileRoute("/parents/")({
   component: ParentsPage,
   head: () => ({
     meta: [
