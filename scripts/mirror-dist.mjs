@@ -1,6 +1,18 @@
 // Mirrors the Nitro build output (.output/) into dist/ so platform dist-checks
-// find the expected artifacts. Vercel keeps using the untouched .output/ build.
-import { cp, rm, mkdir, access } from "node:fs/promises";
+// find the expected artifacts.
+//
+// Vercel requires the DEFAULT Nitro output location (.output/), so vite.config.ts
+// must not set nitro({ output: { dir } }) — scripts/verify-vercel-build.mjs guards
+// that. This script therefore reproduces, after the build, exactly the layout that
+// `output: { dir: "dist" }` used to emit:
+//
+//   dist/public/     <- static client assets
+//   dist/server/     <- SSR server bundle (index.mjs)
+//   dist/nitro.json
+//
+// dist/client/ is also written as an alias, since some checks look there instead
+// of dist/public. .output/ itself is left untouched for Vercel.
+import { cp, rm, mkdir, access, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const root = new URL("../", import.meta.url);
@@ -25,14 +37,21 @@ const dist = p("dist");
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 
-if (await exists(p(".output/public"))) {
-  await cp(p(".output/public"), p("dist/client"), { recursive: true });
-}
-if (await exists(p(".output/server"))) {
-  await cp(p(".output/server"), p("dist/server"), { recursive: true });
-}
-if (await exists(p(".output/nitro.json"))) {
-  await cp(p(".output/nitro.json"), p("dist/nitro.json"));
+// Copy .output/* verbatim -> dist/* (public, server, nitro.json, ...)
+await cp(source, dist, { recursive: true });
+
+// Alias dist/public -> dist/client for checks that expect the Vite client dir name.
+if (await exists(p("dist/public"))) {
+  await cp(p("dist/public"), p("dist/client"), { recursive: true });
 }
 
-console.log("mirror-dist: copied .output/ -> dist/ (client, server)");
+// Fail loudly if the two artifacts that matter are missing.
+const missing = [];
+if (!(await exists(p("dist/server/index.mjs")))) missing.push("dist/server/index.mjs");
+if (!(await exists(p("dist/public/assets")))) missing.push("dist/public/assets");
+if (missing.length) {
+  console.error(`mirror-dist: expected build artifacts missing: ${missing.join(", ")}`);
+  process.exit(1);
+}
+
+console.log(`mirror-dist: .output/ -> dist/ (${(await readdir(dist)).join(", ")})`);

@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import MeetTheParents from "@/components/MeetTheParents";
 import { useParents } from "@/hooks/useParents";
 
-export const Route = createFileRoute("/parents")({
+export const Route = createFileRoute("/parents/")({
   component: ParentsPage,
   head: () => ({
     meta: [
@@ -78,6 +78,15 @@ function ParentsPage() {
                     Expression, structure, and that signature white coat — exactly what carries into
                     the litter.
                   </p>
+                  {p.slug && (
+                    <Link
+                      to="/parents/$slug"
+                      params={{ slug: p.slug }}
+                      className="mt-4 inline-block text-sm font-semibold text-accent transition-colors hover:text-accent/80"
+                    >
+                      View {p.name}&rsquo;s Full Profile &rarr;
+                    </Link>
+                  )}
                 </div>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

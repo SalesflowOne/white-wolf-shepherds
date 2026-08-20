@@ -15,7 +15,6 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReservedRouteImport } from './routes/reserved'
 import { Route as ProcessRouteImport } from './routes/process'
-import { Route as ParentsRouteImport } from './routes/parents'
 import { Route as PackFamilyRouteImport } from './routes/pack-family'
 import { Route as LitterRouteImport } from './routes/litter'
 import { Route as HealthGuaranteeRouteImport } from './routes/health-guarantee'
@@ -25,11 +24,13 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalIndexRouteImport } from './routes/portal/index'
+import { Route as ParentsIndexRouteImport } from './routes/parents/index'
 import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
 import { Route as PortalOnboardingRouteImport } from './routes/portal/onboarding'
 import { Route as PortalMeRouteImport } from './routes/portal/me'
 import { Route as PortalDashboardRouteImport } from './routes/portal/dashboard'
 import { Route as PortalAdminRouteImport } from './routes/portal/admin'
+import { Route as ParentsSlugRouteImport } from './routes/parents/$slug'
 import { Route as ApprovedTokenRouteImport } from './routes/approved/$token'
 
 const WaitlistRoute = WaitlistRouteImport.update({
@@ -60,11 +61,6 @@ const ReservedRoute = ReservedRouteImport.update({
 const ProcessRoute = ProcessRouteImport.update({
   id: '/process',
   path: '/process',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ParentsRoute = ParentsRouteImport.update({
-  id: '/parents',
-  path: '/parents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PackFamilyRoute = PackFamilyRouteImport.update({
@@ -112,6 +108,11 @@ const PortalIndexRoute = PortalIndexRouteImport.update({
   path: '/portal/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParentsIndexRoute = ParentsIndexRouteImport.update({
+  id: '/parents/',
+  path: '/parents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
   id: '/puppies/$slug',
   path: '/puppies/$slug',
@@ -137,6 +138,11 @@ const PortalAdminRoute = PortalAdminRouteImport.update({
   path: '/portal/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParentsSlugRoute = ParentsSlugRouteImport.update({
+  id: '/parents/$slug',
+  path: '/parents/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApprovedTokenRoute = ApprovedTokenRouteImport.update({
   id: '/approved/$token',
   path: '/approved/$token',
@@ -152,7 +158,6 @@ export interface FileRoutesByFullPath {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -160,11 +165,13 @@ export interface FileRoutesByFullPath {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
 export interface FileRoutesByTo {
@@ -176,7 +183,6 @@ export interface FileRoutesByTo {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -184,11 +190,13 @@ export interface FileRoutesByTo {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents': typeof ParentsIndexRoute
   '/portal': typeof PortalIndexRoute
 }
 export interface FileRoutesById {
@@ -201,7 +209,6 @@ export interface FileRoutesById {
   '/health-guarantee': typeof HealthGuaranteeRoute
   '/litter': typeof LitterRoute
   '/pack-family': typeof PackFamilyRoute
-  '/parents': typeof ParentsRoute
   '/process': typeof ProcessRoute
   '/reserved': typeof ReservedRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -209,11 +216,13 @@ export interface FileRoutesById {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
 export interface FileRouteTypes {
@@ -227,7 +236,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -235,11 +243,13 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents/'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,7 +261,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -259,11 +268,13 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents'
     | '/portal'
   id:
     | '__root__'
@@ -275,7 +286,6 @@ export interface FileRouteTypes {
     | '/health-guarantee'
     | '/litter'
     | '/pack-family'
-    | '/parents'
     | '/process'
     | '/reserved'
     | '/reset-password'
@@ -283,11 +293,13 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/parents/'
     | '/portal/'
   fileRoutesById: FileRoutesById
 }
@@ -300,7 +312,6 @@ export interface RootRouteChildren {
   HealthGuaranteeRoute: typeof HealthGuaranteeRoute
   LitterRoute: typeof LitterRoute
   PackFamilyRoute: typeof PackFamilyRoute
-  ParentsRoute: typeof ParentsRoute
   ProcessRoute: typeof ProcessRoute
   ReservedRoute: typeof ReservedRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -308,11 +319,13 @@ export interface RootRouteChildren {
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
+  ParentsSlugRoute: typeof ParentsSlugRoute
   PortalAdminRoute: typeof PortalAdminRoute
   PortalDashboardRoute: typeof PortalDashboardRoute
   PortalMeRoute: typeof PortalMeRoute
   PortalOnboardingRoute: typeof PortalOnboardingRoute
   PuppiesSlugRoute: typeof PuppiesSlugRoute
+  ParentsIndexRoute: typeof ParentsIndexRoute
   PortalIndexRoute: typeof PortalIndexRoute
 }
 
@@ -358,13 +371,6 @@ declare module '@tanstack/react-router' {
       path: '/process'
       fullPath: '/process'
       preLoaderRoute: typeof ProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/parents': {
-      id: '/parents'
-      path: '/parents'
-      fullPath: '/parents'
-      preLoaderRoute: typeof ParentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pack-family': {
@@ -430,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/parents/': {
+      id: '/parents/'
+      path: '/parents'
+      fullPath: '/parents/'
+      preLoaderRoute: typeof ParentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/puppies/$slug': {
       id: '/puppies/$slug'
       path: '/puppies/$slug'
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/parents/$slug': {
+      id: '/parents/$slug'
+      path: '/parents/$slug'
+      fullPath: '/parents/$slug'
+      preLoaderRoute: typeof ParentsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/approved/$token': {
       id: '/approved/$token'
       path: '/approved/$token'
@@ -484,7 +504,6 @@ const rootRouteChildren: RootRouteChildren = {
   HealthGuaranteeRoute: HealthGuaranteeRoute,
   LitterRoute: LitterRoute,
   PackFamilyRoute: PackFamilyRoute,
-  ParentsRoute: ParentsRoute,
   ProcessRoute: ProcessRoute,
   ReservedRoute: ReservedRoute,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -492,11 +511,13 @@ const rootRouteChildren: RootRouteChildren = {
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
+  ParentsSlugRoute: ParentsSlugRoute,
   PortalAdminRoute: PortalAdminRoute,
   PortalDashboardRoute: PortalDashboardRoute,
   PortalMeRoute: PortalMeRoute,
   PortalOnboardingRoute: PortalOnboardingRoute,
   PuppiesSlugRoute: PuppiesSlugRoute,
+  ParentsIndexRoute: ParentsIndexRoute,
   PortalIndexRoute: PortalIndexRoute,
 }
 export const routeTree = rootRouteImport

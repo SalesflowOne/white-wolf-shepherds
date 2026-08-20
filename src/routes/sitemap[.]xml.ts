@@ -25,7 +25,9 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug,status")
               .not("slug", "is", null);
             for (const row of data ?? []) {
-              entries.push(urlEntry(`${SITE_URL}/puppies/${row.slug}`, "0.7", "daily"));
+              // Parents live at /parents/<slug>; everyone else is a puppy detail page.
+              const base = row.status === "parent" ? "/parents" : "/puppies";
+              entries.push(urlEntry(`${SITE_URL}${base}/${row.slug}`, "0.7", "daily"));
             }
           }
         } catch {

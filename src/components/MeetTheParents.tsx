@@ -6,7 +6,7 @@ function roleOf(p: ParentDog) {
   return p.sex === "male" ? "Sire" : p.sex === "female" ? "Dam" : "Parent";
 }
 
-function ParentCard({ parent }: { parent: ParentDog }) {
+function ParentCardBody({ parent }: { parent: ParentDog }) {
   const role = roleOf(parent);
   const born = formatLongDate(parent.dob);
   const age = ageFrom(parent.dob);
@@ -71,6 +71,23 @@ function ParentCard({ parent }: { parent: ParentDog }) {
     </div>
   );
 }
+
+/** Card links through to the full parent profile whenever the dog has a slug. */
+function ParentCard({ parent }: { parent: ParentDog }) {
+  if (!parent.slug) return <ParentCardBody parent={parent} />;
+  return (
+    <Link
+      to="/parents/$slug"
+      params={{ slug: parent.slug }}
+      aria-label={`View ${parent.name}'s full profile`}
+      className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+    >
+      <ParentCardBody parent={parent} />
+    </Link>
+  );
+}
+
+
 
 export default function MeetTheParents({
   eyebrow = "The Foundation",
