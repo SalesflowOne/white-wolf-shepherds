@@ -26,3 +26,40 @@ export function formatDateOnly(
   const d = parseDateOnly(value);
   return d ? d.toLocaleDateString(locale, options) : null;
 }
+
+/** URL-safe slug from a display name (puppies, litters, etc.). */
+export function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Pick a unique slug; keeps `currentSlug` reserved when editing the same record. */
+export function uniqueSlug(baseName: string, takenSlugs: string[], currentSlug?: string | null): string {
+  const base = slugify(baseName);
+  if (!base) return `dog-${Date.now().toString(36).slice(-6)}`;
+
+  const taken = new Set(takenSlugs.filter((s) => s && s !== currentSlug));
+  if (!taken.has(base)) return base;
+
+  let suffix = 2;
+  while (taken.has(`${base}-${suffix}`)) suffix += 1;
+  return `${base}-${suffix}`;
+}
+
+/** Replace a puppy's previous name in bio copy when the display name changes. */
+export function syncPersonalityBioName(
+  bio: string | null | undefined,
+  previousName: string,
+  nextName: string,
+): string | null {
+  const trimmedBio = bio?.trim();
+  if (!trimmedBio || !previousName.trim() || previousName.trim() === nextName.trim()) {
+    return trimmedBio || null;
+  }
+
+  const escaped = previousName.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return trimmedBio.replace(new RegExp(`\\b${escaped}\\b`, "g"), nextName.trim());
+}
