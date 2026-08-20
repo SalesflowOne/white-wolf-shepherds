@@ -117,7 +117,7 @@ function PackFamilyPage() {
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-                      OFA Certified
+                      Health Tested
                     </span>
                     <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
                       AKC Registered
