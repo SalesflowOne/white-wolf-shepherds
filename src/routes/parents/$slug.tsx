@@ -61,7 +61,7 @@ export const Route = createFileRoute("/parents/$slug")({
     const title = `${p.name} — Our ${role} | White Wolf Shepherds`;
     const description =
       p.personality_bio?.slice(0, 155) ??
-      `Meet ${p.name}, the ${role.toLowerCase()} behind our white German Shepherd litters. OFA health tested and AKC registered.`;
+      `Meet ${p.name}, the ${role.toLowerCase()} behind our white German Shepherd litters. Health tested and AKC registered.`;
     const image = p.image_url ? `${SITE_URL}${p.image_url}` : null;
     return {
       meta: [
@@ -216,7 +216,7 @@ function ParentProfilePage() {
               {parent.name}
             </h1>
             <p className="mt-2 text-sm font-semibold text-accent">
-              OFA Health Tested &middot; AKC Registered
+              Health Tested &middot; AKC Registered
             </p>
 
             {parent.personality_bio && (
