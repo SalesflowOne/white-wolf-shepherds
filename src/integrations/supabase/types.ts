@@ -15362,6 +15362,56 @@ export type Database = {
           },
         ]
       }
+      ct_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          changes: Json
+          company_id: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          subject_user_id: string | null
+          summary: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          changes?: Json
+          company_id: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          subject_user_id?: string | null
+          summary: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          changes?: Json
+          company_id?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          subject_user_id?: string | null
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_audit_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ct_breaks: {
         Row: {
           break_type: string
@@ -30953,6 +31003,19 @@ export type Database = {
           p_program_id: string
         }
         Returns: string
+      }
+      ct_audit_diff: { Args: { _new: Json; _old: Json }; Returns: Json }
+      ct_audit_write: {
+        Args: {
+          _action: string
+          _changes: Json
+          _company_id: string
+          _entity_id: string
+          _entity_type: string
+          _subject_user_id: string
+          _summary: string
+        }
+        Returns: undefined
       }
       ct_can_manage: {
         Args: { _company_id: string; _user_id: string }
