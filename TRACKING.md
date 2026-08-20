@@ -8,7 +8,7 @@ Set these in `.env` (local) and in your hosting provider (production):
 
 | Variable | Example | Purpose |
 |----------|---------|---------|
-| `VITE_GOOGLE_ADS_ID` | `AW-1234567890` | Google Ads account ID |
+| `VITE_GOOGLE_ADS_ID` | `AW-18361383450` | Google Ads account ID |
 | `VITE_GADS_LABEL_DEPOSIT` | `AbCdEfGhIjKlMnOpQr` | Conversion label for `deposit_paid` |
 | `VITE_GADS_LABEL_APPLICATION` | `…` | Conversion label for `application_submitted` |
 | `VITE_GADS_LABEL_WAITLIST` | `…` | Conversion label for `waitlist_signup` |
@@ -16,7 +16,9 @@ Set these in `.env` (local) and in your hosting provider (production):
 
 When `VITE_GOOGLE_ADS_ID` or a label is empty, `trackConversion()` no-ops silently (no console noise in production).
 
-GA4 (optional, separate) continues to use `VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_API_KEY`. The global `gtag.js` loader in `src/lib/analytics.ts` configures both IDs when present.
+GA4 (optional, separate) continues to use `VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_API_KEY`.
+
+The Google Ads global site tag (`AW-18361383450`) is injected in the document `<head>` via `googleAdsHeadScripts()` in `src/routes/__root.tsx` (same snippet Google provides). `initAnalytics()` adds GA4 config without loading a second tag.
 
 ## Conversion events
 

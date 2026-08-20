@@ -41,19 +41,48 @@ const measurementId = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_A
   | string
   | undefined;
 
-const adsId = (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() ?? "";
+/** Google Ads global site tag ID (e.g. AW-18361383450). */
+export const GOOGLE_ADS_ID =
+  (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() ?? "";
 
 let gtagLoaded = false;
+
+type HeadScript = {
+  src?: string;
+  async?: boolean;
+  children?: string;
+  type?: string;
+};
+
+/** Google tag (gtag.js) snippets for the document `<head>`. */
+export function googleAdsHeadScripts(): HeadScript[] {
+  if (!GOOGLE_ADS_ID) return [];
+
+  return [
+    {
+      src: `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
+      async: true,
+    },
+    {
+      children: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');
+      `.trim(),
+    },
+  ];
+}
 
 /** Loads gtag.js once and configures GA4 + Google Ads when IDs are set. */
 export function initAnalytics() {
   if (typeof window === "undefined") return;
   captureAttribution();
 
-  const primaryId = measurementId ?? adsId;
-  if (!primaryId) return;
+  const primaryId = measurementId ?? GOOGLE_ADS_ID;
+  if (!primaryId && !window.gtag) return;
 
-  if (!gtagLoaded) {
+  if (!window.gtag && primaryId && !gtagLoaded) {
     gtagLoaded = true;
 
     const s = document.createElement("script");
@@ -66,14 +95,18 @@ export function initAnalytics() {
       window.dataLayer!.push(args);
     };
     window.gtag("js", new Date());
+  } else if (window.gtag) {
+    gtagLoaded = true;
   }
+
+  if (!window.gtag) return;
 
   if (measurementId) {
-    window.gtag!("config", measurementId, { send_page_view: true });
+    window.gtag("config", measurementId, { send_page_view: true });
   }
 
-  if (adsId) {
-    window.gtag!("config", adsId);
+  if (GOOGLE_ADS_ID && !document.querySelector(`script[src*="id=${GOOGLE_ADS_ID}"]`)) {
+    window.gtag("config", GOOGLE_ADS_ID);
   }
 }
 

@@ -7,7 +7,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { initAnalytics, trackPageView } from "@/lib/analytics";
+import { googleAdsHeadScripts, initAnalytics, trackPageView } from "@/lib/analytics";
 import { handleContactLinkClick } from "@/lib/contact-tracking";
 
 import appCss from "../styles.css?url";
@@ -64,6 +64,7 @@ export const Route = createRootRoute({
       },
     ],
     scripts: [
+      ...googleAdsHeadScripts(),
       {
         type: "application/ld+json",
         children: JSON.stringify({
