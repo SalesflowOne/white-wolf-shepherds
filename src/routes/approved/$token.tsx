@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { supabase, T } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { reservationCheckoutUrl } from "@/lib/stripe-links";
 
 type Lead = {
   id: string;
@@ -41,10 +42,8 @@ function ApprovedPage() {
   const [expired, setExpired] = useState(false);
 
   const stripeLink =
-    typeof window !== "undefined"
-      ? import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK ||
-        import.meta.env.NEXT_PUBLIC_STRIPE_RESERVATION_LINK ||
-        "#"
+    lead?.id && typeof window !== "undefined"
+      ? reservationCheckoutUrl({ leadId: lead.id, email: lead.email })
       : "#";
 
   useEffect(() => {

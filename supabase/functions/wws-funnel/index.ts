@@ -82,17 +82,29 @@ async function attributeReferral(
   }
 }
 
-const contactInput = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  city: z.string().min(1),
-  state: z.string().min(1),
-  source: z.string().optional().nullable(),
-  referralCode: z.string().optional().nullable(),
-  waitlist: z.boolean().optional(),
-});
+const contactInput = z
+  .object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional().nullable(),
+    city: z.string().min(1).optional().nullable(),
+    state: z.string().min(1).optional().nullable(),
+    source: z.string().optional().nullable(),
+    referralCode: z.string().optional().nullable(),
+    waitlist: z.boolean().optional(),
+    preferredSex: z.enum(["male", "female", "either"]).optional().nullable(),
+    message: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.waitlist && !(data.phone ?? "").trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Phone is required",
+        path: ["phone"],
+      });
+    }
+  });
 
 const leadIdInput = z.object({ leadId: z.string().uuid() });
 
@@ -144,16 +156,28 @@ async function handleStartLead(data: z.infer<typeof contactInput>) {
     .eq("email", email)
     .maybeSingle();
 
+  const city = data.city?.trim() || null;
+  const state = data.state?.trim() || null;
+  const phone = data.phone?.trim() || null;
+  const waitlistExtras = {
+    preferred_sex: data.preferredSex ?? undefined,
+    additional_notes: data.message?.trim() || undefined,
+    stage: data.waitlist ? "waitlist" : undefined,
+  };
+
   let leadId: string;
   if (existing?.id) {
     await admin
       .from("wws_leads")
       .update({
         full_name: fullName,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
+        phone,
+        city,
+        state,
         source: data.source || undefined,
+        ...(data.waitlist ? { stage: "waitlist" as const } : {}),
+        ...(data.preferredSex ? { preferred_sex: data.preferredSex } : {}),
+        ...(data.message?.trim() ? { additional_notes: data.message.trim() } : {}),
         updated_at: now,
       })
       .eq("id", existing.id);
@@ -164,11 +188,13 @@ async function handleStartLead(data: z.infer<typeof contactInput>) {
       .insert({
         full_name: fullName,
         email,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
+        phone,
+        city,
+        state,
         source: data.source || null,
         stage: data.waitlist ? "waitlist" : "new_inquiry",
+        preferred_sex: waitlistExtras.preferred_sex ?? null,
+        additional_notes: waitlistExtras.additional_notes ?? null,
       })
       .select("id")
       .single();

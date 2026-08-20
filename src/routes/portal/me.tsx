@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import { balanceCheckoutUrl, reservationCheckoutUrl } from "@/lib/stripe-links";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -1791,11 +1792,8 @@ function PaymentsTab({ lead }: { lead: Lead }) {
     load();
   }, [lead.id, lead.preferred_puppy_id]);
 
-  const balanceLink =
-    import.meta.env.VITE_PUBLIC_STRIPE_BALANCE_LINK ??
-    import.meta.env.NEXT_PUBLIC_STRIPE_BALANCE_LINK ??
-    "#";
-
+  const balanceLink = balanceCheckoutUrl(lead.email);
+  const depositLink = reservationCheckoutUrl({ leadId: lead.id, email: lead.email });
   const balance = puppy && puppy.price ? puppy.price - 500 : null;
 
   return (
@@ -1819,6 +1817,16 @@ function PaymentsTab({ lead }: { lead: Lead }) {
             </span>
           )}
         </div>
+        {!reservation && depositLink !== "#" && (
+          <div className="border-b border-border p-4">
+            <a
+              href={depositLink}
+              className="inline-block rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground"
+            >
+              Pay $500 Reservation Fee
+            </a>
+          </div>
+        )}
 
         <div className="flex items-center justify-between p-4">
           <div>
