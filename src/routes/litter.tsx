@@ -310,7 +310,7 @@ function LitterPage() {
               <div>
                 <h3 className="font-display text-base font-bold text-foreground">Health-Tested Parents</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  OFA certified hips, elbows, and cardiac. Full genetic panel completed.
+                  Hips, elbows, and cardiac evaluated. Full genetic panel completed.
                 </p>
               </div>
             </div>

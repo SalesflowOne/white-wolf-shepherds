@@ -125,7 +125,7 @@ function HealthGuaranteePage() {
             </p>
             <p className="rounded-lg border border-dashed border-border bg-muted/40 p-4 text-sm">
               <strong className="text-foreground">TODO(owner):</strong> List the specific panels
-              completed on the parents (for example: OFA hips, OFA elbows, cardiac evaluation, DM,
+              completed on the parents (for example: hip and elbow evaluations, cardiac evaluation, DM,
               and any breed-specific genetic panels), including dates and result summaries.
             </p>
           </Section>
