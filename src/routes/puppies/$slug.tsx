@@ -11,6 +11,7 @@ import SmartImage from "@/components/SmartImage";
 import TrustStrip from "@/components/TrustStrip";
 import PriceBlock from "@/components/PriceBlock";
 import { PRICING, SITE_URL, formatUSD } from "@/lib/site";
+import { reservationCheckoutUrl } from "@/lib/stripe-links";
 
 type Puppy = {
   id: string;
@@ -379,15 +380,27 @@ function PuppyProfilePage() {
               <div className="mt-8">
                 {isAvailable && (
                   <div>
-                    <a
-                      href={puppy.stripe_payment_link || "#"}
-                      className="block w-full rounded-xl bg-accent py-4 text-center text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
-                    >
-                      Reserve {puppy.name} &mdash; $500 Reservation Fee
-                    </a>
+                    {puppy.stripe_payment_link ? (
+                      <a
+                        href={reservationCheckoutUrl({
+                          puppyPaymentLink: puppy.stripe_payment_link,
+                        })}
+                        className="block w-full rounded-xl bg-accent py-4 text-center text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+                      >
+                        Reserve {puppy.name} &mdash; $500 Reservation Fee
+                      </a>
+                    ) : (
+                      <Link
+                        to="/get-started"
+                        search={{ step: "puppy", puppy: puppy.slug ?? puppy.id }}
+                        className="block w-full rounded-xl bg-accent py-4 text-center text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-wolf transition-all hover:brightness-110"
+                      >
+                        Apply to Reserve {puppy.name} &mdash; $500 Deposit
+                      </Link>
+                    )}
                     <Link
                       to="/get-started"
-                      search={{ step: "puppy" }}
+                      search={{ step: "puppy", puppy: puppy.slug ?? puppy.id }}
                       className="mt-3 block text-center text-sm font-semibold text-accent hover:underline"
                     >
                       Prefer to apply first? Start the 2-minute application &rarr;

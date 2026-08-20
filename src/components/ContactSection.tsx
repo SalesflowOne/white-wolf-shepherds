@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/forms/Field";
 import { trackEvent, trackOnce } from "@/lib/analytics";
-import { emailHash, trackConversion } from "@/lib/conversions";
+import { trackConversion } from "@/lib/conversions";
+import { startLead } from "@/lib/wws-funnel";
 
 const waitlistSchema = z.object({
   first_name: z.string().trim().min(1, "Please enter your first name").max(50, "Max 50 characters"),
@@ -104,36 +104,35 @@ export default function ContactSection() {
       return;
     }
     setSubmitting(true);
-    const { data: inserted, error } = await supabase
-      .from("puppy_waitlist")
-      .insert({
-        first_name: parsed.data.first_name,
-        last_name: parsed.data.last_name,
-        email: parsed.data.email,
-        phone: parsed.data.phone || null,
-        preferred_sex: parsed.data.preferred_sex,
+    try {
+      const normalizedEmail = parsed.data.email.toLowerCase();
+      const result = await startLead({
+        firstName: parsed.data.first_name,
+        lastName: parsed.data.last_name,
+        email: normalizedEmail,
+        phone: parsed.data.phone?.trim() || null,
+        source: "waitlist_home",
+        waitlist: true,
+        preferredSex: parsed.data.preferred_sex,
         message: parsed.data.message || null,
-      })
-      .select("id")
-      .single();
-    setSubmitting(false);
-    if (error) {
+      });
+      setSuccess(true);
+      trackConversion("waitlist_signup", result.leadId);
+      trackEvent("generate_lead", {
+        form: "waitlist_home",
+        leadId: result.leadId,
+        metadata: { preferred_sex: parsed.data.preferred_sex },
+      });
+      toast.success("You're on the waitlist! We'll be in touch.");
+      setForm(EMPTY);
+      setErrors({});
+      setTouched({});
+    } catch {
       trackEvent("form_error", { form: "waitlist_home", metadata: { reason: "server" } });
       toast.error("We couldn't save your spot. Please try again in a moment.");
-      return;
+    } finally {
+      setSubmitting(false);
     }
-    setSuccess(true);
-    const signupId =
-      inserted?.id ?? (await emailHash(parsed.data.email));
-    trackConversion("waitlist_signup", signupId);
-    trackEvent("generate_lead", {
-      form: "waitlist_home",
-      metadata: { preferred_sex: parsed.data.preferred_sex },
-    });
-    toast.success("You're on the waitlist! We'll be in touch.");
-    setForm(EMPTY);
-    setErrors({});
-    setTouched({});
   };
 
   return (

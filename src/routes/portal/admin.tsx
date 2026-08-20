@@ -5,6 +5,7 @@ import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import { approvePlacement, denyAndRefund } from "@/lib/wws-admin";
 import TestimonialsAdminTab from "@/components/admin/TestimonialsAdminTab";
 import ConversionsAdminTab from "@/components/admin/ConversionsAdminTab";
+import FormsFlowAdminTab from "@/components/admin/FormsFlowAdminTab";
 
 export const Route = createFileRoute("/portal/admin")({
   component: AdminPage,
@@ -114,6 +115,7 @@ type AlumniPost = {
 type AdminTab =
   | "overview"
   | "leads"
+  | "forms_flow"
   | "dogs"
   | "litters"
   | "alumni"
@@ -169,6 +171,7 @@ function AdminPage() {
   const tabs: AdminTab[] = [
     "overview",
     "leads",
+    "forms_flow",
     "dogs",
     "litters",
     "alumni",
@@ -181,6 +184,7 @@ function AdminPage() {
   const tabLabels: Record<AdminTab, string> = {
     overview: "Overview",
     leads: "Leads",
+    forms_flow: "Forms & Flow",
     dogs: "Dogs",
     litters: "Litters",
     alumni: "Pack Family",
@@ -257,6 +261,7 @@ function AdminPage() {
         <main className="flex-1 px-6 py-8">
           {tab === "overview" && <OverviewTab />}
           {tab === "leads" && <LeadsTab />}
+          {tab === "forms_flow" && <FormsFlowAdminTab />}
           {tab === "dogs" && <DogsAdminTab />}
           {tab === "litters" && <LittersAdminTab />}
           {tab === "alumni" && <AlumniAdminTab />}
