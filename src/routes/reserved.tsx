@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NativeCalendarPicker from "@/components/NativeCalendarPicker";
+import { confirmAndTrackDeposit } from "@/lib/deposit-tracking";
 import { readFunnelState } from "@/lib/wws-funnel";
 import { supabase, T } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/reserved")({
   component: ReservedPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Meet the Puppies — White Wolf Shepherds" },
@@ -36,33 +40,52 @@ export const Route = createFileRoute("/reserved")({
 });
 
 function ReservedPage() {
+  const { session_id: stripeSessionId } = Route.useSearch();
   const funnel = readFunnelState();
   const [booked, setBooked] = useState(false);
   const [stage, setStage] = useState<string | null>(null);
+  const [depositStatus, setDepositStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
+
     async function checkStage() {
       if (!funnel?.leadId) {
-        setLoading(false);
+        if (active) setLoading(false);
         return;
       }
+
       const { data } = await supabase
         .from(T.leads)
-        .select("stage")
+        .select("stage, deposit_status")
         .eq("id", funnel.leadId)
         .maybeSingle();
+
+      if (!active) return;
       setStage(data?.stage ?? null);
+      setDepositStatus(data?.deposit_status ?? null);
+
+      if (data?.deposit_status === "paid") {
+        await confirmAndTrackDeposit(stripeSessionId);
+      }
+
       setLoading(false);
     }
-    checkStage();
-  }, [funnel?.leadId]);
+
+    void checkStage();
+    return () => {
+      active = false;
+    };
+  }, [funnel?.leadId, stripeSessionId]);
 
   const canBook =
     stage === "placement_approved" ||
     stage === "approved" ||
     stage === "reserved" ||
     stage === "deposit_paid";
+
+  const depositReceived = depositStatus === "paid";
 
   return (
     <div className="min-h-screen">
@@ -82,6 +105,22 @@ function ReservedPage() {
           <div className="mt-10 rounded-2xl bg-card p-8 shadow-card sm:p-10">
             {loading ? (
               <p className="text-center text-muted-foreground">Loading...</p>
+            ) : depositReceived && !canBook ? (
+              <div className="space-y-4 text-center">
+                <h2 className="font-display text-2xl font-bold text-foreground">
+                  Deposit received — thank you
+                </h2>
+                <p className="text-muted-foreground">
+                  Your $500 reservation is confirmed. We review every application personally and
+                  will email you within one business day with next steps.
+                </p>
+                <Link
+                  to="/portal/me"
+                  className="inline-block rounded-xl bg-accent px-8 py-3 text-sm font-bold uppercase tracking-wider text-accent-foreground"
+                >
+                  Go to My Portal →
+                </Link>
+              </div>
             ) : !canBook ? (
               <div className="space-y-4 text-center">
                 <p className="text-muted-foreground">
@@ -98,7 +137,7 @@ function ReservedPage() {
             ) : booked ? (
               <div className="space-y-6 text-center">
                 <h2 className="font-display text-2xl font-bold text-foreground">
-                  Your call is booked 🐾
+                  Your call is booked
                 </h2>
                 <p className="text-muted-foreground">
                   We can't wait to introduce you to the puppies. Check your portal for updates.

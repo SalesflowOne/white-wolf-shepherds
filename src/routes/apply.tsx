@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { persistFunnelState, startLead } from "@/lib/wws-funnel";
 import { Field } from "@/components/forms/Field";
 import { trackEvent, trackOnce } from "@/lib/analytics";
+import { trackConversion } from "@/lib/conversions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -161,6 +162,12 @@ function ApplyPage() {
         leadId: result.leadId,
         metadata: { waitlist: isWaitlist, state: parsed.data.state },
       });
+
+      if (isWaitlist) {
+        trackConversion("waitlist_signup", result.leadId);
+      } else {
+        trackConversion("application_submitted", result.leadId);
+      }
 
       const name = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
       persistFunnelState({
