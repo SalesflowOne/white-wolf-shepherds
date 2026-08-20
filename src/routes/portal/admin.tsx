@@ -1,4 +1,4 @@
-import { formatDateOnly, parseDateOnly } from "@/lib/utils";
+import { formatDateOnly, parseDateOnly, slugify, syncPersonalityBioName, uniqueSlug } from "@/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
@@ -1582,14 +1582,6 @@ function LabeledTextarea({
 
 const LITTER_STATUSES = ["upcoming", "available", "reserved", "past"] as const;
 
-function slugify(s: string) {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 // ─────────────────────────────────────────────────────────────
 // Dogs (master Dog Manager — every dog the kennel tracks)
 // ─────────────────────────────────────────────────────────────
@@ -1931,6 +1923,10 @@ function DogFormModal({
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    if (name.trim()) setSlug(slugify(name));
+  }, [name]);
+
   async function uploadOne(file: File): Promise<string | null> {
     const ext = file.name.split(".").pop() ?? "jpg";
     const key = `dogs/${slugify(name || "dog")}-${Date.now()}-${Math.random()
@@ -1984,19 +1980,22 @@ function DogFormModal({
       alert("Name is required");
       return;
     }
-    let finalSlug = slug.trim() || slugify(name);
-    if (!isEdit && existingSlugs.includes(finalSlug)) {
-      finalSlug = `${finalSlug}-${Date.now().toString(36).slice(-4)}`;
-    }
+    const trimmedName = name.trim();
+    const finalSlug = uniqueSlug(trimmedName, existingSlugs, isEdit ? dog?.slug : null);
     const priceNum = priceStr.trim() ? Number(priceStr) : null;
     if (priceStr.trim() && Number.isNaN(priceNum)) {
       alert("Price must be a number");
       return;
     }
     const priorityNum = Number(priorityStr) || 0;
+    const syncedBio = syncPersonalityBioName(
+      bio,
+      isEdit ? (dog?.name ?? "") : "",
+      trimmedName,
+    );
 
     const payload = {
-      name: name.trim(),
+      name: trimmedName,
       slug: finalSlug,
       sex: sex || null,
       dob: dob || null,
@@ -2015,7 +2014,7 @@ function DogFormModal({
       price: priceNum,
       collar_color: collarColor.trim() || null,
       image_url: imageUrl.trim() || null,
-      personality_bio: bio.trim() || null,
+      personality_bio: syncedBio,
       ideal_home: idealHome.trim() || null,
       stripe_payment_link: stripeLink.trim() || null,
       litter_id: litterId || null,
@@ -2048,7 +2047,15 @@ function DogFormModal({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <LabeledInput label="Name *" value={name} onChange={setName} />
-          <LabeledInput label="Slug (URL)" value={slug} onChange={setSlug} />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-foreground">Slug (URL)</label>
+            <p className="rounded-lg border border-input bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+              /puppies/{slug || "…"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Updates automatically when you change the name.
+            </p>
+          </div>
           <Field label="Sex">
             <select
               value={sex}
@@ -2494,8 +2501,8 @@ function LitterFormModal({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!isEdit && name) setSlug(slugify(name));
-  }, [name, isEdit]);
+    if (name.trim()) setSlug(slugify(name));
+  }, [name]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
