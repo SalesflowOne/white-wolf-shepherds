@@ -467,6 +467,7 @@ function DashboardTab({ role, lead }: { role: Role; lead: Lead }) {
         {["placement_approved", "approved"].includes(lead.stage ?? "") && (
           <Link
             to="/reserved"
+            search={{ session_id: undefined }}
             className="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-accent-foreground"
           >
             Book Meet the Puppies call →
