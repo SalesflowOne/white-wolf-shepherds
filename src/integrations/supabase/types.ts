@@ -14,6 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_connections: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          destination_name: string
+          id: string
+          last_sync_at: string | null
+          name: string
+          org_id: string
+          source_name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          destination_name?: string
+          id?: string
+          last_sync_at?: string | null
+          name: string
+          org_id: string
+          source_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          destination_name?: string
+          id?: string
+          last_sync_at?: string | null
+          name?: string
+          org_id?: string
+          source_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_connections_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ab_connections_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "ao_orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          one_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          one_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          one_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_workspace_links: {
+        Row: {
+          created_at: string
+          org_id: string
+          settings: Json
+        }
+        Insert: {
+          created_at?: string
+          org_id: string
+          settings?: Json
+        }
+        Update: {
+          created_at?: string
+          org_id?: string
+          settings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_workspace_links_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "ao_orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       abandoned_funnels: {
         Row: {
           address: string | null
@@ -14331,41 +14446,140 @@ export type Database = {
           },
         ]
       }
+      classroom_access_details: {
+        Row: {
+          access_instructions: string | null
+          alarm_notes: string | null
+          classroom_id: string
+          internal_notes: string | null
+          updated_at: string
+          wifi_notes: string | null
+        }
+        Insert: {
+          access_instructions?: string | null
+          alarm_notes?: string | null
+          classroom_id: string
+          internal_notes?: string | null
+          updated_at?: string
+          wifi_notes?: string | null
+        }
+        Update: {
+          access_instructions?: string | null
+          alarm_notes?: string | null
+          classroom_id?: string
+          internal_notes?: string | null
+          updated_at?: string
+          wifi_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classroom_access_details_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: true
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classroom_access_details_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: true
+            referencedRelation: "v_classroom_load"
+            referencedColumns: ["classroom_id"]
+          },
+        ]
+      }
       classrooms: {
         Row: {
           active: boolean
+          address_public: string
+          allowed_use_tags: string[]
+          amenities: Json
+          booking_notice_hours: number
           capacity: number
+          cleaning_fee_default: number
           created_at: string
           description: string | null
+          hourly_rate: number
           id: string
+          images: Json
+          instant_book_one_off: boolean
           location: string | null
+          maximum_advance_days: number
+          minimum_hours: number
           name: string
           organization_id: string | null
+          publicly_visible: boolean
+          rental_description: string | null
+          rental_enabled: boolean
+          rental_headline: string | null
+          security_deposit_default: number
+          slug: string | null
           sort_order: number
+          timezone: string
+          turnover_minutes_after: number
+          turnover_minutes_before: number
           updated_at: string
         }
         Insert: {
           active?: boolean
+          address_public?: string
+          allowed_use_tags?: string[]
+          amenities?: Json
+          booking_notice_hours?: number
           capacity?: number
+          cleaning_fee_default?: number
           created_at?: string
           description?: string | null
+          hourly_rate?: number
           id?: string
+          images?: Json
+          instant_book_one_off?: boolean
           location?: string | null
+          maximum_advance_days?: number
+          minimum_hours?: number
           name: string
           organization_id?: string | null
+          publicly_visible?: boolean
+          rental_description?: string | null
+          rental_enabled?: boolean
+          rental_headline?: string | null
+          security_deposit_default?: number
+          slug?: string | null
           sort_order?: number
+          timezone?: string
+          turnover_minutes_after?: number
+          turnover_minutes_before?: number
           updated_at?: string
         }
         Update: {
           active?: boolean
+          address_public?: string
+          allowed_use_tags?: string[]
+          amenities?: Json
+          booking_notice_hours?: number
           capacity?: number
+          cleaning_fee_default?: number
           created_at?: string
           description?: string | null
+          hourly_rate?: number
           id?: string
+          images?: Json
+          instant_book_one_off?: boolean
           location?: string | null
+          maximum_advance_days?: number
+          minimum_hours?: number
           name?: string
           organization_id?: string | null
+          publicly_visible?: boolean
+          rental_description?: string | null
+          rental_enabled?: boolean
+          rental_headline?: string | null
+          security_deposit_default?: number
+          slug?: string | null
           sort_order?: number
+          timezone?: string
+          turnover_minutes_after?: number
+          turnover_minutes_before?: number
           updated_at?: string
         }
         Relationships: [
@@ -15871,6 +16085,75 @@ export type Database = {
           },
         ]
       }
+      ct_shift_requests: {
+        Row: {
+          company_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          id: string
+          kind: Database["public"]["Enums"]["ct_shift_request_kind"]
+          note: string | null
+          requester_id: string
+          requester_name: string | null
+          shift_id: string
+          status: Database["public"]["Enums"]["ct_shift_request_status"]
+          target_name: string | null
+          target_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["ct_shift_request_kind"]
+          note?: string | null
+          requester_id?: string
+          requester_name?: string | null
+          shift_id: string
+          status?: Database["public"]["Enums"]["ct_shift_request_status"]
+          target_name?: string | null
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["ct_shift_request_kind"]
+          note?: string | null
+          requester_id?: string
+          requester_name?: string | null
+          shift_id?: string
+          status?: Database["public"]["Enums"]["ct_shift_request_status"]
+          target_name?: string | null
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ct_shift_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "ct_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ct_shift_requests_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "ct_shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ct_shifts: {
         Row: {
           assigned_user_id: string | null
@@ -15884,6 +16167,7 @@ export type Database = {
           job_id: string | null
           notes: string | null
           owner_id: string
+          reminder_sent_at: string | null
           required_qualifications: string[]
           starts_at: string
           status: string
@@ -15902,6 +16186,7 @@ export type Database = {
           job_id?: string | null
           notes?: string | null
           owner_id?: string
+          reminder_sent_at?: string | null
           required_qualifications?: string[]
           starts_at: string
           status?: string
@@ -15920,6 +16205,7 @@ export type Database = {
           job_id?: string | null
           notes?: string | null
           owner_id?: string
+          reminder_sent_at?: string | null
           required_qualifications?: string[]
           starts_at?: string
           status?: string
@@ -17004,6 +17290,227 @@ export type Database = {
           sample_errors?: Json
           triggered_at?: string
           window_minutes?: number
+        }
+        Relationships: []
+      }
+      facility_bookings: {
+        Row: {
+          account_id: string | null
+          booking_type: string
+          classroom_id: string
+          cohort_id: string | null
+          contract_id: string | null
+          created_at: string
+          created_by: string | null
+          deposit: number
+          description: string | null
+          hold_expires_at: string | null
+          id: string
+          party_size: number | null
+          payment_status: string
+          public_token: string | null
+          status: string
+          title: string
+          total_price: number
+          updated_at: string
+          use_type: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          booking_type: string
+          classroom_id: string
+          cohort_id?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deposit?: number
+          description?: string | null
+          hold_expires_at?: string | null
+          id?: string
+          party_size?: number | null
+          payment_status?: string
+          public_token?: string | null
+          status?: string
+          title: string
+          total_price?: number
+          updated_at?: string
+          use_type?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          booking_type?: string
+          classroom_id?: string
+          cohort_id?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deposit?: number
+          description?: string | null
+          hold_expires_at?: string | null
+          id?: string
+          party_size?: number | null
+          payment_status?: string
+          public_token?: string | null
+          status?: string
+          title?: string
+          total_price?: number
+          updated_at?: string
+          use_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_bookings_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "rental_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_bookings_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_bookings_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "v_classroom_load"
+            referencedColumns: ["classroom_id"]
+          },
+          {
+            foreignKeyName: "facility_bookings_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_bookings_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "rental_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_occupancy: {
+        Row: {
+          blocked_ends_at: string
+          blocked_starts_at: string
+          booking_id: string
+          classroom_id: string
+          created_at: string
+          ends_at: string
+          id: string
+          is_exception: boolean
+          original_occupancy_id: string | null
+          sequence_number: number
+          source_id: string | null
+          source_type: string | null
+          starts_at: string
+          status: string
+        }
+        Insert: {
+          blocked_ends_at: string
+          blocked_starts_at: string
+          booking_id: string
+          classroom_id: string
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_exception?: boolean
+          original_occupancy_id?: string | null
+          sequence_number?: number
+          source_id?: string | null
+          source_type?: string | null
+          starts_at: string
+          status?: string
+        }
+        Update: {
+          blocked_ends_at?: string
+          blocked_starts_at?: string
+          booking_id?: string
+          classroom_id?: string
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_exception?: boolean
+          original_occupancy_id?: string | null
+          sequence_number?: number
+          source_id?: string | null
+          source_type?: string | null
+          starts_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_occupancy_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "facility_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_occupancy_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_occupancy_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "v_classroom_load"
+            referencedColumns: ["classroom_id"]
+          },
+          {
+            foreignKeyName: "facility_occupancy_original_occupancy_id_fkey"
+            columns: ["original_occupancy_id"]
+            isOneToOne: false
+            referencedRelation: "facility_occupancy"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_occupancy_audit: {
+        Row: {
+          action: string
+          actor: string | null
+          after_row: Json | null
+          before_row: Json | null
+          booking_id: string | null
+          classroom_id: string | null
+          created_at: string
+          id: string
+          occupancy_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          after_row?: Json | null
+          before_row?: Json | null
+          booking_id?: string | null
+          classroom_id?: string | null
+          created_at?: string
+          id?: string
+          occupancy_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          after_row?: Json | null
+          before_row?: Json | null
+          booking_id?: string | null
+          classroom_id?: string | null
+          created_at?: string
+          id?: string
+          occupancy_id?: string | null
+          reason?: string | null
         }
         Relationships: []
       }
@@ -19660,6 +20167,7 @@ export type Database = {
           currency: string
           description: string | null
           due_date: string | null
+          facility_booking_id: string | null
           id: string
           invoice_number: string
           issued_at: string | null
@@ -19672,6 +20180,7 @@ export type Database = {
           public_token: string
           recipient_email: string | null
           recipient_name: string | null
+          rental_contract_id: string | null
           sent_at: string | null
           status: string
           store_purchase_id: string | null
@@ -19689,6 +20198,7 @@ export type Database = {
           currency?: string
           description?: string | null
           due_date?: string | null
+          facility_booking_id?: string | null
           id?: string
           invoice_number: string
           issued_at?: string | null
@@ -19701,6 +20211,7 @@ export type Database = {
           public_token: string
           recipient_email?: string | null
           recipient_name?: string | null
+          rental_contract_id?: string | null
           sent_at?: string | null
           status?: string
           store_purchase_id?: string | null
@@ -19718,6 +20229,7 @@ export type Database = {
           currency?: string
           description?: string | null
           due_date?: string | null
+          facility_booking_id?: string | null
           id?: string
           invoice_number?: string
           issued_at?: string | null
@@ -19730,6 +20242,7 @@ export type Database = {
           public_token?: string
           recipient_email?: string | null
           recipient_name?: string | null
+          rental_contract_id?: string | null
           sent_at?: string | null
           status?: string
           store_purchase_id?: string | null
@@ -19739,6 +20252,13 @@ export type Database = {
           voided_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "invoices_facility_booking_id_fkey"
+            columns: ["facility_booking_id"]
+            isOneToOne: false
+            referencedRelation: "facility_bookings"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoices_order_id_fkey"
             columns: ["order_id"]
@@ -19751,6 +20271,13 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_rental_contract_id_fkey"
+            columns: ["rental_contract_id"]
+            isOneToOne: false
+            referencedRelation: "rental_contracts"
             referencedColumns: ["id"]
           },
           {
@@ -20829,6 +21356,129 @@ export type Database = {
           },
         ]
       }
+      lore_repo_files: {
+        Row: {
+          content: string
+          path: string
+          repo_key: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          path: string
+          repo_key: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          path?: string
+          repo_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lore_wiki_caches: {
+        Row: {
+          created_at: string
+          generated_pages: Json
+          id: string
+          language: string
+          model: string | null
+          owner: string
+          provider: string | null
+          repo: string
+          repo_type: string
+          repo_url: string | null
+          submitted_at: number
+          updated_at: string
+          wiki_structure: Json
+        }
+        Insert: {
+          created_at?: string
+          generated_pages?: Json
+          id: string
+          language: string
+          model?: string | null
+          owner: string
+          provider?: string | null
+          repo: string
+          repo_type: string
+          repo_url?: string | null
+          submitted_at?: number
+          updated_at?: string
+          wiki_structure?: Json
+        }
+        Update: {
+          created_at?: string
+          generated_pages?: Json
+          id?: string
+          language?: string
+          model?: string | null
+          owner?: string
+          provider?: string | null
+          repo?: string
+          repo_type?: string
+          repo_url?: string | null
+          submitted_at?: number
+          updated_at?: string
+          wiki_structure?: Json
+        }
+        Relationships: []
+      }
+      lore_wiki_tasks: {
+        Row: {
+          created_at: string
+          current_page_ids: Json
+          error: string | null
+          id: string
+          language: string
+          owner: string
+          pages_done: number
+          pages_total: number
+          repo: string
+          repo_type: string
+          request: Json | null
+          status: string
+          submitted_at: number
+          updated_at: string
+          wiki_structure: Json | null
+        }
+        Insert: {
+          created_at?: string
+          current_page_ids?: Json
+          error?: string | null
+          id: string
+          language: string
+          owner: string
+          pages_done?: number
+          pages_total?: number
+          repo: string
+          repo_type: string
+          request?: Json | null
+          status?: string
+          submitted_at: number
+          updated_at?: string
+          wiki_structure?: Json | null
+        }
+        Update: {
+          created_at?: string
+          current_page_ids?: Json
+          error?: string | null
+          id?: string
+          language?: string
+          owner?: string
+          pages_done?: number
+          pages_total?: number
+          repo?: string
+          repo_type?: string
+          request?: Json | null
+          status?: string
+          submitted_at?: number
+          updated_at?: string
+          wiki_structure?: Json | null
+        }
+        Relationships: []
+      }
       marketing_ad_spend: {
         Row: {
           amount: number
@@ -21430,6 +22080,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      onewiki_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          one_id: string | null
+          updated_at: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          one_id?: string | null
+          updated_at?: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          one_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onewiki_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_customers: {
         Row: {
@@ -24318,6 +25009,385 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rental_accounts: {
+        Row: {
+          billing_address: string | null
+          business_type: string | null
+          contact_name: string
+          created_at: string
+          email: string
+          emergency_contact: string | null
+          ghl_contact_id: string | null
+          id: string
+          insurance_carrier: string | null
+          insurance_document_url: string | null
+          insurance_expires_on: string | null
+          insurance_policy_number: string | null
+          legal_name: string
+          notes: string | null
+          organization_id: string | null
+          phone: string | null
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          billing_address?: string | null
+          business_type?: string | null
+          contact_name: string
+          created_at?: string
+          email: string
+          emergency_contact?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          insurance_carrier?: string | null
+          insurance_document_url?: string | null
+          insurance_expires_on?: string | null
+          insurance_policy_number?: string | null
+          legal_name: string
+          notes?: string | null
+          organization_id?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          billing_address?: string | null
+          business_type?: string | null
+          contact_name?: string
+          created_at?: string
+          email?: string
+          emergency_contact?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          insurance_carrier?: string | null
+          insurance_document_url?: string | null
+          insurance_expires_on?: string | null
+          insurance_policy_number?: string | null
+          legal_name?: string
+          notes?: string | null
+          organization_id?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_add_ons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price: number
+          price_unit: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price: number
+          price_unit?: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number
+          price_unit?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      rental_agreements: {
+        Row: {
+          accepted_rules: boolean
+          booking_id: string | null
+          content_snapshot: Json
+          contract_id: string | null
+          created_at: string
+          id: string
+          pdf_url: string | null
+          signed_at: string | null
+          signer_email: string | null
+          signer_name: string | null
+        }
+        Insert: {
+          accepted_rules?: boolean
+          booking_id?: string | null
+          content_snapshot?: Json
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          pdf_url?: string | null
+          signed_at?: string | null
+          signer_email?: string | null
+          signer_name?: string | null
+        }
+        Update: {
+          accepted_rules?: boolean
+          booking_id?: string | null
+          content_snapshot?: Json
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          pdf_url?: string | null
+          signed_at?: string | null
+          signer_email?: string | null
+          signer_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_agreements_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "facility_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_agreements_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "rental_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_contracts: {
+        Row: {
+          account_id: string
+          auto_renew: boolean
+          cancellation_notice_at: string | null
+          classroom_id: string
+          commitment_months: number
+          created_at: string
+          created_by: string | null
+          deposit: number
+          duration_hours: number
+          end_date: string | null
+          id: string
+          included_monthly_occurrences: number
+          insurance_expiration: string | null
+          monthly_amount: number
+          notes: string | null
+          package_id: string
+          public_token: string | null
+          reserved_weekdays: number[]
+          start_date: string
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          auto_renew?: boolean
+          cancellation_notice_at?: string | null
+          classroom_id: string
+          commitment_months?: number
+          created_at?: string
+          created_by?: string | null
+          deposit?: number
+          duration_hours: number
+          end_date?: string | null
+          id?: string
+          included_monthly_occurrences?: number
+          insurance_expiration?: string | null
+          monthly_amount: number
+          notes?: string | null
+          package_id: string
+          public_token?: string | null
+          reserved_weekdays: number[]
+          start_date: string
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          auto_renew?: boolean
+          cancellation_notice_at?: string | null
+          classroom_id?: string
+          commitment_months?: number
+          created_at?: string
+          created_by?: string | null
+          deposit?: number
+          duration_hours?: number
+          end_date?: string | null
+          id?: string
+          included_monthly_occurrences?: number
+          insurance_expiration?: string | null
+          monthly_amount?: number
+          notes?: string | null
+          package_id?: string
+          public_token?: string | null
+          reserved_weekdays?: number[]
+          start_date?: string
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_contracts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "rental_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_contracts_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_contracts_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "v_classroom_load"
+            referencedColumns: ["classroom_id"]
+          },
+          {
+            foreignKeyName: "rental_contracts_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "rental_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_members: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          member_role: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          member_role?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          member_role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_members_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "rental_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_packages: {
+        Row: {
+          active: boolean
+          billing_interval: string
+          code: string
+          created_at: string
+          deposit: number
+          description: string | null
+          duration_hours: number
+          featured: boolean
+          fifth_week_policy: string
+          id: string
+          included_monthly_occurrences: number | null
+          is_public: boolean
+          kind: string
+          min_commitment_months: number
+          name: string
+          overage_hourly_price: number
+          price: number
+          sessions_per_week: number | null
+          sort_order: number
+          updated_at: string
+          weekend_price: number | null
+        }
+        Insert: {
+          active?: boolean
+          billing_interval?: string
+          code: string
+          created_at?: string
+          deposit?: number
+          description?: string | null
+          duration_hours: number
+          featured?: boolean
+          fifth_week_policy?: string
+          id?: string
+          included_monthly_occurrences?: number | null
+          is_public?: boolean
+          kind: string
+          min_commitment_months?: number
+          name: string
+          overage_hourly_price?: number
+          price: number
+          sessions_per_week?: number | null
+          sort_order?: number
+          updated_at?: string
+          weekend_price?: number | null
+        }
+        Update: {
+          active?: boolean
+          billing_interval?: string
+          code?: string
+          created_at?: string
+          deposit?: number
+          description?: string | null
+          duration_hours?: number
+          featured?: boolean
+          fifth_week_policy?: string
+          id?: string
+          included_monthly_occurrences?: number | null
+          is_public?: boolean
+          kind?: string
+          min_commitment_months?: number
+          name?: string
+          overage_hourly_price?: number
+          price?: number
+          sessions_per_week?: number | null
+          sort_order?: number
+          updated_at?: string
+          weekend_price?: number | null
+        }
+        Relationships: []
       }
       reports: {
         Row: {
@@ -27567,6 +28637,44 @@ export type Database = {
           },
         ]
       }
+      ss_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          one_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          one_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          one_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ss_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "kb_user_search"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_livescan_bookings: {
         Row: {
           admin_notes: string | null
@@ -29855,6 +30963,7 @@ export type Database = {
         Args: { p_lead_id: string }
         Returns: string
       }
+      ab_is_workspace_agent: { Args: { p_org_id: string }; Returns: boolean }
       admin_adjust_payment_plan: {
         Args: {
           p_discount_amount?: number
@@ -29885,6 +30994,17 @@ export type Database = {
           p_reason?: string
           p_total_tuition?: number
           p_update_related_order?: boolean
+        }
+        Returns: Json
+      }
+      admin_create_facility_hold: {
+        Args: {
+          p_account_id?: string
+          p_booking_type?: string
+          p_classroom_id: string
+          p_ends_at: string
+          p_starts_at: string
+          p_title: string
         }
         Returns: Json
       }
@@ -30572,6 +31692,22 @@ export type Database = {
         }
         Returns: Json
       }
+      apply_classroom_residency: {
+        Args: {
+          p_accepted_rules?: boolean
+          p_classroom_id: string
+          p_contact_name: string
+          p_email: string
+          p_organization_name?: string
+          p_package_code: string
+          p_phone?: string
+          p_start_date: string
+          p_start_time: string
+          p_use_type?: string
+          p_weekdays: number[]
+        }
+        Returns: Json
+      }
       apply_clerk_import_links: { Args: never; Returns: number }
       apply_invoice_payment: {
         Args: {
@@ -30590,6 +31726,7 @@ export type Database = {
           currency: string
           description: string | null
           due_date: string | null
+          facility_booking_id: string | null
           id: string
           invoice_number: string
           issued_at: string | null
@@ -30602,6 +31739,7 @@ export type Database = {
           public_token: string
           recipient_email: string | null
           recipient_name: string | null
+          rental_contract_id: string | null
           sent_at: string | null
           status: string
           store_purchase_id: string | null
@@ -30636,7 +31774,28 @@ export type Database = {
         Returns: Json
       }
       approve_command_action: { Args: { p_action_id: string }; Returns: Json }
+      approve_rental_contract: {
+        Args: { p_contract_id: string }
+        Returns: Json
+      }
       auto_archive_inactive_leads: { Args: never; Returns: undefined }
+      backfill_cohort_facility_occupancy: { Args: never; Returns: Json }
+      book_classroom_one_off: {
+        Args: {
+          p_accepted_rules?: boolean
+          p_classroom_id: string
+          p_contact_name: string
+          p_email: string
+          p_ends_at: string
+          p_organization_name?: string
+          p_party_size: number
+          p_phone?: string
+          p_starts_at: string
+          p_title: string
+          p_use_type: string
+        }
+        Returns: Json
+      }
       bootstrap_master_admin: { Args: { p_email?: string }; Returns: undefined }
       build_template_snapshot: {
         Args: { p_template_id: string }
@@ -30702,6 +31861,10 @@ export type Database = {
           program_name: string
           start_date: string
         }[]
+      }
+      classroom_local_ts: {
+        Args: { p_date: string; p_time: string; p_tz: string }
+        Returns: string
       }
       clawdeploy_create_instance: {
         Args: {
@@ -31105,11 +32268,13 @@ export type Database = {
         Returns: undefined
       }
       execute_command_action: { Args: { p_action_id: string }; Returns: Json }
+      expire_facility_holds: { Args: never; Returns: number }
       expire_old_enrollment_keys: { Args: never; Returns: number }
       extend_enrollment_key: {
         Args: { p_extra_days?: number; p_key_id: string }
         Returns: undefined
       }
+      facility_rental_kpis: { Args: never; Returns: Json }
       fetch_study_flashcards: {
         Args: { p_organization_id: string }
         Returns: {
@@ -31176,6 +32341,10 @@ export type Database = {
       generate_enrollment_key_code: {
         Args: { p_program_id: string }
         Returns: string
+      }
+      generate_residency_occupancy: {
+        Args: { p_contract_id: string; p_status?: string }
+        Returns: number
       }
       generate_sessions: {
         Args: {
@@ -31260,6 +32429,18 @@ export type Database = {
         Args: { _code: string }
         Returns: Json
       }
+      get_classroom_availability: {
+        Args: {
+          p_classroom_id: string
+          p_duration_hours?: number
+          p_from: string
+          p_to: string
+        }
+        Returns: {
+          window_end: string
+          window_start: string
+        }[]
+      }
       get_flow_funnel_metrics: {
         Args: { p_days?: number; p_flow_id: string }
         Returns: Json
@@ -31303,6 +32484,7 @@ export type Database = {
         Args: { p_payment_log_id: string }
         Returns: Json
       }
+      get_rental_booking_by_token: { Args: { p_token: string }; Returns: Json }
       get_revenue_by_trusted_source: {
         Args: { p_days?: number }
         Returns: {
@@ -31597,9 +32779,14 @@ export type Database = {
         Args: { p_clerk_org_id?: string }
         Returns: boolean
       }
+      is_facility_staff: { Args: { _uid: string }; Returns: boolean }
       is_org_member:
         | { Args: { _org_id: string; _user_id: string }; Returns: boolean }
         | { Args: { org_id: string }; Returns: boolean }
+      is_rental_member_of: {
+        Args: { _account_id: string; _uid: string }
+        Returns: boolean
+      }
       issue_enrollment_key: {
         Args: {
           p_expires_at?: string
@@ -31631,6 +32818,7 @@ export type Database = {
           currency: string
           description: string | null
           due_date: string | null
+          facility_booking_id: string | null
           id: string
           invoice_number: string
           issued_at: string | null
@@ -31643,6 +32831,56 @@ export type Database = {
           public_token: string
           recipient_email: string | null
           recipient_name: string | null
+          rental_contract_id: string | null
+          sent_at: string | null
+          status: string
+          store_purchase_id: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+          voided_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoices"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      issue_rental_invoice: {
+        Args: {
+          p_amount: number
+          p_booking_id: string
+          p_contract_id: string
+          p_email: string
+          p_line_items: Json
+          p_name: string
+          p_title: string
+          p_user_id: string
+        }
+        Returns: {
+          amount_due: number | null
+          amount_paid: number
+          amount_total: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          description: string | null
+          due_date: string | null
+          facility_booking_id: string | null
+          id: string
+          invoice_number: string
+          issued_at: string | null
+          line_items: Json
+          metadata: Json
+          notes: string | null
+          order_id: string | null
+          organization_id: string | null
+          paid_at: string | null
+          public_token: string
+          recipient_email: string | null
+          recipient_name: string | null
+          rental_contract_id: string | null
           sent_at: string | null
           status: string
           store_purchase_id: string | null
@@ -31681,6 +32919,47 @@ export type Database = {
         Args: { p_order_id: string; p_payment_log_id: string }
         Returns: undefined
       }
+      list_facility_calendar: {
+        Args: {
+          p_classroom_id?: string
+          p_from: string
+          p_public?: boolean
+          p_to: string
+        }
+        Returns: {
+          blocked_ends_at: string
+          blocked_starts_at: string
+          booking_id: string
+          booking_type: string
+          classroom_id: string
+          classroom_name: string
+          ends_at: string
+          occupancy_id: string
+          starts_at: string
+          status: string
+          title: string
+        }[]
+      }
+      list_rental_listings: {
+        Args: never
+        Returns: {
+          address_public: string
+          allowed_use_tags: string[]
+          amenities: Json
+          capacity: number
+          hourly_rate: number
+          id: string
+          images: Json
+          instant_book_one_off: boolean
+          location: string
+          minimum_hours: number
+          name: string
+          rental_description: string
+          rental_headline: string
+          security_deposit_default: number
+          slug: string
+        }[]
+      }
       list_textbook_chapters: {
         Args: { p_textbook_id: string }
         Returns: {
@@ -31705,6 +32984,38 @@ export type Database = {
       next_invoice_number: { Args: never; Returns: string }
       normalize_payment_phone: { Args: { p_phone: string }; Returns: string }
       normalize_phone: { Args: { p: string }; Returns: string }
+      one_off_package_for_hours: {
+        Args: { p_hours: number; p_starts_at: string }
+        Returns: {
+          active: boolean
+          billing_interval: string
+          code: string
+          created_at: string
+          deposit: number
+          description: string | null
+          duration_hours: number
+          featured: boolean
+          fifth_week_policy: string
+          id: string
+          included_monthly_occurrences: number | null
+          is_public: boolean
+          kind: string
+          min_commitment_months: number
+          name: string
+          overage_hourly_price: number
+          price: number
+          sessions_per_week: number | null
+          sort_order: number
+          updated_at: string
+          weekend_price: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rental_packages"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       order_line_items_without_managed_fees: {
         Args: { p_line_items: Json }
         Returns: Json
@@ -31951,6 +33262,21 @@ export type Database = {
       payment_log_buyer_name: { Args: { p_raw: Json }; Returns: string }
       payment_log_buyer_phone: { Args: { p_raw: Json }; Returns: string }
       payment_log_square_customer_id: { Args: { p_raw: Json }; Returns: string }
+      preview_residency_occurrences: {
+        Args: {
+          p_classroom_id: string
+          p_duration_hours: number
+          p_included: number
+          p_start_date: string
+          p_start_time: string
+          p_weekdays: number[]
+        }
+        Returns: {
+          conflicts: boolean
+          ends_at: string
+          starts_at: string
+        }[]
+      }
       preview_sessions: {
         Args: {
           p_max_count?: number
@@ -32237,10 +33563,47 @@ export type Database = {
         }
         Returns: string
       }
+      upsert_rental_account: {
+        Args: {
+          p_contact_name: string
+          p_email: string
+          p_legal_name: string
+          p_phone?: string
+          p_user_id?: string
+        }
+        Returns: {
+          billing_address: string | null
+          business_type: string | null
+          contact_name: string
+          created_at: string
+          email: string
+          emergency_contact: string | null
+          ghl_contact_id: string | null
+          id: string
+          insurance_carrier: string | null
+          insurance_document_url: string | null
+          insurance_expires_on: string | null
+          insurance_policy_number: string | null
+          legal_name: string
+          notes: string | null
+          organization_id: string | null
+          phone: string | null
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rental_accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       user_belongs_to_org: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
+      user_has_rental_membership: { Args: { _uid: string }; Returns: boolean }
       validate_checkin_token: { Args: { p_token: string }; Returns: Json }
       wws_is_admin: { Args: { uid: string }; Returns: boolean }
     }
@@ -32480,6 +33843,7 @@ export type Database = {
         | "super_admin"
         | "kiosk"
         | "platform_operator"
+        | "renter"
       bundle_access_type: "lifetime" | "months" | "until_exam"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "voice" | "video"
@@ -32494,6 +33858,8 @@ export type Database = {
         | "announcement"
       ct_invite_status: "pending" | "accepted" | "revoked" | "expired"
       ct_role: "admin" | "manager" | "employee"
+      ct_shift_request_kind: "claim" | "swap" | "drop"
+      ct_shift_request_status: "pending" | "approved" | "declined" | "cancelled"
       cta_destination_type:
         | "direct_enrollment_flow"
         | "shared_admissions_flow"
@@ -32994,6 +34360,7 @@ export const Constants = {
         "super_admin",
         "kiosk",
         "platform_operator",
+        "renter",
       ],
       bundle_access_type: ["lifetime", "months", "until_exam"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
@@ -33010,6 +34377,8 @@ export const Constants = {
       ],
       ct_invite_status: ["pending", "accepted", "revoked", "expired"],
       ct_role: ["admin", "manager", "employee"],
+      ct_shift_request_kind: ["claim", "swap", "drop"],
+      ct_shift_request_status: ["pending", "approved", "declined", "cancelled"],
       cta_destination_type: [
         "direct_enrollment_flow",
         "shared_admissions_flow",
