@@ -6,14 +6,13 @@
   "scripts": {
     "dev": "vite dev",
     "prebuild": "node scripts/verify-vercel-build.mjs",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "vite build && node scripts/mirror-dist.mjs",
+    "build:dev": "vite build --mode development && node scripts/mirror-dist.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "stripe:setup-wws": "node scripts/setup-stripe-wws.mjs",
-    "images:optimize": "node scripts/optimize-images.mjs",
-    "postbuild": "node scripts/mirror-dist.mjs"
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
