@@ -19,8 +19,8 @@ import {
   submitApplicationDetails,
 } from "@/lib/wws-funnel";
 import { confirmAndTrackDeposit } from "@/lib/deposit-tracking";
+import { reservationCheckoutUrl } from "@/lib/stripe-links";
 
-const RESERVATION_LINK = import.meta.env.VITE_PUBLIC_STRIPE_RESERVATION_LINK as string | undefined;
 const TOTAL_STEPS = 3;
 
 export const Route = createFileRoute("/portal/onboarding")({
@@ -112,15 +112,8 @@ function OnboardingPage() {
   }, [contact.email]);
 
   function depositHref(): string {
-    if (!RESERVATION_LINK || !leadId) return "#";
-    try {
-      const url = new URL(RESERVATION_LINK);
-      url.searchParams.set("client_reference_id", leadId);
-      if (contact.email) url.searchParams.set("prefilled_email", contact.email.toLowerCase());
-      return url.toString();
-    } catch {
-      return RESERVATION_LINK;
-    }
+    if (!leadId) return "#";
+    return reservationCheckoutUrl({ leadId, email: contact.email });
   }
 
   async function handleApplicationSubmit(e: React.FormEvent) {
