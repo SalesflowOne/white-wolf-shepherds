@@ -1,4 +1,4 @@
-import { formatDateOnly, parseDateOnly, slugify, syncPersonalityBioName, uniqueSlug } from "@/lib/utils";
+import { formatDateOnly, formatEasternDate, formatEasternDateTime, formatEasternDateTimeLabel, parseDateOnly, slugify, syncPersonalityBioName, uniqueSlug } from "@/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
@@ -450,7 +450,7 @@ function ReservationsPanel({
                   {r.amount != null ? `$${r.amount.toLocaleString()}` : "—"}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}
+                  {formatEasternDateTimeLabel(r.created_at) ?? "—"}
                 </td>
               </tr>
             ))}
@@ -563,7 +563,7 @@ function PuppyGrid({
           )}
           {p.deposit_paid_at && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Paid: {new Date(p.deposit_paid_at).toLocaleDateString()}
+              Paid: {formatEasternDateTimeLabel(p.deposit_paid_at) ?? "—"}
             </p>
           )}
           <p className="mt-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
@@ -821,38 +821,8 @@ function StageBadge({ stage }: { stage: string | null }) {
   );
 }
 
-function formatLeadTimestamp(ts: string | null | undefined): { label: string; title: string } | null {
-  if (!ts) return null;
-  const date = new Date(ts);
-  if (Number.isNaN(date.getTime())) return null;
-  return {
-    label: date.toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }),
-    title: date.toLocaleString(undefined, {
-      dateStyle: "full",
-      timeStyle: "long",
-    }),
-  };
-}
-
-function formatLeadDate(ts: string | null | undefined): string | null {
-  if (!ts) return null;
-  const date = parseDateOnly(ts) ?? new Date(ts);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function FunnelTimestamp({ ts }: { ts: string | null }) {
-  const formatted = formatLeadTimestamp(ts);
+  const formatted = formatEasternDateTime(ts);
   if (!formatted) return <span className="text-muted-foreground/50">—</span>;
   return (
     <span className="whitespace-nowrap text-xs" title={formatted.title}>
@@ -874,14 +844,14 @@ function LeadTimeline({ lead }: { lead: Lead }) {
     { label: "Last portal visit", value: lead.portal_last_seen_at },
   ]
     .map((event) => {
-      const formatted = formatLeadTimestamp(event.value);
+      const formatted = formatEasternDateTime(event.value);
       return formatted
         ? { label: event.label, when: formatted.label, title: formatted.title, iso: event.value! }
         : null;
     })
     .filter((event): event is { label: string; when: string; title: string; iso: string } => event !== null);
 
-  const pickupDate = formatLeadDate(lead.pickup_date);
+  const pickupDate = formatEasternDate(lead.pickup_date);
 
   return (
     <div className="rounded-xl border border-border bg-muted/30 p-4">
@@ -1170,7 +1140,7 @@ function AdminMessagesTab() {
                         mine ? "text-accent-foreground/70" : "text-muted-foreground"
                       }`}
                     >
-                      {new Date(m.created_at).toLocaleString()}
+                      {formatEasternDateTimeLabel(m.created_at) ?? "—"}
                     </p>
                   </div>
                 </div>
@@ -1315,7 +1285,7 @@ function UpdatesAdminTab() {
                     {u.visibility?.replace(/_/g, " ")}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {u.published_at ? new Date(u.published_at).toLocaleDateString() : "—"}
+                    {formatEasternDate(u.published_at) ?? "—"}
                   </td>
                   <td className="px-4 py-3">
                     <TinyBtn onClick={() => handleDelete(u.id)}>Delete</TinyBtn>
@@ -1477,7 +1447,7 @@ function AlumniAdminTab() {
             pending.map((p) => (
               <div key={p.id} className="rounded-2xl bg-card p-6 shadow-card">
                 <p className="text-xs text-muted-foreground">
-                  {new Date(p.created_at).toLocaleString()} · {p.milestone_tag}
+                  {formatEasternDateTimeLabel(p.created_at) ?? "—"} · {p.milestone_tag}
                 </p>
                 <p className="mt-2 text-foreground">{p.caption}</p>
                 {p.image_urls && p.image_urls.length > 0 && (
