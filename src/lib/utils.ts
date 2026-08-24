@@ -17,7 +17,66 @@ export function parseDateOnly(value: string | null | undefined): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-/** Format a date-only value without timezone shifting. */
+/** White Wolf Shepherds business timezone — always show times in Eastern. */
+export const BREEDER_TIME_ZONE = "America/New_York";
+
+const easternDateTimeOptions: Intl.DateTimeFormatOptions = {
+  timeZone: BREEDER_TIME_ZONE,
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZoneName: "short",
+};
+
+const easternDateTimeTitleOptions: Intl.DateTimeFormatOptions = {
+  timeZone: BREEDER_TIME_ZONE,
+  dateStyle: "full",
+  timeStyle: "long",
+  timeZoneName: "short",
+};
+
+const easternDateOptions: Intl.DateTimeFormatOptions = {
+  timeZone: BREEDER_TIME_ZONE,
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+};
+
+/** Format an instant in Eastern Time for display in admin/portal UI. */
+export function formatEasternDateTime(
+  ts: string | null | undefined,
+): { label: string; title: string } | null {
+  if (!ts) return null;
+  const date = new Date(ts);
+  if (Number.isNaN(date.getTime())) return null;
+  return {
+    label: date.toLocaleString("en-US", easternDateTimeOptions),
+    title: date.toLocaleString("en-US", easternDateTimeTitleOptions),
+  };
+}
+
+/** Format a date-only or instant value as an Eastern calendar date. */
+export function formatEasternDate(ts: string | null | undefined): string | null {
+  if (!ts) return null;
+  const date = parseDateOnly(ts) ?? new Date(ts);
+  if (Number.isNaN(date.getTime())) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(ts.trim())) {
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+  return date.toLocaleDateString("en-US", easternDateOptions);
+}
+
+/** Shorthand for compact Eastern timestamps in tables. */
+export function formatEasternDateTimeLabel(ts: string | null | undefined): string | null {
+  return formatEasternDateTime(ts)?.label ?? null;
+}
+
 export function formatDateOnly(
   value: string | null | undefined,
   options?: Intl.DateTimeFormatOptions,
