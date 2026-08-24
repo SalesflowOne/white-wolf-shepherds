@@ -4,6 +4,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { syncWwsLeadToSalesflow } from "../_shared/wws-crm-sync.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -66,6 +67,30 @@ async function ensureUserAndProfile(
   return userId;
 }
 
+async function pushLeadToSalesflow(
+  admin: SupabaseClient,
+  leadId: string,
+  opts: { source?: string | null; stage?: string | null; notes?: string | null } = {},
+) {
+  const { data: lead } = await admin
+    .from("wws_leads")
+    .select(
+      "id, full_name, email, phone, city, state, stage, source, score, salesflow_lead_id",
+    )
+    .eq("id", leadId)
+    .maybeSingle();
+  if (!lead?.email) return;
+
+  const result = await syncWwsLeadToSalesflow(admin, {
+    wwsLead: lead,
+    source: opts.source ?? lead.source,
+    stage: opts.stage ?? lead.stage,
+    notes: opts.notes,
+  });
+  if (!result.ok) {
+    console.warn("Salesflow CRM sync failed for lead", leadId, result.error);
+  }
+}
 async function attributeReferral(
   admin: SupabaseClient,
   leadId: string,
@@ -82,17 +107,32 @@ async function attributeReferral(
   }
 }
 
-const contactInput = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  city: z.string().min(1),
-  state: z.string().min(1),
-  source: z.string().optional().nullable(),
-  referralCode: z.string().optional().nullable(),
-  waitlist: z.boolean().optional(),
-});
+const contactInput = z
+  .object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    state: z.string().optional().nullable(),
+    source: z.string().optional().nullable(),
+    referralCode: z.string().optional().nullable(),
+    waitlist: z.boolean().optional(),
+    preferredSex: z.enum(["male", "female", "either"]).optional(),
+    message: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.waitlist) return;
+    if (!data.phone?.trim()) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Phone is required", path: ["phone"] });
+    }
+    if (!data.city?.trim()) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "City is required", path: ["city"] });
+    }
+    if (!data.state?.trim()) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "State is required", path: ["state"] });
+    }
+  });
 
 const leadIdInput = z.object({ leadId: z.string().uuid() });
 
@@ -150,9 +190,11 @@ async function handleStartLead(data: z.infer<typeof contactInput>) {
       .from("wws_leads")
       .update({
         full_name: fullName,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
+        phone: data.phone?.trim() || undefined,
+        city: data.city?.trim() || undefined,
+        state: data.state?.trim() || undefined,
+        preferred_sex: data.preferredSex ?? undefined,
+        additional_notes: data.message?.trim() || undefined,
         source: data.source || undefined,
         updated_at: now,
       })
@@ -164,9 +206,11 @@ async function handleStartLead(data: z.infer<typeof contactInput>) {
       .insert({
         full_name: fullName,
         email,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
+        phone: data.phone?.trim() || null,
+        city: data.city?.trim() || null,
+        state: data.state?.trim() || null,
+        preferred_sex: data.preferredSex ?? null,
+        additional_notes: data.message?.trim() || null,
         source: data.source || null,
         stage: data.waitlist ? "waitlist" : "new_inquiry",
       })
@@ -180,6 +224,12 @@ async function handleStartLead(data: z.infer<typeof contactInput>) {
 
   await ensureUserAndProfile(admin, email, fullName, leadId);
   await attributeReferral(admin, leadId, data.referralCode);
+
+  await pushLeadToSalesflow(admin, leadId, {
+    source: data.source || (data.waitlist ? "waitlist_home" : "apply"),
+    stage: data.waitlist ? "waitlist" : "new_inquiry",
+    notes: data.message?.trim() || null,
+  });
 
   return { leadId, firstName: data.firstName.trim() };
 }
@@ -250,6 +300,13 @@ async function handleSubmitApplicationDetails(data: z.infer<typeof detailsInput>
     .eq("id", data.leadId);
 
   if (error) throw new Error(`Application update failed: ${error.message}`);
+
+  await pushLeadToSalesflow(admin, data.leadId, {
+    source: data.source,
+    stage: "application_complete",
+    notes: data.additionalNotes ?? null,
+  });
+
   return { ok: true };
 }
 
