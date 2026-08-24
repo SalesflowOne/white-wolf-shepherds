@@ -55,6 +55,7 @@ export const PUBLIC_ROUTES = [
   "/process",
   "/health-guarantee",
   "/faq",
+  "/blog",
   "/waitlist",
   "/apply",
 ] as const;

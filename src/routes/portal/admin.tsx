@@ -5,6 +5,7 @@ import { supabase, T, STORAGE_BUCKET } from "@/integrations/supabase/client";
 import { approvePlacement, denyAndRefund } from "@/lib/wws-admin";
 import TestimonialsAdminTab from "@/components/admin/TestimonialsAdminTab";
 import ConversionsAdminTab from "@/components/admin/ConversionsAdminTab";
+import BlogAdminTab from "@/components/admin/BlogAdminTab";
 
 export const Route = createFileRoute("/portal/admin")({
   component: AdminPage,
@@ -121,7 +122,8 @@ type AdminTab =
   | "updates"
   | "testimonials"
   | "conversions"
-  | "referrals";
+  | "referrals"
+  | "blog";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -177,6 +179,7 @@ function AdminPage() {
     "testimonials",
     "conversions",
     "referrals",
+    "blog",
   ];
   const tabLabels: Record<AdminTab, string> = {
     overview: "Overview",
@@ -189,6 +192,7 @@ function AdminPage() {
     testimonials: "Testimonials",
     conversions: "Conversions",
     referrals: "Referrals",
+    blog: "Blog & AI",
   };
 
   return (
@@ -265,6 +269,7 @@ function AdminPage() {
           {tab === "testimonials" && <TestimonialsAdminTab />}
           {tab === "conversions" && <ConversionsAdminTab />}
           {tab === "referrals" && <ReferralsAdminTab />}
+          {tab === "blog" && <BlogAdminTab />}
         </main>
       </div>
     </div>
