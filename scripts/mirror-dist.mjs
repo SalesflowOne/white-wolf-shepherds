@@ -27,6 +27,13 @@ const exists = async (path) => {
   }
 };
 
+// On Vercel, Nitro emits to .vercel/output (not .output/). The platform deploys
+// that layout directly — dist/ mirroring is only for local / non-Vercel checks.
+if (process.env.VERCEL) {
+  console.log("mirror-dist: skipping on Vercel (.vercel/output is deployed directly)");
+  process.exit(0);
+}
+
 const source = p(".output");
 if (!(await exists(source))) {
   console.error("mirror-dist: .output/ not found — did the build run?");
