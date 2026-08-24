@@ -67,16 +67,22 @@ async function ensureUserAndProfile(
   return userId;
 }
 
+const LEAD_SELECT =
+  "id, full_name, email, phone, city, state, stage, source, score, salesflow_lead_id, preferred_sex, timeline, has_owned_large_dog, has_fenced_yard, household_type, family_size, children_ages, other_pets, reason_for_breed, additional_notes, deposit_status, match_call_booked_at, video_call_booked_at, utm_campaign, created_at";
+
 async function pushLeadToSalesflow(
   admin: SupabaseClient,
   leadId: string,
-  opts: { source?: string | null; stage?: string | null; notes?: string | null } = {},
+  opts: {
+    source?: string | null;
+    stage?: string | null;
+    notes?: string | null;
+    force?: boolean;
+  } = {},
 ) {
   const { data: lead } = await admin
     .from("wws_leads")
-    .select(
-      "id, full_name, email, phone, city, state, stage, source, score, salesflow_lead_id",
-    )
+    .select(LEAD_SELECT)
     .eq("id", leadId)
     .maybeSingle();
   if (!lead?.email) return;
@@ -86,10 +92,12 @@ async function pushLeadToSalesflow(
     source: opts.source ?? lead.source,
     stage: opts.stage ?? lead.stage,
     notes: opts.notes,
+    force: opts.force,
   });
   if (!result.ok) {
     console.warn("Salesflow CRM sync failed for lead", leadId, result.error);
   }
+  return result;
 }
 async function attributeReferral(
   admin: SupabaseClient,
@@ -310,6 +318,172 @@ async function handleSubmitApplicationDetails(data: z.infer<typeof detailsInput>
   return { ok: true };
 }
 
+const backfillInput = z.object({
+  force: z.boolean().optional(),
+  includeWaitlist: z.boolean().optional(),
+  secret: z.string().min(1),
+});
+
+async function handleBackfillSalesflow(data: z.infer<typeof backfillInput>) {
+  const admin = adminClient();
+  const { data: cfg } = await admin
+    .from("app_config")
+    .select("value")
+    .eq("key", "wws_backfill_secret")
+    .maybeSingle();
+  const configSecret = typeof cfg?.value === "string" ? cfg.value : null;
+  const allowedSecrets = [
+    Deno.env.get("WWS_BACKFILL_SECRET"),
+    configSecret,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+  ].filter((s): s is string => Boolean(s));
+  if (!allowedSecrets.includes(data.secret)) {
+    throw new Error("Unauthorized backfill request");
+  }
+  const force = data.force ?? false;
+  const includeWaitlist = data.includeWaitlist ?? true;
+  const results: Array<{
+    id: string;
+    email: string;
+    ok: boolean;
+    salesflowLeadId?: string;
+    error?: string;
+    origin: string;
+  }> = [];
+
+  const skipEmail = (email: string) => {
+    const lower = email.toLowerCase();
+    return (
+      lower.endsWith("@example.com") ||
+      lower.includes("salesflow-test") ||
+      lower === "direct-insert@example.com"
+    );
+  };
+
+  const { data: leads } = await admin
+    .from("wws_leads")
+    .select(LEAD_SELECT)
+    .not("email", "is", null)
+    .order("created_at", { ascending: true });
+
+  for (const lead of leads ?? []) {
+    const email = lead.email!.toLowerCase();
+    if (skipEmail(email)) continue;
+    if (lead.salesflow_lead_id && !force) {
+      results.push({
+        id: lead.id,
+        email,
+        ok: true,
+        salesflowLeadId: lead.salesflow_lead_id,
+        origin: "wws_leads",
+      });
+      continue;
+    }
+
+    const sync = await syncWwsLeadToSalesflow(admin, {
+      wwsLead: lead,
+      source: lead.source ?? "white_wolf_shepherds_backfill",
+      stage: lead.stage,
+      force,
+    });
+    results.push({
+      id: lead.id,
+      email,
+      ok: sync.ok,
+      salesflowLeadId: sync.salesflowLeadId,
+      error: sync.error,
+      origin: "wws_leads",
+    });
+  }
+
+  if (includeWaitlist) {
+    const { data: waitlist } = await admin
+      .from("puppy_waitlist")
+      .select("id, first_name, last_name, email, phone, preferred_sex, message, created_at")
+      .order("created_at", { ascending: true });
+
+    const syncedEmails = new Set(
+      results.filter((r) => r.ok).map((r) => r.email.toLowerCase()),
+    );
+
+    for (const row of waitlist ?? []) {
+      const email = row.email?.trim().toLowerCase();
+      if (!email || skipEmail(email) || syncedEmails.has(email)) continue;
+
+      const fullName = `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim();
+      const now = new Date().toISOString();
+      const { data: existing } = await admin
+        .from("wws_leads")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+      let leadId = existing?.id;
+      if (!leadId) {
+        const { data: inserted, error } = await admin
+          .from("wws_leads")
+          .insert({
+            full_name: fullName,
+            email,
+            phone: row.phone || null,
+            preferred_sex: row.preferred_sex ?? null,
+            additional_notes: row.message || null,
+            source: "puppy_waitlist_backfill",
+            stage: "waitlist",
+            created_at: row.created_at ?? now,
+            updated_at: now,
+          })
+          .select("id")
+          .single();
+        if (error || !inserted) {
+          results.push({
+            id: row.id,
+            email,
+            ok: false,
+            error: error?.message ?? "waitlist insert failed",
+            origin: "puppy_waitlist",
+          });
+          continue;
+        }
+        leadId = inserted.id;
+      }
+
+      const { data: lead } = await admin
+        .from("wws_leads")
+        .select(LEAD_SELECT)
+        .eq("id", leadId)
+        .single();
+      if (!lead) continue;
+
+      const sync = await syncWwsLeadToSalesflow(admin, {
+        wwsLead: lead,
+        source: lead.source ?? "puppy_waitlist_backfill",
+        stage: lead.stage ?? "waitlist",
+        force,
+      });
+      results.push({
+        id: leadId,
+        email,
+        ok: sync.ok,
+        salesflowLeadId: sync.salesflowLeadId,
+        error: sync.error,
+        origin: "puppy_waitlist",
+      });
+      if (sync.ok) syncedEmails.add(email);
+    }
+  }
+
+  const synced = results.filter((r) => r.ok).length;
+  const failed = results.filter((r) => !r.ok);
+  return {
+    ok: failed.length === 0,
+    total: results.length,
+    synced,
+    failed: failed.length,
+    results,
+  };
+}
+
 async function handleGetLeadProgress(data: z.infer<typeof leadIdInput>) {
   const admin = adminClient();
   const { data: lead, error } = await admin
@@ -330,6 +504,7 @@ const bodySchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("saveApplicationDraft"), data: draftInput }),
   z.object({ action: z.literal("submitApplicationDetails"), data: detailsInput }),
   z.object({ action: z.literal("getLeadProgress"), data: leadIdInput }),
+  z.object({ action: z.literal("backfillSalesflow"), data: backfillInput }),
 ]);
 
 serve(async (req) => {
@@ -360,6 +535,9 @@ serve(async (req) => {
         break;
       case "getLeadProgress":
         result = await handleGetLeadProgress(parsed.data);
+        break;
+      case "backfillSalesflow":
+        result = await handleBackfillSalesflow(parsed.data);
         break;
     }
 
