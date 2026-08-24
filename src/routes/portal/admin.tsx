@@ -43,6 +43,12 @@ type Lead = {
   referred_by_lead_id: string | null;
   match_call_booked_at: string | null;
   video_call_booked_at: string | null;
+  deposit_status: string | null;
+  deposit_link_sent_at: string | null;
+  reviewed_at: string | null;
+  portal_last_seen_at: string | null;
+  pickup_date: string | null;
+  signature_agreed_at: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -694,7 +700,8 @@ function LeadsTab() {
                 "Family Fit",
                 "Video Call",
                 "Puppy",
-                "Applied",
+                "Submitted",
+                "Last activity",
                 "Actions",
               ].map((h) => (
                 <th key={h} className="px-4 py-3 font-semibold text-muted-foreground">
@@ -706,7 +713,7 @@ function LeadsTab() {
           <tbody>
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={10} className="px-4 py-8 text-center text-muted-foreground">
                   No leads yet.
                 </td>
               </tr>
@@ -731,7 +738,10 @@ function LeadsTab() {
                     {puppyName(l.preferred_puppy_id)}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {l.created_at ? new Date(l.created_at).toLocaleDateString() : "—"}
+                    <FunnelTimestamp ts={l.created_at} />
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    <FunnelTimestamp ts={l.updated_at} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
@@ -811,12 +821,98 @@ function StageBadge({ stage }: { stage: string | null }) {
   );
 }
 
+function formatLeadTimestamp(ts: string | null | undefined): { label: string; title: string } | null {
+  if (!ts) return null;
+  const date = new Date(ts);
+  if (Number.isNaN(date.getTime())) return null;
+  return {
+    label: date.toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+    title: date.toLocaleString(undefined, {
+      dateStyle: "full",
+      timeStyle: "long",
+    }),
+  };
+}
+
+function formatLeadDate(ts: string | null | undefined): string | null {
+  if (!ts) return null;
+  const date = parseDateOnly(ts) ?? new Date(ts);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function FunnelTimestamp({ ts }: { ts: string | null }) {
-  if (!ts) return <span className="text-muted-foreground/50">—</span>;
+  const formatted = formatLeadTimestamp(ts);
+  if (!formatted) return <span className="text-muted-foreground/50">—</span>;
   return (
-    <span className="whitespace-nowrap text-xs" title={new Date(ts).toLocaleString()}>
-      {new Date(ts).toLocaleDateString()}
+    <span className="whitespace-nowrap text-xs" title={formatted.title}>
+      {formatted.label}
     </span>
+  );
+}
+
+function LeadTimeline({ lead }: { lead: Lead }) {
+  const events = [
+    { label: "Submitted", value: lead.created_at },
+    { label: "Last updated", value: lead.updated_at },
+    { label: "Deposit link sent", value: lead.deposit_link_sent_at },
+    { label: "Approval sent", value: lead.approval_sent_at },
+    { label: "Reviewed", value: lead.reviewed_at },
+    { label: "Match call booked", value: lead.match_call_booked_at },
+    { label: "Video call booked", value: lead.video_call_booked_at },
+    { label: "Contract signed", value: lead.signature_agreed_at },
+    { label: "Last portal visit", value: lead.portal_last_seen_at },
+  ]
+    .map((event) => {
+      const formatted = formatLeadTimestamp(event.value);
+      return formatted
+        ? { label: event.label, when: formatted.label, title: formatted.title, iso: event.value! }
+        : null;
+    })
+    .filter((event): event is { label: string; when: string; title: string; iso: string } => event !== null);
+
+  const pickupDate = formatLeadDate(lead.pickup_date);
+
+  return (
+    <div className="rounded-xl border border-border bg-muted/30 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Timeline</p>
+      {events.length === 0 && !pickupDate ? (
+        <p className="mt-2 text-sm text-muted-foreground">No activity recorded yet.</p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {events.map((event) => (
+            <li key={event.label} className="flex items-start justify-between gap-4 text-sm">
+              <span className="text-muted-foreground">{event.label}</span>
+              <time dateTime={event.iso} className="text-right font-medium text-foreground" title={event.title}>
+                {event.when}
+              </time>
+            </li>
+          ))}
+        </ul>
+      )}
+      {pickupDate && (
+        <p className="mt-3 border-t border-border pt-3 text-sm">
+          <span className="text-muted-foreground">Pickup date: </span>
+          <span className="font-medium text-foreground">{pickupDate}</span>
+        </p>
+      )}
+      {lead.deposit_status && (
+        <p className="mt-2 text-sm">
+          <span className="text-muted-foreground">Deposit status: </span>
+          <span className="font-medium capitalize text-foreground">{lead.deposit_status.replace(/_/g, " ")}</span>
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -861,18 +957,6 @@ function LeadSlideOver({
     { label: "Ready for reservation", value: lead.ready_for_deposit ? "Yes" : "No" },
     { label: "Source", value: lead.source },
     { label: "Referral code", value: lead.referral_code },
-    {
-      label: "Match call booked",
-      value: lead.match_call_booked_at
-        ? new Date(lead.match_call_booked_at).toLocaleString()
-        : null,
-    },
-    {
-      label: "Video call booked",
-      value: lead.video_call_booked_at
-        ? new Date(lead.video_call_booked_at).toLocaleString()
-        : null,
-    },
   ];
 
   return (
@@ -886,6 +970,7 @@ function LeadSlideOver({
           </button>
         </div>
         <div className="space-y-4 p-6">
+          <LeadTimeline lead={lead} />
           {fields.map((f) => (
             <div key={f.label}>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
