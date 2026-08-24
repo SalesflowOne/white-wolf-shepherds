@@ -50,10 +50,13 @@ Return ONLY valid JSON:
 title, subtitle, excerpt, content, tags, seo_title, seo_description, seo_keywords, image_prompt
 
 IMAGE PROMPT GUIDELINES:
-Describe a realistic editorial photograph relevant to the article:
-- White or cream German Shepherd puppies or adults in natural outdoor settings (fields, home yard, family context)
-- Warm natural lighting, authentic expressions, no text overlays or logos
-- 16:9 aspect ratio, professional pet photography style`;
+Describe a realistic editorial photograph relevant to the article. Every image_prompt MUST follow White Wolf Shepherds visual standards:
+- Snow-white German Shepherd puppies or adults (Haki/Mia bloodline look): pure white coat, black nose, dark eyes, erect ears, athletic working-line GSD build
+- Natural outdoor or home settings (fields, yard, gentle family context)
+- Ultra high-quality DSLR pet photography — sharp, warm natural lighting
+- Never depict sable, cream-patch, black-and-tan, or non-white shepherds
+- 16:9 aspect ratio, no text overlays or logos
+Append the full style block from WWS_DOG_IMAGE_STYLE in your image_prompt field.`;
 
 export const TOPIC_TEMPLATES: Record<string, string[]> = {
   "Puppy Care": [
@@ -88,8 +91,14 @@ export const TOPIC_TEMPLATES: Record<string, string[]> = {
   ],
 };
 
+export const WWS_DOG_IMAGE_STYLE = `Ultra high-resolution professional DSLR pet photography, tack-sharp focus, rich fur detail, natural golden-hour or soft daylight. Subject must be a White German Shepherd matching White Wolf Shepherds breeding stock (sire Haki, dam Mia): pure snow-white double coat with no sable or cream patches, black nose, dark almond eyes, erect ears, classic working-line German Shepherd structure — athletic, balanced, confident expression (not long-coat show line, not Belgian Malinois, not Samoyed). No colored GSDs, no black-and-tan, no merle, no cartoon styling, no text overlays, no logos, no watermarks. 16:9 landscape editorial composition.`;
+
 export const DEFAULT_IMAGE_PROMPT =
-  "A beautiful white German Shepherd puppy playing in a sunny meadow with a loving family in the background. Warm natural light, professional pet photography, 16:9 aspect ratio, no text or logos.";
+  `A snow-white German Shepherd puppy with erect ears and dark eyes exploring a sunny home yard, warm natural light, shallow depth of field. ${WWS_DOG_IMAGE_STYLE}`;
+
+export function buildWwsImagePrompt(scene: string): string {
+  return `${scene.trim()} ${WWS_DOG_IMAGE_STYLE}`;
+}
 
 export const AUDIT_SYSTEM = `You are the "White Wolf Content Auditor" for White Wolf Shepherds blog posts.
 
