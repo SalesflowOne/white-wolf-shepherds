@@ -17,12 +17,14 @@ export type StartLeadInput = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
-  city: string;
-  state: string;
+  phone?: string | null;
+  city?: string | null;
+  state?: string | null;
   source?: string | null;
   referralCode?: string | null;
   waitlist?: boolean;
+  preferredSex?: "male" | "female" | "either";
+  message?: string | null;
 };
 
 export function startLead(data: StartLeadInput) {
