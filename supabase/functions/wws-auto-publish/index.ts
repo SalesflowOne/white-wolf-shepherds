@@ -8,6 +8,7 @@ import {
 } from "./_shared/wws-ai.ts";
 import {
   AUTO_PUBLISH_SYSTEM,
+  buildWwsImagePrompt,
   DEFAULT_IMAGE_PROMPT,
   TOPIC_TEMPLATES,
 } from "./_shared/wws-blog-prompts.ts";
@@ -43,6 +44,12 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const body = await req.json().catch(() => ({}));
+    const topicOverride =
+      typeof body.topic === "string" && body.topic.trim() ? body.topic.trim() : null;
+    const categoryOverride =
+      typeof body.category === "string" && body.category.trim() ? body.category.trim() : null;
+
     const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const { data: settings } = await sb
@@ -65,10 +72,17 @@ Deno.serve(async (req) => {
 
     if (!categories?.length) throw new Error("No WWS blog categories found");
 
-    const catIndex = ((settings.last_category_index ?? -1) + 1) % categories.length;
+    const resolvedIndex = categoryOverride
+      ? categories.findIndex((c) => c.name.toLowerCase() === categoryOverride.toLowerCase())
+      : ((settings.last_category_index ?? -1) + 1) % categories.length;
+    const catIndex =
+      resolvedIndex >= 0
+        ? resolvedIndex
+        : ((settings.last_category_index ?? -1) + 1) % categories.length;
     const category = categories[catIndex];
     const templates = TOPIC_TEMPLATES[category.name] || TOPIC_TEMPLATES["Puppy Care"];
-    const topic = templates[Math.floor(Math.random() * templates.length)];
+    const topic =
+      topicOverride || templates[Math.floor(Math.random() * templates.length)];
 
     const raw = await chatCompletion([
       { role: "system", content: AUTO_PUBLISH_SYSTEM },
@@ -104,7 +118,7 @@ Deno.serve(async (req) => {
       Date.now().toString(36);
 
     const image = await generateFeaturedImage(
-      String(parsed.image_prompt || DEFAULT_IMAGE_PROMPT),
+      buildWwsImagePrompt(String(parsed.image_prompt || DEFAULT_IMAGE_PROMPT)),
     );
     const imageUrl = image ? await uploadImage(sb, slug, image) : null;
 

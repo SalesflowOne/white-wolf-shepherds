@@ -8,6 +8,7 @@ import {
 } from "./_shared/wws-ai.ts";
 import {
   AUDIT_SYSTEM,
+  buildWwsImagePrompt,
   DEFAULT_IMAGE_PROMPT,
   REGENERATION_SYSTEM,
 } from "./_shared/wws-blog-prompts.ts";
@@ -114,7 +115,7 @@ Deno.serve(async (req) => {
 
     if (!post.featured_image) {
       const slug = post.slug || post_id;
-      const imgPrompt = String(auditResult.image_prompt || DEFAULT_IMAGE_PROMPT);
+      const imgPrompt = buildWwsImagePrompt(String(auditResult.image_prompt || DEFAULT_IMAGE_PROMPT));
       const image = await generateFeaturedImage(imgPrompt);
       if (image) {
         const url = await uploadImage(sb, slug, image);
