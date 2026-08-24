@@ -1,1 +1,10 @@
 project_id = "ebjzdcnphkfpxfldnatm"
+
+[functions.wws-generate-blog-post]
+verify_jwt = false
+
+[functions.wws-auto-publish]
+verify_jwt = false
+
+[functions.wws-audit-blog-post]
+verify_jwt = false

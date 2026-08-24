@@ -29,6 +29,15 @@ export const Route = createFileRoute("/sitemap.xml")({
               const base = row.status === "parent" ? "/parents" : "/puppies";
               entries.push(urlEntry(`${SITE_URL}${base}/${row.slug}`, "0.7", "daily"));
             }
+
+            const { data: blogRows } = await client
+              .from("blog_posts")
+              .select("slug")
+              .eq("site_key", "wws")
+              .eq("status", "published");
+            for (const row of blogRows ?? []) {
+              if (row.slug) entries.push(urlEntry(`${SITE_URL}/blog/${row.slug}`, "0.6", "weekly"));
+            }
           }
         } catch {
           /* sitemap still valid without puppy detail pages */
