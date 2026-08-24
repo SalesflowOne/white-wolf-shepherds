@@ -70,7 +70,7 @@ export default function HeroSection() {
           Rare White German Shepherd Puppies
         </p>
         <h1 className="font-display text-6xl font-semibold leading-[1.05] tracking-tight text-primary-foreground sm:text-7xl lg:text-8xl">
-          Welcome to the <span className="text-gradient-ice font-bold">White Wolf</span> Bloodline
+          Welcome to <span className="text-gradient-ice font-bold">White Wolf</span> Shepherds
         </h1>
         <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-primary-foreground/75 sm:text-xl">
           Health-tested, family-raised White German Shepherd puppies for select homes.
@@ -109,11 +109,11 @@ export default function HeroSection() {
 
           <p className="mt-2 max-w-xl text-xs leading-relaxed text-primary-foreground/55">
             Three steps, about two minutes: pick your puppy, tell us about your home, send your
-            details. $2,000 all-in · $500 deposit, fully refundable if your family isn't approved.
+            details. $2,000 all-in · $500 reservation fee, refundable until placement is approved.
           </p>
 
           <div className="mt-4">
-            <TrustStrip tone="dark" withLink={false} />
+            <TrustStrip tone="dark" />
           </div>
         </div>
       </div>

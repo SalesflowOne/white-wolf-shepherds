@@ -219,7 +219,7 @@ function ApprovedPage() {
             <ul className="mt-3 space-y-2 text-sm text-amber-900">
               <li className="flex items-start gap-2">
                 <span className="mt-1 shrink-0">&#8226;</span>
-                This fee is non-refundable once paid
+                This fee is non-refundable once paid (your family has already been approved for placement)
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-1 shrink-0">&#8226;</span>

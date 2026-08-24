@@ -107,7 +107,7 @@ function ParentsPage() {
 
           <div className="mt-16 text-center">
             <h2 className="font-display text-2xl font-bold text-foreground">
-              This bloodline places fast.
+              This litter places fast.
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
               Litters from Haki and Mia are typically fully reserved before go-home week. Claim your

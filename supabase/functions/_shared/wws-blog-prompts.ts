@@ -12,7 +12,7 @@ Rules:
 - Provide practical, actionable guidance grounded in real shepherd ownership
 - Mention temperament, socialization, exercise, and family fit where relevant
 - End with a soft CTA to explore the current litter or start an application at /get-started
-- Never make false health guarantees beyond the written 1-year genetic health guarantee
+- Never make unverifiable health or championship claims
 - Do not use H1 (#) — title is separate
 - Do NOT include a Table of Contents
 - Do NOT use {#anchor} syntax or <br> tags
@@ -31,7 +31,7 @@ Audience: Families who are close to applying but need reassurance about fit, pro
 Rules:
 - Write 700–1100 words
 - Address common objections: time commitment, yard space, children, other pets, cost
-- Highlight vet checks, vaccinations, microchip, health guarantee, lifetime support
+- Highlight vet checks, vaccinations, microchip, and lifetime breeder support
 - Strong CTAs to /get-started and /apply
 - Same markdown rules as the education agent
 - Return ONLY valid JSON with the same fields`;
@@ -51,7 +51,7 @@ title, subtitle, excerpt, content, tags, seo_title, seo_description, seo_keyword
 
 IMAGE PROMPT GUIDELINES:
 Describe a realistic editorial photograph relevant to the article. Every image_prompt MUST follow White Wolf Shepherds visual standards:
-- Snow-white German Shepherd puppies or adults (Haki/Mia bloodline look): pure white coat, black nose, dark eyes, erect ears, athletic working-line GSD build
+- Snow-white German Shepherd puppies or adults (Haki/Mia look): pure white coat, black nose, dark eyes, erect ears, athletic working-line GSD build
 - Natural outdoor or home settings (fields, yard, gentle family context)
 - Ultra high-quality DSLR pet photography — sharp, warm natural lighting
 - Never depict sable, cream-patch, black-and-tan, or non-white shepherds

@@ -1316,8 +1316,7 @@ function DocumentsTab({
     <div className="space-y-6">
       <h1 className="font-display text-3xl font-bold text-foreground">Documents</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <DocLink href="/health-guarantee" label="Health Guarantee" />
+      <div className="grid gap-4 sm:grid-cols-2">
         <DocLink href="/faq" label="FAQ" />
         <DocLink href="/process" label="Our Process" />
       </div>
@@ -1327,7 +1326,7 @@ function DocumentsTab({
           <h2 className="font-display text-lg font-bold text-amber-900">Purchase Contract</h2>
           <p className="mt-2 text-sm text-amber-900/80">
             Please review and sign the purchase contract. This acknowledges the Reservation Fee
-            terms, right of first refusal, and health guarantee clauses.
+            terms and right of first refusal.
           </p>
           <label className="mt-4 flex items-start gap-2 text-sm text-amber-900">
             <input

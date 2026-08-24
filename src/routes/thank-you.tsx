@@ -49,9 +49,9 @@ function ThankYouPage() {
       href: "/process" as const,
     },
     {
-      title: "Health Guarantee",
-      desc: "Every puppy comes with a comprehensive health guarantee.",
-      href: "/health-guarantee" as const,
+      title: "FAQ",
+      desc: "Answers about pricing, deposits, health testing, and our placement process.",
+      href: "/faq" as const,
     },
   ];
 

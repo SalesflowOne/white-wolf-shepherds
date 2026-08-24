@@ -340,8 +340,7 @@ function PuppyProfilePage() {
 
               <p className="mt-3 text-xs text-muted-foreground">
                 Every puppy goes home vet-checked, dewormed, age-appropriately vaccinated,
-                microchipped, and AKC-registerable — with a written health guarantee and lifetime
-                breeder support.
+                microchipped, and AKC-registerable — with lifetime breeder support.
               </p>
 
               {/* Temperament tags */}

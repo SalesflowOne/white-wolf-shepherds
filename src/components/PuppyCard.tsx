@@ -131,13 +131,9 @@ export default function PuppyCard({
               Application pending
             </span>
           ) : (
-            <Link
-              to="/get-started"
-              search={{ puppy: puppy.id }}
-              className="rounded-xl border border-border py-3 text-center text-sm font-semibold text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              Ask about {puppy.name}
-            </Link>
+            <span className="rounded-xl border border-border py-3 text-center text-sm font-semibold text-muted-foreground">
+              {puppy.name} is no longer available
+            </span>
           )}
         </div>
       </div>

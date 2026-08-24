@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Discover exceptional white German Shepherd puppies from champion bloodlines. Health-tested, family-raised, and bred for beauty, temperament, and loyalty.",
+          "Discover exceptional white German Shepherd puppies. Health-tested, family-raised, and bred for beauty, temperament, and loyalty.",
       },
       {
         property: "og:title",
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Health-tested, family-raised white German Shepherd puppies. $2,000 all-in with a $500 refundable deposit and a 1-year genetic health guarantee.",
+          "Health-tested, family-raised white German Shepherd puppies. $2,000 all-in with a $500 refundable reservation fee until placement is approved.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: SITE_URL },
