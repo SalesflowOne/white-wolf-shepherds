@@ -132,7 +132,7 @@ function LitterPage() {
           </div>
 
           <div className="mt-8">
-            <TrustStrip tone="dark" withLink={false} />
+            <TrustStrip tone="dark" />
           </div>
 
           <div className="mt-10">
@@ -178,7 +178,7 @@ function LitterPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
-                  Health guarantee included
+                  Lifetime breeder support
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
@@ -204,7 +204,7 @@ function LitterPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
-                  Health guarantee included
+                  Lifetime breeder support
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
@@ -231,7 +231,7 @@ function LitterPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5 text-accent">&#10003;</span>
-                  Health guarantee + lifetime support
+                  Lifetime breeder support
                 </li>
               </ul>
             </div>
@@ -292,7 +292,7 @@ function LitterPage() {
         <div className="mx-auto max-w-5xl px-6">
           <MeetTheParents
             eyebrow="The Parents"
-            title="Champion Bloodlines"
+            title="Meet the Parents"
             subtitle="This litter is the direct product of two health-tested, AKC-registered White Shepherds — proven structure, stable nerves, and that signature snow-white coat."
           />
         </div>

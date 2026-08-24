@@ -124,9 +124,8 @@ export default function TestimonialsSection() {
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 White Wolf Shepherds is a small, family-run program. We don&apos;t publish reviews we
                 can&apos;t stand behind — when our first families are ready to share their experience,
-                their words will appear here. In the meantime, every puppy goes home with a written
-                1-year genetic health guarantee and our lifetime return commitment: if you ever
-                cannot keep your dog, you call us first.
+                their words will appear here. In the meantime, every puppy goes home vet-checked with
+                our lifetime return commitment: if you ever cannot keep your dog, you call us first.
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
                 Content slot: add published rows to the <code className="text-foreground">wws_testimonials</code>{" "}
@@ -135,13 +134,13 @@ export default function TestimonialsSection() {
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
-              <h3 className="font-display text-base font-bold text-foreground">1-year genetic guarantee</h3>
+              <h3 className="font-display text-base font-bold text-foreground">Health-tested parents</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Health-tested parents, vet exam before go-home, and a written guarantee you can share
-                with your own veterinarian before you pay.
+                Both parents are screened for hips, elbows, cardiac health, and a full genetic panel
+                before any litter is planned.
               </p>
-              <Link to="/health-guarantee" className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">
-                Read the full guarantee →
+              <Link to="/parents" className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">
+                Meet the parents →
               </Link>
             </div>
 
@@ -151,8 +150,8 @@ export default function TestimonialsSection() {
                 If life changes and you cannot keep your White Wolf Shepherd, we take them back — at
                 any age, for any reason. No dog from our program ends up in a shelter.
               </p>
-              <Link to="/health-guarantee" className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">
-                See our policy →
+              <Link to="/process" className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">
+                See our process →
               </Link>
             </div>
           </div>

@@ -43,7 +43,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, and AKC-registerable.",
       },
       { name: "author", content: "White Wolf Shepherds" },
       { property: "og:title", content: "White Wolf Shepherds — White German Shepherd Puppies" },
@@ -51,7 +51,7 @@ export const Route = createRootRoute({
       {
         property: "og:description",
         content:
-          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, and AKC-registerable.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -60,7 +60,7 @@ export const Route = createRootRoute({
       {
         name: "twitter:description",
         content:
-          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, 1-year genetic health guarantee.",
+          "White Wolf Shepherds raises health-tested, family-raised white German Shepherd puppies for select homes. Vet-checked, microchipped, and AKC-registerable.",
       },
     ],
     scripts: [

@@ -4,7 +4,7 @@ export default function AboutSection() {
   const stats = [
     { value: "15+", label: "Years of Experience" },
     { value: "200+", label: "Happy Families" },
-    { value: "100%", label: "Health Guaranteed" },
+    { value: "100%", label: "Health Tested" },
     { value: "5★", label: "Average Rating" },
   ];
 
@@ -35,7 +35,7 @@ export default function AboutSection() {
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
               For over 15 years, White Wolf Shepherds has been dedicated to preserving and
-              perfecting the white German Shepherd bloodline. Our breeding philosophy centers on
+              perfecting the white German Shepherd breed. Our breeding philosophy centers on
               three pillars: exceptional health, balanced temperament, and breathtaking beauty.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">

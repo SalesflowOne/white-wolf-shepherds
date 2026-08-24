@@ -290,7 +290,7 @@ function GetStartedPage() {
                 ? "Your details are with us. Here's exactly what happens next."
                 : `Three short steps — about two minutes. ${formatUSD(PRICING.price)} all-in, ${formatUSD(
                     PRICING.deposit,
-                  )} refundable deposit holds your puppy.`}
+                  )} refundable reservation fee until placement is approved.`}
             </p>
           </header>
 
@@ -435,16 +435,22 @@ function StepPuppy({
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {puppies.map((p) => {
             const active = value === p.id || value === p.slug;
-            const disabled = p.status !== "available";
+            const unavailable = p.status !== "available";
             return (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => onSelect(p.id)}
+                disabled={unavailable}
+                onClick={() => !unavailable && onSelect(p.id)}
                 aria-pressed={active}
+                aria-disabled={unavailable}
                 className={`overflow-hidden rounded-xl border-2 text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none ${
-                  active ? "border-accent shadow-wolf" : "border-border hover:border-accent/50"
-                } ${disabled ? "opacity-70" : ""}`}
+                  unavailable
+                    ? "cursor-not-allowed border-border opacity-60"
+                    : active
+                      ? "border-accent shadow-wolf"
+                      : "border-border hover:border-accent/50"
+                }`}
               >
                 <div className="relative">
                   {p.image_url ? (

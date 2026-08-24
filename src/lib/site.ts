@@ -17,7 +17,7 @@ export const PRICING = {
   deposit: 500,
   currency: "USD",
   depositTerms:
-    "Your deposit holds that specific puppy, is applied to the balance, and is fully refundable if your family isn't approved.",
+    "The $500 reservation fee is refundable if White Wolf Shepherds does not approve your family for placement. Once approved and you accept placement, it becomes non-refundable and is applied toward your puppy's purchase price.",
 } as const;
 
 export function formatUSD(amount: number | null | undefined): string {
@@ -31,7 +31,7 @@ export const INCLUDED = [
   "Age-appropriate vaccinations",
   "Deworming schedule completed",
   "Microchip registered in your name",
-  "1-year genetic health guarantee",
+  "AKC registration paperwork",
   "Puppy pack: food, blanket, toy & records",
   "Transport & flight-nanny options",
 ] as const;
@@ -41,7 +41,7 @@ export const TRUST_POINTS = [
   { label: "Vet checked", detail: "Exam & health certificate before go-home" },
   { label: "Vaccinated & dewormed", detail: "On schedule from week two" },
   { label: "Microchipped", detail: "Registered in your name" },
-  { label: "1-year guarantee", detail: "Written genetic health guarantee" },
+  { label: "ENS & Puppy Culture", detail: "Raised with proven enrichment protocols" },
   { label: "Lifetime support", detail: "We're a text away, forever" },
 ] as const;
 
@@ -53,7 +53,6 @@ export const PUBLIC_ROUTES = [
   "/pack-family",
   "/parents",
   "/process",
-  "/health-guarantee",
   "/faq",
   "/blog",
   "/waitlist",

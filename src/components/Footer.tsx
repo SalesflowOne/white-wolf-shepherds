@@ -13,7 +13,7 @@ export default function Footer() {
               White Wolf <span className="text-ice">Shepherds</span>
             </span>
             <p className="mt-1 text-sm text-primary-foreground/50">
-              Premium White German Shepherd Bloodlines
+              Premium White German Shepherd Breeder
             </p>
             {(hasPhone || hasEmail) && (
               <div className="mt-4 flex flex-col gap-1 text-sm text-primary-foreground/70">

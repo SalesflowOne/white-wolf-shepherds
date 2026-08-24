@@ -261,7 +261,7 @@ function ParentProfilePage() {
                 to="/get-started"
                 className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
               >
-                Reserve From This Bloodline &rarr;
+                Reserve a Puppy &rarr;
               </Link>
               <Link
                 to="/litter"

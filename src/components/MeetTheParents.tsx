@@ -92,7 +92,7 @@ function ParentCard({ parent }: { parent: ParentDog }) {
 export default function MeetTheParents({
   eyebrow = "The Foundation",
   title = "Meet the Parents",
-  subtitle = "Every puppy we place is the product of two health-tested, temperament-proven White Shepherds. You are not buying a puppy — you are inheriting their bloodline.",
+  subtitle = "Every puppy we place is the product of two health-tested, temperament-proven White Shepherds — raised for structure, stable nerves, and family life.",
   showCta = true,
   className = "",
 }: {

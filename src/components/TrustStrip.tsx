@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { TRUST_POINTS } from "@/lib/site";
 
 /**
@@ -7,10 +6,8 @@ import { TRUST_POINTS } from "@/lib/site";
  */
 export default function TrustStrip({
   tone = "light",
-  withLink = true,
 }: {
   tone?: "light" | "dark";
-  withLink?: boolean;
 }) {
   const chip =
     tone === "dark"
@@ -37,14 +34,6 @@ export default function TrustStrip({
           {p.label}
         </span>
       ))}
-      {withLink && (
-        <Link
-          to="/health-guarantee"
-          className="text-xs font-semibold text-accent underline-offset-4 hover:underline"
-        >
-          See the full guarantee →
-        </Link>
-      )}
     </div>
   );
 }

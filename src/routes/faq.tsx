@@ -36,7 +36,7 @@ export const Route = createFileRoute("/faq")({
 const faqs = [
   {
     q: "Is the $500 Reservation Fee refundable?",
-    a: "The Reservation Fee is non-refundable once paid. It is applied in full toward your total purchase price and secures your pick position in the litter.",
+    a: "Yes — if White Wolf Shepherds does not approve your family for placement, your $500 reservation fee is fully refunded. Once your family is approved and you accept placement, the fee becomes non-refundable and is applied in full toward your puppy's purchase price.",
   },
   {
     q: "How is pick order determined?",
@@ -63,12 +63,8 @@ const faqs = [
     a: "Your purchase price includes the puppy, complete health records, age-appropriate vaccines, deworming, microchip, AKC registration paperwork, premium starter food, scent blanket, puppy transition guide, and lifetime breeder support.",
   },
   {
-    q: "What is your health guarantee?",
-    a: "Every puppy comes with a comprehensive health guarantee covering genetic conditions. Our health-tested parents reduce the risk of hereditary issues. Visit our Health Guarantee page for full details.",
-  },
-  {
     q: "What if I am not approved?",
-    a: "We review every application personally. If we feel a match is not right, we will let you know honestly and respectfully. Our goal is to place every puppy in the best possible home.",
+    a: "We review every application personally. If we feel a match is not right, we will let you know honestly and respectfully — and your $500 reservation fee will be fully refunded. Our goal is to place every puppy in the best possible home.",
   },
   {
     q: "What if my preferred puppy is reserved by someone else?",
