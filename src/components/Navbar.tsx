@@ -10,6 +10,7 @@ export default function Navbar() {
     { label: "Process", href: "/process" as const },
     { label: "Health & Guarantee", href: "/health-guarantee" as const },
     { label: "FAQ", href: "/faq" as const },
+    { label: "Blog", href: "/blog" as const },
   ];
 
   return (

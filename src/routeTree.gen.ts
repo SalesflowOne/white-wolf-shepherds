@@ -25,12 +25,14 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalIndexRouteImport } from './routes/portal/index'
 import { Route as ParentsIndexRouteImport } from './routes/parents/index'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as PuppiesSlugRouteImport } from './routes/puppies/$slug'
 import { Route as PortalOnboardingRouteImport } from './routes/portal/onboarding'
 import { Route as PortalMeRouteImport } from './routes/portal/me'
 import { Route as PortalDashboardRouteImport } from './routes/portal/dashboard'
 import { Route as PortalAdminRouteImport } from './routes/portal/admin'
 import { Route as ParentsSlugRouteImport } from './routes/parents/$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApprovedTokenRouteImport } from './routes/approved/$token'
 
 const WaitlistRoute = WaitlistRouteImport.update({
@@ -113,6 +115,11 @@ const ParentsIndexRoute = ParentsIndexRouteImport.update({
   path: '/parents/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PuppiesSlugRoute = PuppiesSlugRouteImport.update({
   id: '/puppies/$slug',
   path: '/puppies/$slug',
@@ -143,6 +150,11 @@ const ParentsSlugRoute = ParentsSlugRouteImport.update({
   path: '/parents/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApprovedTokenRoute = ApprovedTokenRouteImport.update({
   id: '/approved/$token',
   path: '/approved/$token',
@@ -165,12 +177,14 @@ export interface FileRoutesByFullPath {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
@@ -190,12 +204,14 @@ export interface FileRoutesByTo {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/blog': typeof BlogIndexRoute
   '/parents': typeof ParentsIndexRoute
   '/portal': typeof PortalIndexRoute
 }
@@ -216,12 +232,14 @@ export interface FileRoutesById {
   '/thank-you': typeof ThankYouRoute
   '/waitlist': typeof WaitlistRoute
   '/approved/$token': typeof ApprovedTokenRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/parents/$slug': typeof ParentsSlugRoute
   '/portal/admin': typeof PortalAdminRoute
   '/portal/dashboard': typeof PortalDashboardRoute
   '/portal/me': typeof PortalMeRoute
   '/portal/onboarding': typeof PortalOnboardingRoute
   '/puppies/$slug': typeof PuppiesSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/parents/': typeof ParentsIndexRoute
   '/portal/': typeof PortalIndexRoute
 }
@@ -243,12 +261,14 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/blog/$slug'
     | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/blog/'
     | '/parents/'
     | '/portal/'
   fileRoutesByTo: FileRoutesByTo
@@ -268,12 +288,14 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/blog/$slug'
     | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/blog'
     | '/parents'
     | '/portal'
   id:
@@ -293,12 +315,14 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/waitlist'
     | '/approved/$token'
+    | '/blog/$slug'
     | '/parents/$slug'
     | '/portal/admin'
     | '/portal/dashboard'
     | '/portal/me'
     | '/portal/onboarding'
     | '/puppies/$slug'
+    | '/blog/'
     | '/parents/'
     | '/portal/'
   fileRoutesById: FileRoutesById
@@ -319,12 +343,14 @@ export interface RootRouteChildren {
   ThankYouRoute: typeof ThankYouRoute
   WaitlistRoute: typeof WaitlistRoute
   ApprovedTokenRoute: typeof ApprovedTokenRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   ParentsSlugRoute: typeof ParentsSlugRoute
   PortalAdminRoute: typeof PortalAdminRoute
   PortalDashboardRoute: typeof PortalDashboardRoute
   PortalMeRoute: typeof PortalMeRoute
   PortalOnboardingRoute: typeof PortalOnboardingRoute
   PuppiesSlugRoute: typeof PuppiesSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   ParentsIndexRoute: typeof ParentsIndexRoute
   PortalIndexRoute: typeof PortalIndexRoute
 }
@@ -443,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/puppies/$slug': {
       id: '/puppies/$slug'
       path: '/puppies/$slug'
@@ -485,6 +518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/approved/$token': {
       id: '/approved/$token'
       path: '/approved/$token'
@@ -511,12 +551,14 @@ const rootRouteChildren: RootRouteChildren = {
   ThankYouRoute: ThankYouRoute,
   WaitlistRoute: WaitlistRoute,
   ApprovedTokenRoute: ApprovedTokenRoute,
+  BlogSlugRoute: BlogSlugRoute,
   ParentsSlugRoute: ParentsSlugRoute,
   PortalAdminRoute: PortalAdminRoute,
   PortalDashboardRoute: PortalDashboardRoute,
   PortalMeRoute: PortalMeRoute,
   PortalOnboardingRoute: PortalOnboardingRoute,
   PuppiesSlugRoute: PuppiesSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
   ParentsIndexRoute: ParentsIndexRoute,
   PortalIndexRoute: PortalIndexRoute,
 }
